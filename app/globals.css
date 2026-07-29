@@ -159,12 +159,8 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .trip .tt span{color:var(--blaze);font-weight:400}
 
 /* ---------- map markers ---------- */
-/* Marker ink flips with the basemap: dark drive map vs bright swisstopo sheet. */
+/* Both basemaps are pale sheets, so marker ink is dark with a light halo. */
 .mapbox{
-  --map-halo:var(--sunken); --map-ink:var(--ink);   --map-mute:var(--stone);
-  --map-accent:var(--blaze); --map-cool:var(--glacier); --map-dot:var(--panel);
-}
-.mapbox.on-light{
   --map-halo:#F7F6F1; --map-ink:#16211E;  --map-mute:#55605C;
   --map-accent:#B3271C; --map-cool:#1F5A6E; --map-dot:#FFFFFF;
 }
@@ -174,19 +170,14 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .wp-marker.is-above{flex-direction:column-reverse;gap:.18rem}
 .wp-marker.is-below{flex-direction:column;gap:.18rem}
 .wp-marker.is-above .wp-label,.wp-marker.is-below .wp-label{align-items:center;text-align:center}
-.wp-label{font-family:var(--mono);font-size:.61rem;line-height:1.2;letter-spacing:.02em;
+/* A printed map sheet is already full of type — a halo alone loses the fight,
+   so labels sit on an opaque plate. */
+.wp-label{font-family:var(--mono);font-size:.64rem;line-height:1.2;letter-spacing:.02em;
   color:var(--map-ink);white-space:nowrap;display:flex;flex-direction:column;font-weight:600;
-  text-shadow:0 0 3px var(--map-halo),0 0 3px var(--map-halo),0 0 5px var(--map-halo),
-    1px 0 2px var(--map-halo),-1px 0 2px var(--map-halo),
-    0 1px 2px var(--map-halo),0 -1px 2px var(--map-halo)}
+  background:rgba(247,246,241,.9);border:1px solid rgba(22,33,30,.18);padding:.12rem .3rem}
 .wp-label.is-camp{color:var(--map-accent);font-weight:700}
 .wp-label.is-peak{color:var(--map-mute)}
 .wp-label s{text-decoration:none;font-size:.54rem;color:var(--map-mute);font-weight:400}
-/* A printed topo sheet is already full of type — a halo alone loses the fight,
-   so on light basemaps our labels get an opaque plate instead. */
-.mapbox.on-light .wp-label{font-size:.64rem;text-shadow:none;
-  background:rgba(247,246,241,.9);border:1px solid rgba(22,33,30,.18);
-  padding:.12rem .3rem}
 @media(max-width:560px){.wp-label{font-size:.55rem}.wp-label s{display:none}}
 
 /* ---------- maplibre chrome ---------- */

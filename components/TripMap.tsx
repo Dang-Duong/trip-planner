@@ -7,14 +7,14 @@ type ML = typeof import("maplibre-gl");
 type MLMap = import("maplibre-gl").Map;
 
 const BASEMAPS = {
-  // CARTO dark, label-free: the basemap's own place names would fight our waypoint
-  // labels, so we use the no-labels build and put every label on ourselves.
+  // CARTO Positron, label-free: pale and legible with clear national borders, and
+  // no place names of its own to fight the waypoint labels we draw ourselves.
   osm: {
-    tiles: ["https://basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png"],
-    maxzoom: 19,
+    tiles: ["https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"],
+    maxzoom: 20,
     attribution:
       '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-    paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
+    paint: { "raster-saturation": 0, "raster-contrast": 0.06, "raster-opacity": 1 },
   },
   swisstopo: {
     tiles: [
@@ -22,8 +22,7 @@ const BASEMAPS = {
     ],
     maxzoom: 17,
     attribution: '© <a href="https://www.swisstopo.admin.ch/">swisstopo</a>',
-    // Bright topo sheet against dark chrome — knock it back just enough to sit in the UI.
-    paint: { "raster-saturation": -0.1, "raster-contrast": 0.02, "raster-opacity": 0.96 },
+    paint: { "raster-saturation": -0.1, "raster-contrast": 0.02, "raster-opacity": 1 },
   },
 } as const;
 
@@ -137,7 +136,7 @@ export default function TripMap({
             route: { type: "geojson", data: empty() },
           },
           layers: [
-            { id: "bg", type: "background", paint: { "background-color": "#06090A" } },
+            { id: "bg", type: "background", paint: { "background-color": "#E9E8E3" } },
             {
               id: "osm",
               type: "raster",
@@ -152,24 +151,23 @@ export default function TripMap({
               layout: { visibility: "none" },
               paint: { ...BASEMAPS.swisstopo.paint },
             },
+            // Pale casing under the route so it stays readable where it crosses
+            // borders, lakes and road lines on the basemap.
             {
-              id: "route-glow",
+              id: "route-casing",
               type: "line",
               source: "route",
               layout: { "line-join": "round", "line-cap": "round" },
-              paint: {
-                "line-color": "#FF5A45",
-                "line-width": 9,
-                "line-blur": 8,
-                "line-opacity": 0.45,
-              },
+              paint: { "line-color": "#F7F6F1", "line-width": 8, "line-opacity": 0.95 },
             },
             {
+              // Heavier than it needs to be for its own sake: Positron draws national
+              // borders in a similar red, and the route has to win that comparison.
               id: "route",
               type: "line",
               source: "route",
               layout: { "line-join": "round", "line-cap": "round" },
-              paint: { "line-color": "#FF5A45", "line-width": 2.4 },
+              paint: { "line-color": "#C0342A", "line-width": 3.4 },
             },
           ],
         },
@@ -207,9 +205,6 @@ export default function TripMap({
     const line = (view.route ?? [])
       .map((id) => byId.get(id)?.at)
       .filter((p): p is [number, number] => !!p);
-
-    // Bright topo sheets need dark ink and a light halo; the dark drive map the reverse.
-    box.current?.classList.toggle("on-light", view.basemap === "swisstopo");
 
     m.setLayoutProperty("osm", "visibility", view.basemap === "osm" ? "visible" : "none");
     m.setLayoutProperty(
