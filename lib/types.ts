@@ -29,12 +29,25 @@ export type MapView = {
 
 export type Leg = { time: string; text: ReactNode };
 
+/** One of several ways a day could be run, each with its own timeline. */
+export type DayOption = {
+  name: string;
+  /** komoot tour for this route. */
+  href?: string;
+  meta: string;
+  legs: Leg[];
+  note?: ReactNode;
+};
+
 export type Day = {
   date: string;
   title: string;
   meta: string;
+  /** Used when the day has a single plan. Ignored if `options` is set. */
   legs: Leg[];
   note?: ReactNode;
+  /** Undecided days carry the candidates side by side instead of one timeline. */
+  options?: DayOption[];
   /** Which MapView the sticky map shows while this day is on screen. */
   mapId?: string;
 };

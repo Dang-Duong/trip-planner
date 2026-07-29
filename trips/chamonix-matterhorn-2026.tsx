@@ -228,10 +228,16 @@ export const chamonixMatterhorn2026: Trip = {
     },
     {
       date: "26",
-      title: "Sat · 5 km track + Lac Blanc",
-      meta: "15 km · +1 150 m",
+      title: "Sat · Chamonix — pick one",
+      meta: "two options",
       mapId: "sat",
-      legs: [
+      legs: [],
+      options: [
+        {
+          name: "Lac Blanc + the 5 km track",
+          href: "https://www.komoot.com/smarttour/e934061622/von-flegere-zum-col-des-montets-ueber-den-lac-blanc-chamonix-mont-blanc-schleife",
+          meta: "16.6 km · +1 180 m · 2 352 m",
+          legs: [
         {
           time: "07:00",
           text: (
@@ -275,22 +281,74 @@ export const chamonixMatterhorn2026: Trip = {
             </>
           ),
         },
-        { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
+            { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
+          ],
+          note: (
+            <>
+              <b>The ladders are single-file.</b> Fourteen people plus other parties means 30–45 min
+              of queuing — start early and the trail is yours.{" "}
+              <b>Anyone who dislikes heights should walk the loop backwards:</b> up via Remuaz, meet
+              everyone at Lac Blanc, no ladders at all. Track gated? Run from camp toward Le
+              Lavancher. Rain? Petit Balcon Sud, ~3 h under trees.
+            </>
+          ),
+        },
+        {
+          name: "Mont Buet",
+          href: "https://www.komoot.com/smarttour/e924134691/mont-buet-via-vallorcine-chamonix-mont-blanc",
+          meta: "19.8 km · +1 730 m · 3 096 m",
+          legs: [
+            {
+              time: "06:00",
+              text: (
+                <>
+                  <b>No morning run</b> — this day needs the daylight. Breakfast, then the
+                  Mont-Blanc Express from Argentière to Le Buet, ~10 min, free on the guest card.
+                </>
+              ),
+            },
+            { time: "07:00", text: <>Walking from Le Buet, 1 330 m, up the Bérard valley.</> },
+            { time: "~07:40", text: <>Cascade de Bérard. Forest, then the valley opens out.</> },
+            {
+              time: "~09:15",
+              text: (
+                <>
+                  <b>Refuge de la Pierre à Bérard, 1 924 m.</b> Shut by late Sept — carry
+                  everything. Last water.
+                </>
+              ),
+            },
+            {
+              time: "~12:30",
+              text: (
+                <>
+                  <b>Mont Buet, 3 096 m.</b> Mont Blanc massif front to back.
+                </>
+              ),
+            },
+            {
+              time: "13:00",
+              text: (
+                <b>
+                  <em>Hard turn-back, on the summit or not.</em>
+                </b>
+              ),
+            },
+            { time: "~15:00", text: <>Back past the refuge. 1 766 m of descent; poles.</> },
+            { time: "~17:30", text: <>Le Buet. Train back to Argentière, shop, camp.</> },
+            { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
+          ],
+          note: (
+            <>
+              <b>10–11 h for fourteen</b> against komoot’s 8 h 07 for one fit hiker, so the
+              13:00 turn-back is the whole plan — sunset is 19:25 and there is no hut to wait in.{" "}
+              <b>The summit is above 3 000 m and exposed:</b> snow is likely by late Sept, so
+              microspikes, and it is a genuine cold-and-wind day, not a valley walk. It also costs
+              +580 m more than Lac Blanc the day before Zermatt.
+            </>
+          ),
+        },
       ],
-      note: (
-        <>
-          <b>The ladders are single-file.</b> Fourteen people plus other parties means 30–45 min of
-          queuing — start early and the trail is yours.{" "}
-          <b>Anyone who dislikes heights should walk the loop backwards:</b> up via Remuaz, meet
-          everyone at Lac Blanc, no ladders at all. Track gated? Run from camp toward Le Lavancher.
-          Rain? Petit Balcon Sud, ~3 h under trees.
-          <br />
-          <br />
-          <b>Alternative — Mont Buet</b> (both routes are on the map): 19.8 km, +1 730 m, 3 096 m, so
-          10–11 h for fourteen. No ladders, a real summit, and the train drops you at Le Buet. But it
-          replaces the morning run, and it is +580 m more than Lac Blanc the day before Zermatt.
-        </>
-      ),
     },
     {
       date: "27",

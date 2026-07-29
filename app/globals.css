@@ -156,6 +156,20 @@ td .fine{display:block;margin-top:.15rem}
 .day .fine{margin-top:.75rem;padding-top:.6rem;border-top:1px solid var(--rule)}
 .day .fine b{color:var(--ink-2)}
 
+/* A day with more than one candidate plan carries them as labelled blocks. */
+.opt{border-left:2px solid var(--rule);padding-left:.9rem;margin-top:.9rem}
+.opt:first-of-type{margin-top:.2rem}
+.opt:hover{border-left-color:var(--blaze)}
+.opt-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:.3rem .6rem;margin-bottom:.45rem}
+.opt-tag{font-family:var(--mono);font-size:.58rem;font-weight:700;letter-spacing:.1em;
+  color:var(--blaze);border:1px solid var(--rule);padding:.05rem .34rem}
+.opt-name{font-size:.94rem;font-weight:700;letter-spacing:-.015em;color:var(--ink);
+  text-decoration-color:var(--rule)}
+a.opt-name:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
+.opt-meta{margin-left:auto;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;
+  color:var(--glacier);font-variant-numeric:tabular-nums;white-space:nowrap}
+.opt .fine{margin-top:.6rem;padding-top:.5rem;border-top:1px dashed var(--rule-2)}
+
 /* ---------- pack ---------- */
 .pack{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);
   grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
