@@ -49,7 +49,7 @@ export const chamonixMatterhorn2026: Trip = {
     },
     { id: "trelechamp", name: "Tré-le-Champ", at: [6.933, 45.9985], kind: "stop", note: "1 417 m · ladders" },
     { id: "coldesmontets", name: "Col des Montets", at: [6.931, 46.005], kind: "stop", note: "overflow parking" },
-    { id: "lacblanc", name: "Lac Blanc", at: [6.885, 45.975], kind: "peak", note: "2 352 m" },
+    { id: "lacblanc", name: "Lac Blanc", at: [6.885, 45.975], kind: "goal", note: "2 352 m · Sat high point" },
     { id: "montblanc", name: "Mont Blanc", at: [6.865, 45.833], kind: "peak", note: "4 806 m" },
     { id: "tasch", name: "Täsch", at: [7.779, 46.069], kind: "stop", note: "terminal · CHF 16/car" },
     { id: "randa", name: "Randa", at: [7.79, 46.1], kind: "camp", note: "camp 2 · Sun", labelSide: "above" },

@@ -16,24 +16,30 @@ const BASEMAPS = {
       '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
     paint: { "raster-saturation": 0, "raster-contrast": 0.06, "raster-opacity": 1 },
   },
+  // Greyscale, and faded back hard. The colour sheet is a beautiful map but it is
+  // dense with its own type at this zoom and buries our waypoints. Muted to an
+  // underlay it still shows every trail and contour without competing for attention.
   swisstopo: {
     tiles: [
-      "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-farbe/default/current/3857/{z}/{x}/{y}.jpeg",
+      "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg",
     ],
     maxzoom: 17,
     attribution: '© <a href="https://www.swisstopo.admin.ch/">swisstopo</a>',
-    paint: { "raster-saturation": -0.1, "raster-contrast": 0.02, "raster-opacity": 1 },
+    paint: { "raster-saturation": 0, "raster-contrast": -0.05, "raster-opacity": 0.72 },
   },
 } as const;
 
 // Colours resolve from CSS vars set on the map container, which flip with the
 // basemap — the dark drive map and the bright swisstopo sheets need opposite ink.
+// Deliberately large. These sit on printed map sheets already full of type and
+// line work — a subtle dot loses every time.
 const MARKER_STYLE: Record<Waypoint["kind"], { fill: string; stroke: string; r: number }> = {
-  camp: { fill: "var(--map-accent)", stroke: "var(--map-halo)", r: 6 },
-  start: { fill: "var(--map-cool)", stroke: "var(--map-halo)", r: 5.5 },
-  hut: { fill: "var(--map-cool)", stroke: "var(--map-halo)", r: 5 },
-  peak: { fill: "var(--map-ink)", stroke: "var(--map-halo)", r: 3.5 },
-  stop: { fill: "var(--map-dot)", stroke: "var(--map-ink)", r: 4 },
+  camp: { fill: "var(--map-accent)", stroke: "#FFFFFF", r: 8 },
+  goal: { fill: "var(--map-cool)", stroke: "#FFFFFF", r: 8 },
+  start: { fill: "var(--map-cool)", stroke: "#FFFFFF", r: 7.5 },
+  hut: { fill: "var(--map-cool)", stroke: "#FFFFFF", r: 7 },
+  peak: { fill: "var(--map-ink)", stroke: "#FFFFFF", r: 5 },
+  stop: { fill: "#FFFFFF", stroke: "var(--map-accent)", r: 5.5 },
 };
 
 const SVG = "http://www.w3.org/2000/svg";
@@ -55,12 +61,11 @@ function markerEl(wp: Waypoint) {
   circle.setAttribute("r", String(s.r));
   circle.setAttribute("fill", s.fill);
   circle.setAttribute("stroke", s.stroke);
-  circle.setAttribute("stroke-width", "2");
+  circle.setAttribute("stroke-width", "2.5");
   svg.appendChild(circle);
 
   const label = document.createElement("span");
-  label.className =
-    "wp-label" + (wp.kind === "camp" ? " is-camp" : wp.kind === "peak" ? " is-peak" : "");
+  label.className = `wp-label is-${wp.kind}`;
   label.textContent = wp.name;
   if (wp.note) {
     const note = document.createElement("s");
@@ -110,6 +115,10 @@ export default function TripMap({
       const m = new lib.Map({
         container: node,
         attributionControl: false,
+        // Trackpad pinch (which the OS sends as ctrl+wheel) and ⌘/ctrl+scroll zoom the
+        // map; a plain two-finger scroll still scrolls the page. Without this a sticky
+        // half-screen map swallows the wheel and you can't scroll past it.
+        cooperativeGestures: true,
         center: [8.5, 47],
         zoom: 5,
         style: {
@@ -176,7 +185,6 @@ export default function TripMap({
       m.addControl(new lib.AttributionControl({ compact: true }), "bottom-right");
       m.addControl(new lib.NavigationControl({ showCompass: false }), "top-right");
       m.addControl(new lib.ScaleControl({ maxWidth: 84, unit: "metric" }), "bottom-left");
-      m.scrollZoom.disable(); // the page scrolls past this; don't hijack the wheel
 
       map.current = m;
       m.on("load", () => !cancelled && setReady(true));
@@ -205,6 +213,9 @@ export default function TripMap({
     const line = (view.route ?? [])
       .map((id) => byId.get(id)?.at)
       .filter((p): p is [number, number] => !!p);
+
+    // Lets CSS thin the labels out on the wide-area drive map at phone sizes.
+    box.current?.setAttribute("data-basemap", view.basemap);
 
     m.setLayoutProperty("osm", "visibility", view.basemap === "osm" ? "visible" : "none");
     m.setLayoutProperty(

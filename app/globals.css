@@ -167,18 +167,26 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .wp-marker{display:flex;align-items:center;gap:.34rem;pointer-events:none}
 .wp-marker.is-left{flex-direction:row-reverse}
 .wp-marker.is-left .wp-label{align-items:flex-end}
-.wp-marker.is-above{flex-direction:column-reverse;gap:.18rem}
-.wp-marker.is-below{flex-direction:column;gap:.18rem}
+.wp-marker.is-above{flex-direction:column-reverse;gap:.5rem}
+.wp-marker.is-below{flex-direction:column;gap:.5rem}
 .wp-marker.is-above .wp-label,.wp-marker.is-below .wp-label{align-items:center;text-align:center}
 /* A printed map sheet is already full of type — a halo alone loses the fight,
-   so labels sit on an opaque plate. */
-.wp-label{font-family:var(--mono);font-size:.64rem;line-height:1.2;letter-spacing:.02em;
-  color:var(--map-ink);white-space:nowrap;display:flex;flex-direction:column;font-weight:600;
-  background:rgba(247,246,241,.9);border:1px solid rgba(22,33,30,.18);padding:.12rem .3rem}
-.wp-label.is-camp{color:var(--map-accent);font-weight:700}
-.wp-label.is-peak{color:var(--map-mute)}
-.wp-label s{text-decoration:none;font-size:.54rem;color:var(--map-mute);font-weight:400}
-@media(max-width:560px){.wp-label{font-size:.55rem}.wp-label s{display:none}}
+   so labels sit on a solid plate with a hard edge and a lift shadow. */
+.wp-label{font-family:var(--mono);font-size:.72rem;line-height:1.25;letter-spacing:.01em;
+  color:var(--map-ink);white-space:nowrap;display:flex;flex-direction:column;font-weight:700;
+  background:#FFFFFF;border:1px solid rgba(22,33,30,.55);padding:.2rem .4rem;
+  box-shadow:0 1px 4px rgba(6,9,10,.35)}
+.wp-label.is-camp{color:var(--map-accent)}
+.wp-label.is-peak{color:var(--map-mute);font-weight:600}
+.wp-label s{text-decoration:none;font-size:.6rem;color:var(--map-mute);font-weight:500;
+  letter-spacing:.02em}
+@media(max-width:560px){.wp-label{font-size:.58rem;padding:.14rem .3rem}.wp-label s{display:none}}
+/* On a phone the drive map is only ~44vh, and seven labels won't fit across 1 000 km.
+   The intermediate stops are route shape rather than destinations, so they keep their
+   dot and lose their label. The hike maps are dense with real destinations — leave them. */
+@media(max-width:760px){
+  .mapbox[data-basemap="osm"] .wp-label.is-stop{display:none}
+}
 
 /* ---------- maplibre chrome ---------- */
 .maplibregl-ctrl-attrib{font-family:var(--mono);font-size:.55rem}
@@ -191,3 +199,6 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1) opacity(.7)}
 .maplibregl-ctrl-scale{border-color:var(--stone);border-radius:0;background:transparent;
   color:var(--stone);font-family:var(--mono);font-size:.55rem;font-variant-numeric:tabular-nums}
+/* "use ⌘ + scroll to zoom" hint shown when a plain wheel is passed through to the page */
+.maplibregl-cooperative-gesture-screen{background:rgba(10,14,16,.72);font-family:var(--mono);
+  font-size:.7rem;letter-spacing:.04em}

@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 
 export type LngLat = [number, number];
 
-export type WaypointKind = "start" | "stop" | "camp" | "peak" | "hut";
+/** `peak` is scenery for orientation; `goal` is what the day is actually aiming at. */
+export type WaypointKind = "start" | "stop" | "camp" | "peak" | "hut" | "goal";
 
 export type Waypoint = {
   id: string;
