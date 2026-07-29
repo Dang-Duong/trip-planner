@@ -11,23 +11,36 @@ export default function TripView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const [active, setActive] = useState(trip?.maps[0]?.id ?? "");
 
-  // Scrollspy: whichever [data-map] block sits in the middle band of the viewport
-  // decides what the sticky map shows.
+  // Scrollspy: the last [data-map] block whose top has passed an anchor line near the
+  // top of the reading column wins. Anchoring at the top rather than mid-viewport
+  // matters — on a tall window the middle of the screen is already inside Saturday
+  // while the page is still scrolled to the very top, which showed the wrong map first.
   useEffect(() => {
     const blocks = Array.from(document.querySelectorAll<HTMLElement>("[data-map]"));
     if (!blocks.length) return;
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.filter((e) => e.isIntersecting).at(0);
-        const id = (hit?.target as HTMLElement | undefined)?.dataset.map;
-        if (id) setActive(id);
-      },
-      { rootMargin: "-45% 0px -45% 0px" },
-    );
+    let raf = 0;
+    const pick = () => {
+      raf = 0;
+      const line = window.innerHeight * 0.3;
+      let current = blocks[0];
+      for (const b of blocks) {
+        if (b.getBoundingClientRect().top <= line) current = b;
+      }
+      if (current.dataset.map) setActive(current.dataset.map);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(pick);
+    };
 
-    blocks.forEach((b) => io.observe(b));
-    return () => io.disconnect();
+    schedule();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   if (!trip) return null;
