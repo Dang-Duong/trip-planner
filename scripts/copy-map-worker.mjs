@@ -7,8 +7,10 @@
 // `import ... from "./maplibre-gl-shared.mjs"`, so the shared chunk must sit next to
 // it under exactly that name.
 //
-// Copied at pre{dev,build} rather than committed, so it can't drift from the
-// installed maplibre-gl version.
+// Copied at build rather than committed, so it can't drift from the installed
+// maplibre-gl version. Called inline from the `build` script, not as a `prebuild`
+// lifecycle hook — a host that runs the script's contents instead of `npm run build`
+// would skip the hook, and the failure is a silently black map in production.
 import { copyFile, mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
