@@ -22,7 +22,13 @@ export default function TripView({ slug }: { slug: string }) {
     let raf = 0;
     const pick = () => {
       raf = 0;
-      const line = window.innerHeight * 0.3;
+      // In the stacked layout the map is stuck across the top of the viewport, so the
+      // anchor has to sit below it. Measured rather than hard-coding the breakpoint:
+      // side by side, the pane is full height and its bottom is the viewport bottom.
+      const pane = document.querySelector<HTMLElement>(".mappane");
+      const paneBottom = pane ? pane.getBoundingClientRect().bottom : 0;
+      const top = paneBottom < window.innerHeight - 1 ? paneBottom : 0;
+      const line = top + (window.innerHeight - top) * 0.3;
       let current = blocks[0];
       for (const b of blocks) {
         if (b.getBoundingClientRect().top <= line) current = b;
@@ -55,7 +61,13 @@ export default function TripView({ slug }: { slug: string }) {
               key={m.id}
               role="tab"
               aria-selected={m.id === active}
-              onClick={() => setActive(m.id)}
+              // Scroll to the day this map belongs to; the scrollspy then sets `active`.
+              // Falling back to setActive keeps maps with no day of their own usable.
+              onClick={() => {
+                const target = document.querySelector<HTMLElement>(`.chapter[data-map="${m.id}"]`);
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+                else setActive(m.id);
+              }}
             >
               {m.title}
             </button>
@@ -64,37 +76,44 @@ export default function TripView({ slug }: { slug: string }) {
       </div>
 
       <div className="plan">
-        <header className="phead" data-map="overview">
-          <span className="blz" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <h1>
-            {trip.title} <span>{trip.titleAccent}</span> {trip.titleTail}
-          </h1>
-          <p className="fine">{trip.subtitle}</p>
-          <div className="stats">
-            {trip.stats.map((s) => (
-              <div key={s.label}>
-                <b>{s.value}</b>
-                <span>{s.label}</span>
-              </div>
-            ))}
+        {/* One full-height chapter per day: the map on the left follows whichever
+            day you have scrolled to, and the column snaps between them. */}
+        {trip.days.map((day, i) => (
+          <div className="chapter" key={day.date} data-map={day.mapId}>
+            {i === 0 && (
+              <header className="phead">
+                <span className="blz" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <h1>
+                  {trip.title} <span>{trip.titleAccent}</span> {trip.titleTail}
+                </h1>
+                <p className="fine">{trip.subtitle}</p>
+                <div className="stats">
+                  {trip.stats.map((s) => (
+                    <div key={s.label}>
+                      <b>{s.value}</b>
+                      <span>{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </header>
+            )}
+            <div className="chapter-head">
+              <b>{String(i + 1).padStart(2, "0")}</b>
+              <h2>
+                Day {i + 1} of {trip.days.length}
+              </h2>
+            </div>
+            <DayTimeline day={day} />
           </div>
-        </header>
-
-        <section>
-          <div className="hd">
-            <b>01</b>
-            <h2>Days</h2>
-          </div>
-          <DayTimeline days={trip.days} activeMapId={active} />
-        </section>
+        ))}
 
         <section data-map="overview">
           <div className="hd">
-            <b>02</b>
+            <b>01</b>
             <h2>Pins &amp; parking</h2>
           </div>
           <PinTable pins={trip.pins} />
@@ -114,7 +133,7 @@ export default function TripView({ slug }: { slug: string }) {
 
         <section>
           <div className="hd">
-            <b>03</b>
+            <b>02</b>
             <h2>Pack</h2>
           </div>
           <PackList groups={trip.pack} slug={trip.slug} />
@@ -122,7 +141,7 @@ export default function TripView({ slug }: { slug: string }) {
 
         <section>
           <div className="hd">
-            <b>04</b>
+            <b>03</b>
             <h2>Before you go</h2>
           </div>
           <div className="scroll">
