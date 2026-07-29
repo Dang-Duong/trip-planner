@@ -162,7 +162,7 @@ td .fine{display:block;margin-top:.15rem}
 /* A day with more than one candidate plan carries them as labelled blocks. */
 .opt{border-left:2px solid var(--rule);padding-left:.9rem;margin-top:.9rem}
 .opt:first-of-type{margin-top:.2rem}
-.opt:hover{border-left-color:var(--blaze)}
+.opt:hover,.opt:focus-within{border-left-color:var(--blaze)}
 .opt-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:.3rem .6rem;margin-bottom:.45rem}
 .opt-tag{font-family:var(--mono);font-size:.58rem;font-weight:700;letter-spacing:.1em;
   color:var(--blaze);border:1px solid var(--rule);padding:.05rem .34rem}

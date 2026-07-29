@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { MapView, Waypoint } from "@/lib/types";
+import type { LngLat, MapView, Waypoint } from "@/lib/types";
 
 type ML = typeof import("maplibre-gl");
 type MLMap = import("maplibre-gl").Map;
@@ -151,10 +151,13 @@ export default function TripMap({
   views,
   activeId,
   waypoints,
+  trail,
 }: {
   views: MapView[];
   activeId: string;
   waypoints: Waypoint[];
+  /** Hovered hike, drawn over the day's map. */
+  trail?: LngLat[];
 }) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MLMap | null>(null);
@@ -213,6 +216,7 @@ export default function TripMap({
               attribution: BASEMAPS.swisstopo.attribution,
             },
             route: { type: "geojson", data: empty() },
+            trail: { type: "geojson", data: empty() },
           },
           layers: [
             { id: "bg", type: "background", paint: { "background-color": "#E9E8E3" } },
@@ -247,6 +251,22 @@ export default function TripMap({
               source: "route",
               layout: { "line-join": "round", "line-cap": "round" },
               paint: { "line-color": "#C0342A", "line-width": 3.4 },
+            },
+            // The hovered hike. Above the route so it wins where the two overlap, and
+            // dashed so it never reads as another road on the topo sheet.
+            {
+              id: "trail-casing",
+              type: "line",
+              source: "trail",
+              layout: { "line-join": "round", "line-cap": "round" },
+              paint: { "line-color": "#FFFFFF", "line-width": 7, "line-opacity": 0.9 },
+            },
+            {
+              id: "trail",
+              type: "line",
+              source: "trail",
+              layout: { "line-join": "round", "line-cap": "round" },
+              paint: { "line-color": "#C0342A", "line-width": 3.2, "line-dasharray": [2.4, 1.2] },
             },
           ],
         },
@@ -334,6 +354,18 @@ export default function TripMap({
       });
     }
   }, [ready, activeId, views, waypoints]);
+
+  // Its own effect: hovering a hike must not re-fit the camera or rebuild the markers.
+  useEffect(() => {
+    const m = map.current;
+    if (!ready || !m) return;
+    const src = m.getSource("trail") as import("maplibre-gl").GeoJSONSource;
+    src.setData(
+      trail && trail.length > 1
+        ? { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: trail } }
+        : empty(),
+    );
+  }, [ready, trail]);
 
   return <div className="mapbox" ref={box} role="img" aria-label={activeId} />;
 }

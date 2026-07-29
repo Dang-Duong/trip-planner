@@ -43,6 +43,9 @@ export type DayOption = {
   meta: string;
   legs: Leg[];
   note?: ReactNode;
+  /** Trail geometry, drawn on the map while this option is hovered. Baked in like
+   *  `MapView.routeLine` — see the note in the trip data for how to regenerate. */
+  line?: LngLat[];
 };
 
 export type Day = {

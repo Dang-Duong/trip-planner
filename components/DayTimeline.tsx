@@ -1,4 +1,4 @@
-import type { Day, Leg } from "@/lib/types";
+import type { Day, DayOption, Leg } from "@/lib/types";
 
 const Legs = ({ legs }: { legs: Leg[] }) => (
   <>
@@ -11,7 +11,14 @@ const Legs = ({ legs }: { legs: Leg[] }) => (
   </>
 );
 
-export default function DayTimeline({ day }: { day: Day }) {
+export default function DayTimeline({
+  day,
+  onOption,
+}: {
+  day: Day;
+  /** Called with the option under the pointer (or keyboard focus), null on leave. */
+  onOption?: (opt: DayOption | null) => void;
+}) {
   return (
     <article className="day">
       <div className="dh">
@@ -22,7 +29,15 @@ export default function DayTimeline({ day }: { day: Day }) {
 
       {day.options ? (
         day.options.map((opt, i) => (
-          <div className="opt" key={opt.name}>
+          <div
+            className="opt"
+            key={opt.name}
+            // Focus is included so tabbing to the komoot link draws the trail too.
+            onMouseEnter={() => onOption?.(opt)}
+            onMouseLeave={() => onOption?.(null)}
+            onFocus={() => onOption?.(opt)}
+            onBlur={() => onOption?.(null)}
+          >
             <div className="opt-h">
               <span className="opt-tag">{String.fromCharCode(65 + i)}</span>
               {opt.href ? (
