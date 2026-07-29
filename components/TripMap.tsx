@@ -79,6 +79,15 @@ function markerEl(wp: Waypoint) {
 
 const empty = (): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features: [] });
 
+// Generous, and wider on the right: labels sit beside their dot and would clip otherwise.
+const PADDING = { top: 62, bottom: 72, left: 82, right: 108 };
+
+function fit(m: MLMap, lib: ML, pts: LngLat[], maxZoom: number, duration: number) {
+  if (!pts.length) return;
+  const bounds = pts.reduce((b, p) => b.extend(p), new lib.LngLatBounds(pts[0], pts[0]));
+  m.fitBounds(bounds, { padding: PADDING, maxZoom, duration });
+}
+
 // What survives when labels collide. A day's objective and the campsites outrank
 // waypoints you pass through.
 const PRIORITY: Record<Waypoint["kind"], number> = {
@@ -166,6 +175,10 @@ export default function TripMap({
     { mk: import("maplibre-gl").Marker; el: HTMLElement; kind: Waypoint["kind"]; side: Side }[]
   >([]);
   const [ready, setReady] = useState(false);
+  // What the active day's map is framed on, so letting go of a hovered hike can put
+  // the camera back without rebuilding the view.
+  const viewPts = useRef<LngLat[]>([]);
+  const hadTrail = useRef(false);
 
   // Create the map once. Sources and layers are declared in the initial style so
   // nothing depends on 'load' having fired before they exist.
@@ -341,30 +354,38 @@ export default function TripMap({
     declutter(markers.current, box.current);
 
     const pts = [...marked.map((w) => w.at), ...line];
-    if (pts.length) {
-      const bounds = pts.reduce((b, p) => b.extend(p), new lib.LngLatBounds(pts[0], pts[0]));
-      // The pane can settle to its final size after the map is built; without this the
-      // fit is computed against a stale width and drifts off-centre.
-      m.resize();
-      m.fitBounds(bounds, {
-        // Generous side padding: labels sit beside their dot and would clip otherwise.
-        padding: { top: 62, bottom: 72, left: 82, right: 108 },
-        maxZoom: 14,
-        duration: 900,
-      });
-    }
+    viewPts.current = pts;
+    // The pane can settle to its final size after the map is built; without this the
+    // fit is computed against a stale width and drifts off-centre.
+    m.resize();
+    fit(m, lib, pts, 14, 900);
   }, [ready, activeId, views, waypoints]);
 
-  // Its own effect: hovering a hike must not re-fit the camera or rebuild the markers.
+  // Its own effect: hovering a hike must not rebuild the markers, only redraw the
+  // trail and move the camera onto it. Zooming in is the point — several of these
+  // routes are a few km across on a map framed to a whole valley, and at that scale
+  // the line is a squiggle behind the labels.
   useEffect(() => {
     const m = map.current;
-    if (!ready || !m) return;
+    const lib = ml.current;
+    if (!ready || !m || !lib) return;
+
+    const drawn = trail && trail.length > 1 ? trail : null;
     const src = m.getSource("trail") as import("maplibre-gl").GeoJSONSource;
     src.setData(
-      trail && trail.length > 1
-        ? { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: trail } }
+      drawn
+        ? { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: drawn } }
         : empty(),
     );
+
+    // Restore the day's framing only on the way out of a hover, never on mount —
+    // otherwise this fires alongside the view effect and the two fight over the camera.
+    if (!drawn && !hadTrail.current) return;
+    hadTrail.current = !!drawn;
+
+    // Quick, because this tracks the pointer: a leisurely fly makes moving between the
+    // two options feel like the map is lagging behind you.
+    fit(m, lib, drawn ?? viewPts.current, drawn ? 15 : 14, 500);
   }, [ready, trail]);
 
   return <div className="mapbox" ref={box} role="img" aria-label={activeId} />;
