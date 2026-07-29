@@ -17,12 +17,14 @@ export const chamonixMatterhorn2026: Trip = {
     "25–28 Sept 2026 · 14 people · Praha out and back · everything on foot, zero lifts",
   blurb: "14 people · Praha out and back · everything on foot, zero lifts",
 
+  // Both hiking days are still a choice, so these span the four combinations rather
+  // than quoting one. They collapse to single numbers once the routes are picked.
   stats: [
     { value: "14", label: "people" },
     { value: "2 190", label: "km driving" },
-    { value: "2 790", label: "m ascent" },
-    { value: "3 260", label: "m high point" },
-    { value: "~11 h", label: "longest day" },
+    { value: "2 150–3 370", label: "m ascent" },
+    { value: "2 600–3 260", label: "m high point" },
+    { value: "7½–12 h", label: "longest day" },
   ],
 
   waypoints: [
@@ -61,9 +63,15 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "randa", name: "Randa", at: [7.79, 46.1], kind: "camp", note: "camp 2 · Sun", labelSide: "above" },
     { id: "zermatt", name: "Zermatt", at: [7.749, 46.021], kind: "stop", note: "1 620 m · on foot 07:30" },
     { id: "zmutt", name: "Zmutt", at: [7.7017, 46.0128], kind: "stop", note: "1 936 m · ~09:00" },
-    { id: "schwarzsee", name: "Schwarzsee", at: [7.711, 46.001], kind: "stop", note: "2 583 m · the split, 11:30" },
-    { id: "hornlihutte", name: "Hörnlihütte", at: [7.696, 45.977], kind: "hut", note: "3 260 m · group A" },
+    { id: "schwarzsee", name: "Schwarzsee", at: [7.711, 46.001], kind: "stop", note: "2 583 m · turn back 13:00" },
+    { id: "hornlihutte", name: "Hörnlihütte", at: [7.696, 45.977], kind: "hut", note: "3 260 m · Sun high point" },
     { id: "matterhorn", name: "Matterhorn", at: [7.658, 45.976], kind: "peak", note: "4 478 m" },
+    // 5-Seenweg, east side of the valley. Coordinates from OSM.
+    { id: "blauherd", name: "Blauherd", at: [7.7874, 46.0169], kind: "stop", note: "2 571 m" },
+    { id: "stellisee", name: "Stellisee", at: [7.8004, 46.0134], kind: "goal", note: "2 537 m · the reflection" },
+    { id: "grindjisee", name: "Grindjisee", at: [7.7916, 46.0115], kind: "stop", note: "2 334 m" },
+    { id: "grunsee", name: "Grünsee", at: [7.7857, 46.0056], kind: "stop", note: "2 300 m" },
+    { id: "leisee", name: "Leisee", at: [7.7727, 46.015], kind: "stop", note: "2 232 m · Sunnegga" },
   ],
 
   maps: [
@@ -90,11 +98,15 @@ export const chamonixMatterhorn2026: Trip = {
       note: "Two options. Lac Blanc south-west from Tré-le-Champ up the ladders, down via Remuaz into Argentière; or Mont Buet, north-west up the Bérard valley from Le Buet and back the same way. Both start on the Mont-Blanc Express with the campsite guest card.",
     },
     {
+      // Both Sunday candidates: Hörnlihütte up the west side, the lakes on the east.
       id: "sun",
-      title: "Sun · Zermatt → Hörnlihütte",
+      title: "Sun · Hörnlihütte or 5 Lakes",
       basemap: "swisstopo",
-      waypoints: ["randa", "tasch", "zermatt", "zmutt", "schwarzsee", "hornlihutte", "matterhorn"],
-      note: "Group A continues Schwarzsee → Hörnlihütte. Group B descends via Furi.",
+      waypoints: [
+        "randa", "tasch", "zermatt", "zmutt", "schwarzsee", "hornlihutte", "matterhorn",
+        "blauherd", "stellisee", "grindjisee", "grunsee", "leisee",
+      ],
+      note: "Two options from the same Zermatt start. Hörnlihütte south-west up the Zmutt valley past Schwarzsee; or the 5-Seenweg east above Sunnegga, Stellisee to Leisee.",
     },
   ],
 
@@ -352,74 +364,107 @@ export const chamonixMatterhorn2026: Trip = {
     },
     {
       date: "27",
-      title: "Sun · Schwarzsee, then split",
-      meta: "split day · see below",
+      title: "Sun · Zermatt — pick one",
+      meta: "two options",
       mapId: "sun",
-      legs: [
-        { time: "04:30", text: <>Depart in convoy → Martigny → Sion → Visp → Täsch. 2 h 20.</> },
+      legs: [],
+      options: [
         {
-          time: "07:12",
-          text: (
+          name: "Hörnlihütte",
+          href: "https://www.komoot.com/smarttour/7904022",
+          meta: "23 km · ±1 640 m · 3 260 m",
+          legs: [
+            { time: "04:30", text: <>Depart in convoy → Martigny → Sion → Visp → Täsch. 2 h 20.</> },
+            {
+              time: "07:12",
+              text: (
+                <>
+                  Shuttle to Zermatt. Every 20 min from 05:55 — 14 people won’t fit one departure,
+                  so agree a meeting point <b>in Zermatt</b>, not on the platform.
+                </>
+              ),
+            },
+            { time: "07:30", text: <>All 14 on foot from 1 620 m, up the Zmutt valley.</> },
+            {
+              time: "~09:00",
+              text: (
+                <>
+                  <b>Zmutt</b>, 1 936 m — larch hamlet, north face overhead.
+                </>
+              ),
+            },
+            { time: "~11:30", text: <>Schwarzsee, 2 583 m. Regroup, eat, refill.</> },
+            {
+              time: "13:00",
+              text: (
+                <b>
+                  <em>Hard turn-back at Schwarzsee.</em> Past this and the descent finishes in the
+                  dark.
+                </b>
+              ),
+            },
+            {
+              time: "~14:00",
+              text: (
+                <>
+                  <b>Hörnlihütte, 3 260 m.</b> Kitchen shut for the season — carry everything.
+                </>
+              ),
+            },
+            { time: "~18:30", text: <>Back in Zermatt via Furi. Sunset 19:15.</> },
+            { time: "~19:30", text: <>Randa. Tents up in the dark; head torches out before you start.</> },
+          ],
+          note: (
             <>
-              Shuttle to Zermatt. Every 20 min from 05:55 — 14 people won’t fit one departure,
-              so agree a meeting point <b>in Zermatt</b>, not on the platform.
+              <b>The honest number: 11–12 h for fourteen.</b> 9½ h is a fit-pair figure and a group
+              this size adds 20–30% in regrouping, eating and queueing — so the tail of the
+              1 640 m descent is by head torch, and everyone needs a working one. Around freezing at
+              3 260 m with cables and metal steps: <b>microspikes, and turn back if it is iced.</b>
             </>
           ),
         },
-        { time: "07:30", text: <>All 14 on foot from 1 620 m, up the Zmutt valley.</> },
         {
-          time: "~09:00",
-          text: (
+          name: "5-Seenweg — Stellisee & the lakes",
+          href: "https://www.komoot.com/smarttour/1713407",
+          meta: "14 km · +580 m · 2 600 m",
+          legs: [
+            { time: "05:30", text: <>Depart → Täsch. An hour more sleep than the Hörnli day.</> },
+            { time: "08:12", text: <>Shuttle to Zermatt, on foot from 1 620 m.</> },
+            {
+              time: "~10:30",
+              text: (
+                <>
+                  <b>Blauherd, 2 571 m</b> on foot — the climb the lift usually does.
+                </>
+              ),
+            },
+            {
+              time: "~11:00",
+              text: (
+                <>
+                  <b>Stellisee, 2 537 m.</b> The reflection shot. Wind flat by mid-morning or not at
+                  all.
+                </>
+              ),
+            },
+            { time: "~12:00", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
+            { time: "~13:00", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
+            { time: "~14:00", text: <>Leisee, 2 232 m, above Sunnegga.</> },
+            { time: "~15:30", text: <>Zermatt. Shuttle to Täsch.</> },
+            { time: "~16:30", text: <>Randa in daylight. Tents up, then RandaBoulder at 19:45.</> },
+          ],
+          note: (
             <>
-              <b>Zmutt</b>, 1 936 m — larch hamlet, north face overhead.
-            </>
-          ),
-        },
-        {
-          time: "~11:30",
-          text: (
-            <b>
-              Schwarzsee, 2 583 m. <em>The group splits here.</em>
-            </b>
-          ),
-        },
-        {
-          time: "↑ group A",
-          text: (
-            <>
-              At Schwarzsee <b>by 11:30</b> and moving well → <b>Hörnlihütte, 3 260 m</b> (2 h up,
-              1 h 20 down). Back in Zermatt ~18:00.
-            </>
-          ),
-        },
-        {
-          time: "↓ group B",
-          text: (
-            <>
-              Everyone else descends via <b>Furi</b> from Schwarzsee. Still a 6 h day and +963 m.
-              Zermatt ~15:00, first to Randa, tents up before the others land.
-            </>
-          ),
-        },
-        { time: "~18:40", text: <>Regrouped at Randa. Sunset 19:15.</> },
-        {
-          time: "19:45",
-          text: (
-            <>
-              <b>RandaBoulder</b> — 250 m² and 14 of you. <b>Email them first.</b>
+              <b>Komoot’s 5 h 08 and +580 m assume the Sunnegga funicular and Blauherd gondola
+              for the climb.</b>{" "}
+              Walking it from Zermatt is nearer <b>+970 m and ~7½ h</b>, which is the version timed
+              above and the one that keeps this trip lift-free. Take the lifts and it is a half day —
+              but check they are running, and that is a cost per head for fourteen. Either way the
+              whole group stays together and reaches Randa in daylight.
             </>
           ),
         },
       ],
-      note: (
-        <>
-          <b>Why the split:</b> 9½ h moving is a fit-pair number. Fourteen people regrouping, eating
-          and queueing realistically adds 20–30% — that’s 11–12 h, and you’d be
-          descending 1 640 m in the dark. Group B is not the consolation prize; it’s the sane
-          day. Nominate a leader for each before you leave the campsite, and make sure both have a
-          map, a torch and a charged phone.
-        </>
-      ),
     },
     {
       date: "28",
@@ -480,6 +525,22 @@ export const chamonixMatterhorn2026: Trip = {
       note: <>From Schwarzsee only — add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
     },
     {
+      name: "5-Seenweg — Stellisee & the lakes",
+      href: "https://www.komoot.com/smarttour/1713407",
+      when: "Zermatt · Sun",
+      km: "14.0 km",
+      ascent: "+580 m",
+      time: "5 h 08",
+      high: "2 600 m",
+      grade: "Hard",
+      note: (
+        <>
+          East side of the valley. <b>Those figures assume the Sunnegga and Blauherd lifts</b> —
+          on foot from Zermatt it is nearer +970 m and 7½ h, which is how it is timed on Sunday.
+        </>
+      ),
+    },
+    {
       name: "Zermatt – Zmutt – Furi loop",
       href: "https://www.komoot.com/tour/32054192",
       when: "Zermatt · Sun",
@@ -488,7 +549,7 @@ export const chamonixMatterhorn2026: Trip = {
       time: "4 h 53",
       high: "2 070 m",
       grade: "Moderate",
-      note: <>The short Sunday. No Hörnlihütte, back in Zermatt early.</>,
+      note: <>Shortest Sunday. No Hörnlihütte, no lift question, back in Zermatt early.</>,
     },
   ],
 
@@ -597,8 +658,16 @@ export const chamonixMatterhorn2026: Trip = {
       when: "Now",
     },
     { what: "Confirm the track is open", when: "20 Sept" },
-    { what: "Name a leader for group A and group B", when: "Before you go" },
-    { what: "Agree the 11:30 Schwarzsee split", when: "Before you go" },
+    { what: "Name a route leader and a sweep — the group stays together", when: "Before you go" },
+    {
+      what: (
+        <>
+          <b>Agree both turn-back times</b>{" "}
+          <span className="fine">— 13:00 on Mont Buet, 13:00 at Schwarzsee</span>
+        </>
+      ),
+      when: "Before you go",
+    },
     {
       what: (
         <>
