@@ -194,12 +194,17 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
   --map-halo:#F7F6F1; --map-ink:#16211E;  --map-mute:#55605C;
   --map-accent:#B3271C; --map-cool:#1F5A6E; --map-dot:#FFFFFF;
 }
-.wp-marker{display:flex;align-items:center;gap:.34rem;pointer-events:none}
-.wp-marker.is-left{flex-direction:row-reverse}
-.wp-marker.is-left .wp-label{align-items:flex-end}
-.wp-marker.is-above{flex-direction:column-reverse;gap:.5rem}
-.wp-marker.is-below{flex-direction:column;gap:.5rem}
-.wp-marker.is-above .wp-label,.wp-marker.is-below .wp-label{align-items:center;text-align:center}
+/* The marker box collapses to a point so MapLibre's `center` anchor lands the dot
+   exactly on the coordinate. The label is taken out of flow and hung off it —
+   otherwise the anchor centres dot+label together and the dot drifts sideways by
+   half the label width, which pushed edge markers clean off the map. */
+.wp-marker{position:relative;width:0;height:0;pointer-events:none}
+.wp-marker>svg{position:absolute;left:0;top:0;transform:translate(-50%,-50%)}
+.wp-marker .wp-label{position:absolute}
+.wp-marker.is-right .wp-label{left:14px;top:0;transform:translateY(-50%)}
+.wp-marker.is-left .wp-label{right:14px;top:0;transform:translateY(-50%);align-items:flex-end}
+.wp-marker.is-above .wp-label{bottom:14px;left:0;transform:translateX(-50%);align-items:center;text-align:center}
+.wp-marker.is-below .wp-label{top:14px;left:0;transform:translateX(-50%);align-items:center;text-align:center}
 /* A printed map sheet is already full of type — a halo alone loses the fight,
    so labels sit on a solid plate with a hard edge and a lift shadow. */
 .wp-label{font-family:var(--mono);font-size:.72rem;line-height:1.25;letter-spacing:.01em;

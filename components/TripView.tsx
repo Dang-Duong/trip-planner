@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DayTimeline from "@/components/DayTimeline";
 import PackList from "@/components/PackList";
 import HikeTable from "@/components/HikeTable";
@@ -10,7 +10,13 @@ import { getTrip } from "@/trips";
 
 export default function TripView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
+  // `active` follows the scroll. `pinned` holds a map that no day scrolls to — the
+  // Mont Buet alternative — so picking it from the tabs isn't undone by the next
+  // scroll event. It releases as soon as you reach a different day.
   const [active, setActive] = useState(trip?.maps[0]?.id ?? "");
+  const [pinned, setPinned] = useState<string | null>(null);
+  const lastAuto = useRef<string | null>(null);
+  const shown = pinned ?? active;
 
   // Scrollspy: the last [data-map] block whose top has passed an anchor line near the
   // top of the reading column wins. Anchoring at the top rather than mid-viewport
@@ -34,7 +40,14 @@ export default function TripView({ slug }: { slug: string }) {
       for (const b of blocks) {
         if (b.getBoundingClientRect().top <= line) current = b;
       }
-      if (current.dataset.map) setActive(current.dataset.map);
+      const id = current.dataset.map;
+      if (!id) return;
+      // Only release the pin once the scroll actually reaches a different day.
+      if (lastAuto.current !== id) {
+        lastAuto.current = id;
+        setPinned(null);
+      }
+      setActive(id);
     };
     const schedule = () => {
       if (!raf) raf = requestAnimationFrame(pick);
@@ -55,19 +68,23 @@ export default function TripView({ slug }: { slug: string }) {
   return (
     <div className="split">
       <div className="mappane">
-        <TripMap views={trip.maps} activeId={active} waypoints={trip.waypoints} />
+        <TripMap views={trip.maps} activeId={shown} waypoints={trip.waypoints} />
         <div className="mtabs" role="tablist" aria-label="Map view">
           {trip.maps.map((m) => (
             <button
               key={m.id}
               role="tab"
-              aria-selected={m.id === active}
+              aria-selected={m.id === shown}
               // Scroll to the day this map belongs to; the scrollspy then sets `active`.
-              // Falling back to setActive keeps maps with no day of their own usable.
+              // A map with no day of its own gets pinned instead.
               onClick={() => {
                 const target = document.querySelector<HTMLElement>(`.chapter[data-map="${m.id}"]`);
-                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-                else setActive(m.id);
+                if (target) {
+                  setPinned(null);
+                  target.scrollIntoView({ behavior: "smooth", block: "start" });
+                } else {
+                  setPinned(m.id);
+                }
               }}
             >
               {m.title}

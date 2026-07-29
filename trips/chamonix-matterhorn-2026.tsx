@@ -26,7 +26,8 @@ export const chamonixMatterhorn2026: Trip = {
   ],
 
   waypoints: [
-    { id: "praha", name: "Praha", at: [14.47, 50.02], kind: "start", note: "start 06:30 Fri" },
+    // Easternmost point on the drive map — label below, or it runs off the edge.
+    { id: "praha", name: "Praha", at: [14.47, 50.02], kind: "start", note: "start 06:30 Fri", labelSide: "below" },
     { id: "plzen", name: "Plzeň", at: [13.38, 49.75], kind: "stop" },
     { id: "nurnberg", name: "Nürnberg", at: [11.08, 49.45], kind: "stop" },
     { id: "stuttgart", name: "Stuttgart", at: [9.18, 48.78], kind: "stop" },
@@ -51,6 +52,11 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "coldesmontets", name: "Col des Montets", at: [6.931, 46.005], kind: "stop", note: "overflow parking" },
     { id: "lacblanc", name: "Lac Blanc", at: [6.885, 45.975], kind: "goal", note: "2 352 m · Sat high point" },
     { id: "montblanc", name: "Mont Blanc", at: [6.865, 45.833], kind: "peak", note: "4 806 m" },
+    // Mont Buet alternative — up the Bérard valley. Coordinates from OSM.
+    { id: "lebuet", name: "Le Buet", at: [6.9204, 46.0192], kind: "start", note: "1 330 m · by train" },
+    { id: "cascadeberard", name: "Cascade de Bérard", at: [6.9118, 46.02], kind: "stop", labelSide: "below" },
+    { id: "refugeberard", name: "Refuge de la Pierre à Bérard", at: [6.8687, 46.003], kind: "hut", note: "1 924 m · shut by late Sept" },
+    { id: "montbuet", name: "Mont Buet", at: [6.8525, 46.0248], kind: "goal", note: "3 096 m · turn back by 13:00" },
     { id: "tasch", name: "Täsch", at: [7.779, 46.069], kind: "stop", note: "terminal · CHF 16/car" },
     { id: "randa", name: "Randa", at: [7.79, 46.1], kind: "camp", note: "camp 2 · Sun", labelSide: "above" },
     { id: "zermatt", name: "Zermatt", at: [7.749, 46.021], kind: "stop", note: "1 620 m · on foot 07:30" },
@@ -78,6 +84,15 @@ export const chamonixMatterhorn2026: Trip = {
       basemap: "swisstopo",
       waypoints: ["argentiere", "trelechamp", "coldesmontets", "lacblanc", "chamonix"],
       note: "Up the ladders from Tré-le-Champ, down via Remuaz into Argentière. Trails as drawn by swisstopo.",
+    },
+    {
+      // No day points at this one — it is the Saturday alternative, reachable
+      // from the tab bar rather than by scrolling.
+      id: "montbuet",
+      title: "Alt · Mont Buet",
+      basemap: "swisstopo",
+      waypoints: ["argentiere", "lebuet", "cascadeberard", "refugeberard", "montbuet"],
+      note: "Alternative Saturday. Out and back up the Bérard valley from Le Buet, one stop up the Mont-Blanc Express from Argentière.",
     },
     {
       id: "sun",
@@ -274,6 +289,11 @@ export const chamonixMatterhorn2026: Trip = {
           <b>Anyone who dislikes heights should walk the loop backwards:</b> up via Remuaz, meet
           everyone at Lac Blanc, no ladders at all. Track gated? Run from camp toward Le Lavancher.
           Rain? Petit Balcon Sud, ~3 h under trees.
+          <br />
+          <br />
+          <b>Alternative — Mont Buet</b> (see the <em>Alt</em> map): 19.8 km, +1 730 m, 3 096 m, so
+          10–11 h for fourteen. No ladders, a real summit, and the train drops you at Le Buet. But it
+          replaces the morning run, and it is +580 m more than Lac Blanc the day before Zermatt.
         </>
       ),
     },
@@ -385,7 +405,7 @@ export const chamonixMatterhorn2026: Trip = {
       km: "19.8 km",
       ascent: "+1 730 m",
       time: "8 h 07",
-      high: "3 098 m",
+      high: "3 096 m",
       grade: "Hard",
       note: (
         <>
