@@ -92,11 +92,14 @@ html{scroll-snap-type:y proximity}
 .blz i:nth-child(1),.blz i:nth-child(3){background:var(--panel)}
 h1{margin:0;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.02;letter-spacing:-.04em;font-weight:700}
 h1 span{color:var(--blaze);font-weight:400}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:1px;
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;
   background:var(--rule);border:1px solid var(--rule);margin-top:.35rem}
 .stats div{background:var(--panel);padding:.6rem .7rem;display:grid;gap:.2rem}
-.stats b{font-family:var(--mono);font-size:1.1rem;font-weight:600;letter-spacing:-.03em;
-  line-height:1;color:var(--glacier);font-variant-numeric:tabular-nums}
+/* Sized so a range like "2 150–3 370" fits one line — the routes are undecided and
+   these carry ranges until they are picked. */
+.stats b{font-family:var(--mono);font-size:.92rem;font-weight:600;
+  letter-spacing:-.04em;line-height:1.1;color:var(--glacier);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
 .stats span{font-family:var(--mono);font-size:.53rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--stone)}
 

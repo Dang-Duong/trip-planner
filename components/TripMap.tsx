@@ -283,9 +283,9 @@ export default function TripMap({
 
     const byId = new Map(waypoints.map((w) => [w.id, w]));
     const marked = view.waypoints.map((id) => byId.get(id)).filter((w): w is Waypoint => !!w);
-    const line = (view.route ?? [])
-      .map((id) => byId.get(id)?.at)
-      .filter((p): p is [number, number] => !!p);
+    const line: [number, number][] =
+      view.routeLine ??
+      (view.route ?? []).map((id) => byId.get(id)?.at).filter((p): p is [number, number] => !!p);
 
     // Lets CSS thin the labels out on the wide-area drive map at phone sizes.
     box.current?.setAttribute("data-basemap", view.basemap);

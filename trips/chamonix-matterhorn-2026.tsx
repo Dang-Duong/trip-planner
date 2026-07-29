@@ -21,7 +21,7 @@ export const chamonixMatterhorn2026: Trip = {
   // than quoting one. They collapse to single numbers once the routes are picked.
   stats: [
     { value: "14", label: "people" },
-    { value: "2 190", label: "km driving" },
+    { value: "1 980", label: "km driving" },
     { value: "2 150–3 370", label: "m ascent" },
     { value: "2 600–3 260", label: "m high point" },
     { value: "7½–12 h", label: "longest day" },
@@ -32,8 +32,8 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "praha", name: "Praha", at: [14.47, 50.02], kind: "start", note: "start 06:30 Fri", labelSide: "below" },
     { id: "plzen", name: "Plzeň", at: [13.38, 49.75], kind: "stop" },
     { id: "nurnberg", name: "Nürnberg", at: [11.08, 49.45], kind: "stop" },
-    { id: "stuttgart", name: "Stuttgart", at: [9.18, 48.78], kind: "stop" },
-    { id: "zurich", name: "Zürich", at: [8.54, 47.37], kind: "stop" },
+    { id: "karlsruhe", name: "Karlsruhe", at: [8.4, 49.01], kind: "stop" },
+    { id: "basel", name: "Basel", at: [7.59, 47.55], kind: "stop", note: "into Switzerland" },
     { id: "bern", name: "Bern", at: [7.45, 46.95], kind: "stop" },
     { id: "vevey", name: "Vevey", at: [6.84, 46.46], kind: "stop" },
     { id: "martigny", name: "Martigny", at: [7.07, 46.1], kind: "stop" },
@@ -79,12 +79,43 @@ export const chamonixMatterhorn2026: Trip = {
       id: "overview",
       title: "Praha → Argentière → Randa",
       basemap: "osm",
-      waypoints: ["praha", "nurnberg", "stuttgart", "zurich", "bern", "argentiere", "randa"],
-      route: [
-        "praha", "plzen", "nurnberg", "stuttgart", "zurich", "bern", "vevey",
-        "martigny", "argentiere", "martigny", "sion", "visp", "tasch", "randa",
+      waypoints: ["praha", "nurnberg", "karlsruhe", "basel", "bern", "argentiere", "randa"],
+      // Actual road geometry, not straight lines between cities. Generated with the
+      // public OSRM demo server and pasted in, so there is no key, no runtime call and
+      // nothing to break offline. To regenerate:
+      //   curl "https://router.project-osrm.org/route/v1/driving/\
+      //   14.47,50.02;6.93,45.98?overview=simplified&geometries=geojson"
+      // then the same for 6.93,45.98;7.79,46.10 and concatenate.
+      routeLine: [
+        [14.4696, 50.0203], [14.4795, 49.9809], [14.4098, 49.9815], [14.2755, 50.0511],
+        [14.2399, 50.0434], [13.748, 49.7986], [13.4691, 49.7246], [13.4145, 49.6813],
+        [13.099, 49.7231], [12.9824, 49.7027], [12.8181, 49.752], [12.7401, 49.7391],
+        [12.5078, 49.6323], [12.3576, 49.6185], [12.2107, 49.5652], [12.1278, 49.4548],
+        [11.9699, 49.3983], [11.7975, 49.3967], [11.649, 49.4293], [11.2355, 49.4019],
+        [11.019, 49.3105], [10.7691, 49.3054], [10.6386, 49.2508], [10.4191, 49.2551],
+        [10.0102, 49.1728], [9.8086, 49.1732], [9.5671, 49.2176], [9.3058, 49.1567],
+        [8.759, 49.2757], [8.6195, 49.2826], [8.5497, 49.1138], [8.4356, 48.9724],
+        [8.1529, 48.7865], [7.9106, 48.5111], [7.8899, 48.4298], [7.7922, 48.354],
+        [7.7458, 48.1965], [7.8105, 48.0479], [7.597, 47.9222], [7.5205, 47.6925],
+        [7.6155, 47.545], [7.7511, 47.5231], [7.8353, 47.3444], [7.6057, 47.2201],
+        [7.5729, 47.0811], [7.47, 46.9708], [7.3457, 46.8906], [7.1602, 46.8396],
+        [7.0903, 46.7837], [7.067, 46.6512], [6.9238, 46.579], [6.8598, 46.4744],
+        [6.9295, 46.4266], [6.928, 46.3461], [7.0341, 46.1467], [7.0974, 46.1107],
+        [6.9977, 46.045], [6.9761, 46.0714], [6.9459, 46.0507], [6.9295, 45.9789],
+        // Sunday: Argentière → Martigny → Sion → Visp → Täsch → Randa
+        [6.9208, 45.976], [6.929, 45.9903], [6.9182, 46.0209], [6.9361, 46.0359],
+        [6.9442, 46.0493], [6.9748, 46.0712], [6.9928, 46.0604], [6.9977, 46.045],
+        [6.9995, 46.0582], [7.0153, 46.0658], [7.0204, 46.0756], [7.0324, 46.0802],
+        [7.0642, 46.1036], [7.068, 46.089], [7.0908, 46.1009], [7.0975, 46.1147],
+        [7.1562, 46.15], [7.199, 46.1628], [7.2711, 46.2073], [7.3636, 46.2239],
+        [7.3884, 46.2384], [7.4286, 46.2485], [7.4599, 46.2655], [7.5342, 46.2859],
+        [7.5525, 46.2854], [7.598, 46.2979], [7.6193, 46.3097], [7.6402, 46.3119],
+        [7.6734, 46.3051], [7.7058, 46.3094], [7.7381, 46.3045], [7.8291, 46.3076],
+        [7.8616, 46.3001], [7.8805, 46.2702], [7.876, 46.2372], [7.8679, 46.2292],
+        [7.8583, 46.2233], [7.8517, 46.2138], [7.8325, 46.2081], [7.8063, 46.1824],
+        [7.7905, 46.1515], [7.7925, 46.1308], [7.7847, 46.1073], [7.7882, 46.1023],
       ],
-      note: "Praha → Argentière 1 030 km · Argentière → Randa 150 km",
+      note: "Praha → Argentière 984 km · Argentière → Randa 132 km · real road geometry",
     },
     {
       // Both Saturday candidates on one sheet, so the choice is visible at a glance.
@@ -113,7 +144,7 @@ export const chamonixMatterhorn2026: Trip = {
   pins: [
     {
       when: "Fri",
-      what: "Praha → Argentière · 1 030 km",
+      what: "Praha → Argentière · 984 km",
       cost: "—",
       href: dir("Ceneticka 2413/1a Praha", "Camping Glacier Argentiere Chamonix"),
       linkLabel: "Route ↗",
@@ -170,7 +201,7 @@ export const chamonixMatterhorn2026: Trip = {
     },
     {
       when: "Mon",
-      what: "Randa → Praha · 1 080 km",
+      what: "Randa → Praha · 862 km",
       cost: "—",
       href: dir("Camping Attermenzen Randa", "Ceneticka 2413/1a Praha"),
       linkLabel: "Route ↗",
@@ -191,7 +222,7 @@ export const chamonixMatterhorn2026: Trip = {
       border — buy them all at once on via.admin.ch.
     </>,
     <>
-      <b>Don’t drive in convoy.</b> Over 1 030 km you will separate at the first services.
+      <b>Don’t drive in convoy.</b> Over 980 km you will separate at the first services.
       Agree fuel stops and a Martigny meeting point instead, and put one person from each car in a
       group chat.
     </>,
@@ -214,14 +245,14 @@ export const chamonixMatterhorn2026: Trip = {
     {
       date: "25",
       title: "Fri · Praha → Argentière",
-      meta: "1 030 km",
+      meta: "984 km",
       mapId: "overview",
       legs: [
         {
           time: "06:30",
           text: (
             <>
-              D1 → D5 → Nürnberg → Stuttgart. <b>Fuel up in Czechia.</b>
+              D5 → Nürnberg, then A6/A8 west toward Karlsruhe. <b>Fuel up in Czechia.</b>
             </>
           ),
         },
@@ -229,11 +260,12 @@ export const chamonixMatterhorn2026: Trip = {
           time: "~13:30",
           text: (
             <>
-              Into Switzerland. <b>Vignette already on the car.</b>
+              Down the A5 past Freiburg and into Switzerland at <b>Basel</b>.{" "}
+              <b>Vignette already on the car.</b>
             </>
           ),
         },
-        { time: "~15:30", text: <>Zürich → Bern → Martigny. Driver swap.</> },
+        { time: "~15:30", text: <>Bern → Vevey → Martigny. Driver swap.</> },
         { time: "~19:00", text: <>Arrive. Sunset 19:25 — pitch fast.</> },
       ],
       note: <>Buy food in Germany or Martigny; you pass Chamonix after closing.</>,
@@ -469,11 +501,11 @@ export const chamonixMatterhorn2026: Trip = {
     {
       date: "28",
       title: "Mon · Randa → Praha",
-      meta: "1 080 km",
+      meta: "862 km",
       mapId: "overview",
       legs: [
         { time: "06:30", text: <>Visp → Bern → Basel → Nürnberg → Plzeň.</> },
-        { time: "~19:30", text: <>Home. ~13 h with stops.</> },
+        { time: "~18:30", text: <>Home. 10 h driving, ~12 h with stops.</> },
       ],
     },
   ],

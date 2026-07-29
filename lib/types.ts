@@ -22,8 +22,14 @@ export type MapView = {
   basemap: "osm" | "swisstopo";
   /** Waypoint ids to mark. Also what the map fits its bounds to. */
   waypoints: string[];
-  /** Waypoint ids drawn as a connected line, in order. Omit for marker-only maps. */
+  /** Waypoint ids joined into a line, in order. A schematic — fine at hiking scale. */
   route?: string[];
+  /**
+   * Real road geometry, baked in rather than fetched. Straight lines between cities
+   * are visibly not the road you drive, which matters on a map people navigate by.
+   * Regenerate with OSRM — see the note in the trip data.
+   */
+  routeLine?: LngLat[];
   note?: string;
 };
 
