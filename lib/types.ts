@@ -51,6 +51,19 @@ export type Pin = {
   linkLabel: string;
 };
 
+/** A candidate route, linked out to its komoot tour. */
+export type Hike = {
+  name: string;
+  href: string;
+  when: string;
+  km: string;
+  ascent: string;
+  time: string;
+  high: string;
+  grade: string;
+  note?: ReactNode;
+};
+
 export type PrepRow = { what: ReactNode; when: string };
 export type Stat = { value: string; label: string };
 export type Source = { label: string; href: string };
@@ -73,6 +86,8 @@ export type Trip = {
   flagsTitle: string;
   flags: ReactNode[];
   days: Day[];
+  hikes: Hike[];
+  hikesNote?: ReactNode;
   pack: PackGroup[];
   prep: PrepRow[];
   sources: Source[];

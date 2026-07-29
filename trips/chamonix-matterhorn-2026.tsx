@@ -360,12 +360,80 @@ export const chamonixMatterhorn2026: Trip = {
     },
   ],
 
+  // Stats are komoot's own for each tour. Verified against the live pages —
+  // if you add one, open it first: komoot retires smart tours and returns 410.
+  hikes: [
+    {
+      name: "Lac Blanc & Lacs des Chéserys loop",
+      href: "https://www.komoot.com/smarttour/e934061622/von-flegere-zum-col-des-montets-ueber-den-lac-blanc-chamonix-mont-blanc-schleife",
+      when: "Chamonix · Sat",
+      km: "16.6 km",
+      ascent: "+1 180 m",
+      time: "7 h 54",
+      high: "2 350 m",
+      grade: "Hard",
+      note: (
+        <>
+          The Chésérys ladders. <b>This is the planned Saturday.</b>
+        </>
+      ),
+    },
+    {
+      name: "Mont Buet via Vallorcine",
+      href: "https://www.komoot.com/smarttour/e924134691/mont-buet-via-vallorcine-chamonix-mont-blanc",
+      when: "Chamonix · Sat",
+      km: "19.8 km",
+      ascent: "+1 730 m",
+      time: "8 h 07",
+      high: "3 098 m",
+      grade: "Hard",
+      note: (
+        <>
+          Out and back from the Vallorcine bus stop, so the cars still stay at camp.{" "}
+          <b>10–11 h for fourteen</b> — it does not combine with the morning run, and it is
+          +1 730 m the day before Zermatt.
+        </>
+      ),
+    },
+    {
+      name: "Hörnligrat – Schwarzsee loop",
+      href: "https://www.komoot.com/smarttour/7904022",
+      when: "Zermatt · Sun",
+      km: "11.0 km",
+      ascent: "+840 m",
+      time: "5 h 51",
+      high: "3 210 m",
+      grade: "Hard",
+      note: <>From Schwarzsee only — add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
+    },
+    {
+      name: "Zermatt – Zmutt – Furi loop",
+      href: "https://www.komoot.com/tour/32054192",
+      when: "Zermatt · Sun",
+      km: "11.2 km",
+      ascent: "+630 m",
+      time: "4 h 53",
+      high: "2 070 m",
+      grade: "Moderate",
+      note: <>The short Sunday. No Hörnlihütte, back in Zermatt early.</>,
+    },
+  ],
+
+  hikesNote: (
+    <>
+      <b>Komoot times are for one fit hiker.</b> Fourteen people regrouping, eating and queueing
+      adds 20–30% — that is what turns a 9½ h Sunday into 11–12 h. Snow fell to{" "}
+      <b>1 900–2 200 m</b> in each of Sept 2024 and 2025, so anything above 3 000 m should be
+      assumed white. Pick the routes a week out, once there is a real forecast.
+    </>
+  ),
+
   pack: [
     {
       title: "Hiking",
       items: [
         { label: "Boots, broken in" },
-        { label: <b>Microspikes</b>, sub: "Snow above 2 800 m is normal by late Sept" },
+        { label: <b>Microspikes</b>, sub: "Snow fell to 1 900–2 200 m in Sept 2024 and 2025" },
         { label: "Trekking poles", sub: "2 740 m of descent in two days" },
         { label: <b>3 L water for Sunday</b>, sub: "No open hut on the route" },
         { label: "Headtorch + spares" },
@@ -458,7 +526,16 @@ export const chamonixMatterhorn2026: Trip = {
     { what: "Confirm the track is open", when: "20 Sept" },
     { what: "Name a leader for group A and group B", when: "Before you go" },
     { what: "Agree the 11:30 Schwarzsee split", when: "Before you go" },
-    { what: "Forecast + webcams", when: "3 days out" },
+    {
+      what: (
+        <>
+          <b>Forecast + snow line — pick the hikes</b>{" "}
+          <span className="fine">— Météo-France montagne, SLF for the Swiss side</span>
+        </>
+      ),
+      when: "1 week out",
+    },
+    { what: "Re-check forecast + webcams", when: "3 days out" },
   ],
 
   sources: [

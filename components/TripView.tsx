@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import DayTimeline from "@/components/DayTimeline";
 import PackList from "@/components/PackList";
+import HikeTable from "@/components/HikeTable";
 import PinTable from "@/components/PinTable";
 import TripMap from "@/components/TripMap";
 import { getTrip } from "@/trips";
@@ -114,6 +115,19 @@ export default function TripView({ slug }: { slug: string }) {
         <section data-map="overview">
           <div className="hd">
             <b>01</b>
+            <h2>Hike options</h2>
+          </div>
+          <HikeTable hikes={trip.hikes} />
+          {trip.hikesNote && (
+            <p className="fine" style={{ marginTop: ".7rem" }}>
+              {trip.hikesNote}
+            </p>
+          )}
+        </section>
+
+        <section data-map="overview">
+          <div className="hd">
+            <b>02</b>
             <h2>Pins &amp; parking</h2>
           </div>
           <PinTable pins={trip.pins} />
@@ -133,7 +147,7 @@ export default function TripView({ slug }: { slug: string }) {
 
         <section>
           <div className="hd">
-            <b>02</b>
+            <b>03</b>
             <h2>Pack</h2>
           </div>
           <PackList groups={trip.pack} slug={trip.slug} />
@@ -141,7 +155,7 @@ export default function TripView({ slug }: { slug: string }) {
 
         <section>
           <div className="hd">
-            <b>03</b>
+            <b>04</b>
             <h2>Before you go</h2>
           </div>
           <div className="scroll">

@@ -120,6 +120,13 @@ tbody tr:hover{background:var(--raise)}
 td.n,th.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 a.go{font-family:var(--mono);font-size:.68rem;color:var(--blaze);white-space:nowrap;
   text-decoration-color:currentColor}
+/* hike options — the route name is the link out to komoot */
+a.hike{display:block;font-weight:700;font-size:.9rem;letter-spacing:-.01em;color:var(--ink);
+  text-decoration-color:var(--rule)}
+a.hike:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
+.hike-meta{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--glacier);margin:.18rem 0 .1rem}
+td .fine{display:block;margin-top:.15rem}
 
 /* ---------- convoy notes ---------- */
 .flags{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
