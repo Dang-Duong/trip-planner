@@ -1,0 +1,202 @@
+@import "tailwindcss";
+
+/* Dark alpine. Cool blue-grey surfaces, maps glow against them,
+   trail-blaze red as the single accent, glacier blue as the secondary. */
+:root{
+  color-scheme:dark;
+  --bg:#0A0E10;--panel:#12181B;--raise:#161E22;--sunken:#06090A;
+  --ink:#EAF0F2;--ink-2:#9FADB4;--stone:#63727A;
+  --rule:#1F282C;--rule-2:#161D20;
+  --glacier:#5FC9E8;--blaze:#FF5A45;
+  --sans:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,"DejaVu Sans Mono",monospace;
+}
+
+@theme inline{
+  --color-bg:var(--bg);       --color-panel:var(--panel);
+  --color-raise:var(--raise); --color-sunken:var(--sunken);
+  --color-ink:var(--ink);     --color-ink-2:var(--ink-2);
+  --color-stone:var(--stone); --color-rule:var(--rule);
+  --color-rule-2:var(--rule-2);
+  --color-glacier:var(--glacier); --color-blaze:var(--blaze);
+  --font-sans:var(--sans);    --font-mono:var(--mono);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+p{margin:0}
+a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+a:hover{text-decoration-color:var(--blaze)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--glacier);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.fine{font-size:.8rem;color:var(--stone);line-height:1.5}
+em{font-style:normal;color:var(--blaze);font-weight:700}
+h2{margin:0;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--stone)}
+
+/* ---------- split shell: sticky map left, plan scrolls right ---------- */
+/* minmax(0,…) everywhere: grid/flex children default to min-width:auto and would
+   otherwise be forced wider than the viewport by long labels, scrolling the page
+   sideways on a phone. */
+.split{display:grid;grid-template-columns:minmax(0,1fr);min-height:100vh}
+@media(min-width:1024px){
+  .split{grid-template-columns:minmax(0,1fr) minmax(0,620px)}
+}
+.mappane{position:sticky;top:0;height:44vh;z-index:2;background:var(--sunken);
+  border-bottom:1px solid var(--rule);display:flex;flex-direction:column;min-width:0}
+@media(min-width:1024px){
+  .mappane{height:100vh;border-bottom:0;border-right:1px solid var(--rule)}
+}
+.mapbox{flex:1;min-height:0;min-width:0;position:relative}
+.plan{padding:0 clamp(1.1rem,4vw,2.4rem) 5rem;min-width:0}
+
+/* map view tabs */
+.mtabs{display:flex;gap:1px;background:var(--rule);border-top:1px solid var(--rule);flex:none}
+.mtabs button{flex:1 1 0;min-width:0;background:var(--panel);color:var(--stone);border:0;
+  cursor:pointer;font-family:var(--mono);font-size:.58rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:.6rem .4rem;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;border-top:2px solid transparent;
+  transition:color .15s,border-color .15s}
+.mtabs button:hover{color:var(--ink)}
+.mtabs button[aria-selected="true"]{color:var(--ink);background:var(--raise);border-top-color:var(--blaze)}
+
+/* ---------- header ---------- */
+.phead{padding:clamp(2rem,6vw,3.4rem) 0 1.4rem;display:grid;gap:.85rem}
+.blz{display:inline-flex;width:30px;height:10px;border:1px solid var(--rule)}
+.blz i{flex:1}.blz i:nth-child(2){background:var(--blaze)}
+.blz i:nth-child(1),.blz i:nth-child(3){background:var(--panel)}
+h1{margin:0;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.02;letter-spacing:-.04em;font-weight:700}
+h1 span{color:var(--blaze);font-weight:400}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:1px;
+  background:var(--rule);border:1px solid var(--rule);margin-top:.35rem}
+.stats div{background:var(--panel);padding:.6rem .7rem;display:grid;gap:.2rem}
+.stats b{font-family:var(--mono);font-size:1.1rem;font-weight:600;letter-spacing:-.03em;
+  line-height:1;color:var(--glacier);font-variant-numeric:tabular-nums}
+.stats span{font-family:var(--mono);font-size:.53rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--stone)}
+
+/* ---------- section headers ---------- */
+section{padding-top:2.6rem;scroll-margin-top:48vh}
+@media(min-width:1024px){section{scroll-margin-top:2rem}}
+.hd{display:flex;align-items:center;gap:.75rem;margin-bottom:.9rem}
+.hd::after{content:"";flex:1;height:1px;background:var(--rule)}
+.hd b{font-family:var(--mono);font-size:.62rem;color:var(--blaze);font-weight:600}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;min-width:380px;background:var(--panel)}
+th,td{text-align:left;padding:.55rem .8rem;border-bottom:1px solid var(--rule-2);
+  font-size:.84rem;vertical-align:top}
+thead th{font-family:var(--mono);font-size:.55rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--stone);font-weight:600;border-bottom:1px solid var(--rule);
+  background:var(--sunken);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:var(--raise)}
+td.n,th.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+a.go{font-family:var(--mono);font-size:.68rem;color:var(--blaze);white-space:nowrap;
+  text-decoration-color:currentColor}
+
+/* ---------- convoy notes ---------- */
+.flags{list-style:none;margin:0;padding:0;display:grid;gap:.6rem}
+.flags li{font-size:.84rem;color:var(--ink-2);line-height:1.5;padding-left:1rem;position:relative}
+.flags li::before{content:"";position:absolute;left:0;top:.55em;width:5px;height:5px;background:var(--blaze)}
+.flags b{color:var(--ink);font-weight:600}
+
+/* ---------- days ---------- */
+.days{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.day{background:var(--panel);padding:1.05rem 1.1rem;transition:background .25s}
+.day[data-active="true"]{background:var(--raise)}
+.dh{display:flex;flex-wrap:wrap;align-items:baseline;gap:.3rem .75rem;
+  padding-bottom:.6rem;margin-bottom:.7rem;border-bottom:1px solid var(--rule)}
+.dh .d{font-family:var(--mono);font-size:1.5rem;font-weight:600;letter-spacing:-.05em;
+  line-height:1;color:var(--blaze);font-variant-numeric:tabular-nums}
+.dh .t{font-size:1rem;font-weight:700;letter-spacing:-.02em}
+.dh .m{margin-left:auto;font-family:var(--mono);font-size:.56rem;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--stone);border:1px solid var(--rule);
+  padding:.16rem .42rem;white-space:nowrap}
+.leg{display:grid;grid-template-columns:4.1rem 1fr;gap:.1rem .8rem;padding:.34rem 0;
+  border-bottom:1px dashed var(--rule-2);align-items:baseline;font-size:.87rem}
+.leg:last-of-type{border-bottom:0}
+.leg i{font-family:var(--mono);font-style:normal;font-size:.76rem;font-weight:600;
+  font-variant-numeric:tabular-nums;color:var(--glacier)}
+.leg span{color:var(--ink-2)}.leg span b{color:var(--ink);font-weight:600}
+@media(max-width:480px){.leg{grid-template-columns:1fr;gap:.05rem}}
+.day .fine{margin-top:.75rem;padding-top:.6rem;border-top:1px solid var(--rule)}
+.day .fine b{color:var(--ink-2)}
+
+/* ---------- pack ---------- */
+.pack{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule);
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.pc{background:var(--panel);padding:.9rem 1rem}
+.pc h3{margin:0 0 .5rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--stone);padding-bottom:.4rem;border-bottom:1px solid var(--rule)}
+.pc ul{list-style:none;margin:0;padding:0}
+.pc label{display:grid;grid-template-columns:.95rem 1fr;gap:.5rem;align-items:start;
+  padding:.2rem 0;cursor:pointer;font-size:.83rem;line-height:1.35}
+.pc input{margin:.2rem 0 0;accent-color:var(--blaze);width:.95rem;height:.95rem}
+.pc input:checked+span{color:var(--stone);text-decoration:line-through;text-decoration-color:var(--rule)}
+.pc s{display:block;font-size:.71rem;color:var(--stone);text-decoration:none;line-height:1.35}
+.bar{display:flex;align-items:center;gap:.8rem;margin-bottom:.9rem}
+.bar .pr{flex:1;height:5px;background:var(--sunken);border:1px solid var(--rule)}
+.bar .pr i{display:block;height:100%;background:var(--blaze);width:0;transition:width .2s}
+.bar button{font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;
+  background:none;color:var(--stone);border:1px solid var(--rule);padding:.32rem .55rem;cursor:pointer}
+.bar button:hover{color:var(--blaze);border-color:var(--blaze)}
+
+footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
+
+/* ---------- trip index ---------- */
+.idx{max-width:760px;margin:0 auto;padding:0 clamp(1.1rem,4vw,2rem) 4rem}
+.trips{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.trip{background:var(--panel);padding:1.15rem 1.2rem;display:grid;gap:.5rem;text-decoration:none;
+  border-left:2px solid transparent;transition:background .15s,border-color .15s}
+.trip:hover{background:var(--raise);border-left-color:var(--blaze)}
+.trip .td{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--stone)}
+.trip .tt{font-size:1.3rem;font-weight:700;letter-spacing:-.03em}
+.trip .tt span{color:var(--blaze);font-weight:400}
+
+/* ---------- map markers ---------- */
+/* Marker ink flips with the basemap: dark drive map vs bright swisstopo sheet. */
+.mapbox{
+  --map-halo:var(--sunken); --map-ink:var(--ink);   --map-mute:var(--stone);
+  --map-accent:var(--blaze); --map-cool:var(--glacier); --map-dot:var(--panel);
+}
+.mapbox.on-light{
+  --map-halo:#F7F6F1; --map-ink:#16211E;  --map-mute:#55605C;
+  --map-accent:#B3271C; --map-cool:#1F5A6E; --map-dot:#FFFFFF;
+}
+.wp-marker{display:flex;align-items:center;gap:.34rem;pointer-events:none}
+.wp-marker.is-left{flex-direction:row-reverse}
+.wp-marker.is-left .wp-label{align-items:flex-end}
+.wp-marker.is-above{flex-direction:column-reverse;gap:.18rem}
+.wp-marker.is-below{flex-direction:column;gap:.18rem}
+.wp-marker.is-above .wp-label,.wp-marker.is-below .wp-label{align-items:center;text-align:center}
+.wp-label{font-family:var(--mono);font-size:.61rem;line-height:1.2;letter-spacing:.02em;
+  color:var(--map-ink);white-space:nowrap;display:flex;flex-direction:column;font-weight:600;
+  text-shadow:0 0 3px var(--map-halo),0 0 3px var(--map-halo),0 0 5px var(--map-halo),
+    1px 0 2px var(--map-halo),-1px 0 2px var(--map-halo),
+    0 1px 2px var(--map-halo),0 -1px 2px var(--map-halo)}
+.wp-label.is-camp{color:var(--map-accent);font-weight:700}
+.wp-label.is-peak{color:var(--map-mute)}
+.wp-label s{text-decoration:none;font-size:.54rem;color:var(--map-mute);font-weight:400}
+/* A printed topo sheet is already full of type — a halo alone loses the fight,
+   so on light basemaps our labels get an opaque plate instead. */
+.mapbox.on-light .wp-label{font-size:.64rem;text-shadow:none;
+  background:rgba(247,246,241,.9);border:1px solid rgba(22,33,30,.18);
+  padding:.12rem .3rem}
+@media(max-width:560px){.wp-label{font-size:.55rem}.wp-label s{display:none}}
+
+/* ---------- maplibre chrome ---------- */
+.maplibregl-ctrl-attrib{font-family:var(--mono);font-size:.55rem}
+.maplibregl-ctrl-attrib.maplibregl-compact{background:var(--panel);color:var(--stone)}
+.maplibregl-ctrl-attrib a{color:var(--stone)}
+.maplibregl-ctrl-attrib-button{filter:invert(1) opacity(.5)}
+.maplibregl-ctrl-group{border-radius:0;background:var(--panel);box-shadow:0 0 0 1px var(--rule)}
+.maplibregl-ctrl-group button{background:var(--panel)}
+.maplibregl-ctrl-group button+button{border-top:1px solid var(--rule)}
+.maplibregl-ctrl-group button .maplibregl-ctrl-icon{filter:invert(1) opacity(.7)}
+.maplibregl-ctrl-scale{border-color:var(--stone);border-radius:0;background:transparent;
+  color:var(--stone);font-family:var(--mono);font-size:.55rem;font-variant-numeric:tabular-nums}
