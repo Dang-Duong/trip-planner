@@ -79,6 +79,74 @@ function markerEl(wp: Waypoint) {
 
 const empty = (): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features: [] });
 
+// What survives when labels collide. A day's objective and the campsites outrank
+// waypoints you pass through.
+const PRIORITY: Record<Waypoint["kind"], number> = {
+  goal: 0,
+  camp: 1,
+  start: 2,
+  hut: 3,
+  peak: 4,
+  stop: 5,
+};
+
+type Side = "right" | "left" | "above" | "below";
+const SIDES: Side[] = ["right", "left", "above", "below"];
+
+type Placed = { el: HTMLElement; kind: Waypoint["kind"]; side: Side };
+
+const setSide = (el: HTMLElement, side: Side) => {
+  el.classList.remove("is-right", "is-left", "is-above", "is-below");
+  el.classList.add(`is-${side}`);
+};
+
+const hits = (a: DOMRect, b: DOMRect) =>
+  !(a.right < b.left || b.right < a.left || a.bottom < b.top || b.bottom < a.top);
+
+/**
+ * Place labels in priority order, trying each side of the dot until one is free and
+ * inside the map, and hiding the label only if every side collides. Labels are
+ * absolutely positioned off a zero-size marker, so moving one never shifts another
+ * and a single pass suffices.
+ *
+ * This is what stops the campsite label vanishing behind a summit at phone size —
+ * and it removes the need to hand-pick a side per waypoint for every zoom the map
+ * might settle at.
+ */
+function declutter(placed: Placed[], container: HTMLElement | null) {
+  const items = placed
+    .map((p) => ({ ...p, label: p.el.querySelector<HTMLElement>(".wp-label") }))
+    .filter((p): p is Placed & { label: HTMLElement } => !!p.label);
+  if (!items.length) return;
+
+  const bounds = container?.getBoundingClientRect();
+  for (const p of items) {
+    p.label.classList.remove("is-hidden");
+    setSide(p.el, p.side);
+  }
+
+  const kept: DOMRect[] = [];
+  for (const p of [...items].sort((a, b) => PRIORITY[a.kind] - PRIORITY[b.kind])) {
+    const candidates: Side[] = [p.side, ...SIDES.filter((s) => s !== p.side)];
+    const fits = candidates.find((side) => {
+      setSide(p.el, side);
+      const r = p.label.getBoundingClientRect();
+      const inside =
+        !bounds ||
+        (r.left >= bounds.left && r.right <= bounds.right &&
+          r.top >= bounds.top && r.bottom <= bounds.bottom);
+      return inside && !kept.some((k) => hits(k, r));
+    });
+
+    if (fits) {
+      kept.push(p.label.getBoundingClientRect());
+    } else {
+      setSide(p.el, p.side);
+      p.label.classList.add("is-hidden");
+    }
+  }
+}
+
 export default function TripMap({
   views,
   activeId,
@@ -91,7 +159,9 @@ export default function TripMap({
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MLMap | null>(null);
   const ml = useRef<ML | null>(null);
-  const markers = useRef<import("maplibre-gl").Marker[]>([]);
+  const markers = useRef<
+    { mk: import("maplibre-gl").Marker; el: HTMLElement; kind: Waypoint["kind"]; side: Side }[]
+  >([]);
   const [ready, setReady] = useState(false);
 
   // Create the map once. Sources and layers are declared in the initial style so
@@ -188,11 +258,14 @@ export default function TripMap({
 
       map.current = m;
       m.on("load", () => !cancelled && setReady(true));
+      // Which labels collide depends on the camera, so recheck once it settles —
+      // after the fly-in, and after any pan or zoom.
+      m.on("moveend", () => declutter(markers.current, box.current));
     })();
 
     return () => {
       cancelled = true;
-      markers.current.forEach((mk) => mk.remove());
+      markers.current.forEach(({ mk }) => mk.remove());
       markers.current = [];
       map.current?.remove();
       map.current = null;
@@ -235,10 +308,17 @@ export default function TripMap({
         : empty(),
     );
 
-    markers.current.forEach((mk) => mk.remove());
-    markers.current = marked.map((wp) =>
-      new lib.Marker({ element: markerEl(wp), anchor: "center" }).setLngLat(wp.at).addTo(m),
-    );
+    markers.current.forEach(({ mk }) => mk.remove());
+    markers.current = marked.map((wp) => {
+      const el = markerEl(wp);
+      return {
+        mk: new lib.Marker({ element: el, anchor: "center" }).setLngLat(wp.at).addTo(m),
+        el,
+        kind: wp.kind,
+        side: (wp.labelSide ?? "right") as Side,
+      };
+    });
+    declutter(markers.current, box.current);
 
     const pts = [...marked.map((w) => w.at), ...line];
     if (pts.length) {

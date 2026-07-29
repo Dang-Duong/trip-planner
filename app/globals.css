@@ -215,13 +215,10 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .wp-label.is-peak{color:var(--map-mute);font-weight:600}
 .wp-label s{text-decoration:none;font-size:.6rem;color:var(--map-mute);font-weight:500;
   letter-spacing:.02em}
+/* Dropped by the declutter pass in TripMap when it would collide with a
+   higher-priority label. The dot stays; only the text goes. */
+.wp-label.is-hidden{display:none}
 @media(max-width:560px){.wp-label{font-size:.58rem;padding:.14rem .3rem}.wp-label s{display:none}}
-/* On a phone the drive map is only ~44vh, and seven labels won't fit across 1 000 km.
-   The intermediate stops are route shape rather than destinations, so they keep their
-   dot and lose their label. The hike maps are dense with real destinations — leave them. */
-@media(max-width:760px){
-  .mapbox[data-basemap="osm"] .wp-label.is-stop{display:none}
-}
 
 /* ---------- maplibre chrome ---------- */
 .maplibregl-ctrl-attrib{font-family:var(--mono);font-size:.55rem}

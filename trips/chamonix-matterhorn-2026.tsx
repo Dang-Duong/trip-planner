@@ -79,20 +79,15 @@ export const chamonixMatterhorn2026: Trip = {
       note: "Praha → Argentière 1 030 km · Argentière → Randa 150 km",
     },
     {
+      // Both Saturday candidates on one sheet, so the choice is visible at a glance.
       id: "sat",
-      title: "Sat · Lac Blanc loop",
+      title: "Sat · Lac Blanc or Mont Buet",
       basemap: "swisstopo",
-      waypoints: ["argentiere", "trelechamp", "coldesmontets", "lacblanc", "chamonix"],
-      note: "Up the ladders from Tré-le-Champ, down via Remuaz into Argentière. Trails as drawn by swisstopo.",
-    },
-    {
-      // No day points at this one — it is the Saturday alternative, reachable
-      // from the tab bar rather than by scrolling.
-      id: "montbuet",
-      title: "Alt · Mont Buet",
-      basemap: "swisstopo",
-      waypoints: ["argentiere", "lebuet", "cascadeberard", "refugeberard", "montbuet"],
-      note: "Alternative Saturday. Out and back up the Bérard valley from Le Buet, one stop up the Mont-Blanc Express from Argentière.",
+      waypoints: [
+        "argentiere", "chamonix", "trelechamp", "coldesmontets", "lacblanc",
+        "lebuet", "refugeberard", "montbuet",
+      ],
+      note: "Two options. Lac Blanc south-west from Tré-le-Champ up the ladders, down via Remuaz into Argentière; or Mont Buet, north-west up the Bérard valley from Le Buet and back the same way. Both start on the Mont-Blanc Express with the campsite guest card.",
     },
     {
       id: "sun",
@@ -291,7 +286,7 @@ export const chamonixMatterhorn2026: Trip = {
           Rain? Petit Balcon Sud, ~3 h under trees.
           <br />
           <br />
-          <b>Alternative — Mont Buet</b> (see the <em>Alt</em> map): 19.8 km, +1 730 m, 3 096 m, so
+          <b>Alternative — Mont Buet</b> (both routes are on the map): 19.8 km, +1 730 m, 3 096 m, so
           10–11 h for fourteen. No ladders, a real summit, and the train drops you at Le Buet. But it
           replaces the morning run, and it is +580 m more than Lac Blanc the day before Zermatt.
         </>
