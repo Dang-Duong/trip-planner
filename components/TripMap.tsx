@@ -27,7 +27,52 @@ const BASEMAPS = {
     attribution: '© <a href="https://www.swisstopo.admin.ch/">swisstopo</a>',
     paint: { "raster-saturation": 0, "raster-contrast": -0.05, "raster-opacity": 0.72 },
   },
+  // Colour, labelled, roads and place names — the familiar street-map look, for when
+  // a contour sheet is not what you want.
+  voyager: {
+    tiles: ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
+    maxzoom: 20,
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
+  },
+  // Left photographic on purpose — the whole reason to switch here is telling glacier
+  // from moraine from scree, which any desaturation would flatten away.
+  //
+  // Esri's REST tiles are addressed {z}/{y}/{x} — row before column, the reverse of the
+  // usual slippy order. Swapping them returns tiles of somewhere else rather than a 404,
+  // so it fails as a plausible-looking wrong map. Same for satlabels below.
+  satellite: {
+    tiles: [
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    ],
+    maxzoom: 18,
+    attribution: "© Esri, Maxar, Earthstar Geographics",
+    paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
+  },
+  // Place names over the imagery. CARTO's dark-basemap label sheet rather than Esri's
+  // reference layer: Esri draws dark type meant for a pale background, which on a
+  // photograph of rock and forest is close to unreadable. This one is light type with a
+  // dark halo, and it carries to z20 instead of stopping at z16.
+  satlabels: {
+    tiles: ["https://basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png"],
+    maxzoom: 20,
+    attribution:
+      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
+  },
 } as const;
+
+/** What the switcher offers. `default` is whatever the active view declares. */
+export type Basemap = "default" | "voyager" | "satellite";
+export const BASEMAP_CHOICES: { id: Basemap; label: string }[] = [
+  { id: "default", label: "Map" },
+  { id: "voyager", label: "Streets" },
+  { id: "satellite", label: "Satellite" },
+];
+
+// Every basemap layer, so switching can hide the rest without listing them by hand.
+const BASEMAP_LAYERS = ["osm", "swisstopo", "voyager", "satellite", "satlabels"] as const;
 
 // Colours resolve from CSS vars set on the map container, which flip with the
 // basemap — the dark drive map and the bright swisstopo sheets need opposite ink.
@@ -161,12 +206,15 @@ export default function TripMap({
   activeId,
   waypoints,
   trail,
+  basemap = "default",
 }: {
   views: MapView[];
   activeId: string;
   waypoints: Waypoint[];
   /** Hovered hike, drawn over the day's map. */
   trail?: LngLat[];
+  /** Overrides the tiles the active view asks for. */
+  basemap?: Basemap;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MLMap | null>(null);
@@ -228,6 +276,27 @@ export default function TripMap({
               bounds: [5.6, 45.6, 10.8, 48.0],
               attribution: BASEMAPS.swisstopo.attribution,
             },
+            voyager: {
+              type: "raster",
+              tiles: [...BASEMAPS.voyager.tiles],
+              tileSize: 256,
+              maxzoom: BASEMAPS.voyager.maxzoom,
+              attribution: BASEMAPS.voyager.attribution,
+            },
+            satellite: {
+              type: "raster",
+              tiles: [...BASEMAPS.satellite.tiles],
+              tileSize: 256,
+              maxzoom: BASEMAPS.satellite.maxzoom,
+              attribution: BASEMAPS.satellite.attribution,
+            },
+            satlabels: {
+              type: "raster",
+              tiles: [...BASEMAPS.satlabels.tiles],
+              tileSize: 256,
+              maxzoom: BASEMAPS.satlabels.maxzoom,
+              attribution: BASEMAPS.satlabels.attribution,
+            },
             route: { type: "geojson", data: empty() },
             trail: { type: "geojson", data: empty() },
           },
@@ -246,6 +315,27 @@ export default function TripMap({
               source: "swisstopo",
               layout: { visibility: "none" },
               paint: { ...BASEMAPS.swisstopo.paint },
+            },
+            {
+              id: "voyager",
+              type: "raster",
+              source: "voyager",
+              layout: { visibility: "none" },
+              paint: { ...BASEMAPS.voyager.paint },
+            },
+            {
+              id: "satellite",
+              type: "raster",
+              source: "satellite",
+              layout: { visibility: "none" },
+              paint: { ...BASEMAPS.satellite.paint },
+            },
+            {
+              id: "satlabels",
+              type: "raster",
+              source: "satlabels",
+              layout: { visibility: "none" },
+              paint: { ...BASEMAPS.satlabels.paint },
             },
             // Pale casing under the route so it stays readable where it crosses
             // borders, lakes and road lines on the basemap.
@@ -320,16 +410,6 @@ export default function TripMap({
       view.routeLine ??
       (view.route ?? []).map((id) => byId.get(id)?.at).filter((p): p is [number, number] => !!p);
 
-    // Lets CSS thin the labels out on the wide-area drive map at phone sizes.
-    box.current?.setAttribute("data-basemap", view.basemap);
-
-    m.setLayoutProperty("osm", "visibility", view.basemap === "osm" ? "visible" : "none");
-    m.setLayoutProperty(
-      "swisstopo",
-      "visibility",
-      view.basemap === "swisstopo" ? "visible" : "none",
-    );
-
     const src = m.getSource("route") as import("maplibre-gl").GeoJSONSource;
     src.setData(
       line.length > 1
@@ -360,6 +440,28 @@ export default function TripMap({
     m.resize();
     fit(m, lib, pts, 14, 900);
   }, [ready, activeId, views, waypoints]);
+
+  // Basemap swapping is kept apart from the effect above on purpose: it must not
+  // rebuild the markers or touch the camera. Zoom into the Hörnli ridge, tap Satellite,
+  // and you stay on the ridge.
+  useEffect(() => {
+    const m = map.current;
+    if (!ready || !m) return;
+
+    const view = views.find((v) => v.id === activeId) ?? views[0];
+    if (!view) return;
+
+    const shown = basemap === "default" ? view.basemap : basemap;
+    for (const id of BASEMAP_LAYERS) {
+      // Place names ride along with the imagery rather than being selectable alone.
+      const on = id === shown || (id === "satlabels" && shown === "satellite");
+      m.setLayoutProperty(id, "visibility", on ? "visible" : "none");
+    }
+
+    // Drives the marker palette, and lets CSS thin the labels out on the wide-area
+    // drive map at phone sizes.
+    box.current?.setAttribute("data-basemap", shown);
+  }, [ready, activeId, views, basemap]);
 
   // Its own effect: hovering a hike must not rebuild the markers, only redraw the
   // trail and move the camera onto it. Zooming in is the point — several of these

@@ -85,6 +85,15 @@ html{scroll-snap-type:y proximity}
 .mtabs button:hover{color:var(--ink)}
 .mtabs button[aria-selected="true"]{color:var(--ink);background:var(--raise);border-top-color:var(--blaze)}
 
+/* basemap switcher, floating over the map's top-left corner */
+.basemaps{position:absolute;top:.55rem;left:.55rem;z-index:2;display:flex;gap:1px;
+  background:var(--rule);box-shadow:0 1px 6px rgba(6,9,10,.45)}
+.basemaps button{background:var(--panel);color:var(--stone);border:0;cursor:pointer;
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.11em;text-transform:uppercase;
+  padding:.42rem .62rem;white-space:nowrap;transition:color .15s,background .15s}
+.basemaps button:hover{color:var(--ink)}
+.basemaps button[aria-pressed="true"]{color:var(--bg);background:var(--blaze)}
+
 /* ---------- header ---------- */
 .phead{padding:clamp(2rem,6vw,3.4rem) 0 1.4rem;display:grid;gap:.85rem}
 .blz{display:inline-flex;width:30px;height:10px;border:1px solid var(--rule)}
@@ -206,10 +215,16 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .trip .tt span{color:var(--blaze);font-weight:400}
 
 /* ---------- map markers ---------- */
-/* Both basemaps are pale sheets, so marker ink is dark with a light halo. */
+/* The map sheets are pale, so marker ink is dark with a light halo. */
 .mapbox{
   --map-halo:#F7F6F1; --map-ink:#16211E;  --map-mute:#55605C;
   --map-accent:#B3271C; --map-cool:#1F5A6E; --map-dot:#FFFFFF;
+}
+/* Satellite is the exception: dark imagery swallows the muted dot fills chosen for a
+   printed sheet, so they go to the bright end of the palette. Labels sit on solid
+   white plates already and need nothing. */
+.mapbox[data-basemap="satellite"]{
+  --map-accent:#FF5A45; --map-cool:#5FC9E8; --map-mute:#5E6B71;
 }
 /* The marker box collapses to a point so MapLibre's `center` anchor lands the dot
    exactly on the coordinate. The label is taken out of flow and hung off it —

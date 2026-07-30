@@ -38,6 +38,25 @@ The data file is `.tsx`, not `.ts`, so leg text can hold inline `<b>`/`<em>` as 
 `dangerouslySetInnerHTML`, no markdown parser. **Use real characters (`’ — ×`), not HTML
 entities**: a text node containing an entity loses its leading whitespace in the JSX transform.
 
+## Adding a basemap
+
+`BASEMAPS` in `components/TripMap.tsx` is the whole story: add an entry, then declare a matching
+raster source and layer in the initial style — **below `route-casing`**, or the route and hover
+trail end up buried under the tiles. Add its id to `BASEMAP_LAYERS`, and to `BASEMAP_CHOICES` if it
+should get a button.
+
+Two traps worth knowing:
+
+- **Esri addresses tiles `{z}/{y}/{x}`**, row before column — the reverse of the usual slippy order.
+  Swap them and you get tiles of somewhere else rather than a 404, so it fails as a map that looks
+  plausible and is wrong.
+- **Attribution is automatic but conditional.** MapLibre credits only sources used by *visible*
+  layers, so the footer follows the switcher on its own — as long as the `attribution` string is on
+  the source, not just in the `BASEMAPS` table.
+
+`data-basemap` on `.mapbox` carries the active id so CSS can retune the marker palette; satellite
+uses it to swap the dot fills to their bright variants, which the pale sheets don't need.
+
 ## The maplibre worker
 
 maplibre-gl v6 works out its worker URL from `import.meta.url` and silently falls back to an empty
@@ -57,5 +76,9 @@ Deploys to Vercel; both routes are prerendered as static HTML.
 
 ## Attribution
 
-Required by both tile licences and wired into the map: © OpenStreetMap contributors, © CARTO,
-© swisstopo.
+Required by the tile licences and wired into the map, switching with the selected basemap:
+© OpenStreetMap contributors, © CARTO, © swisstopo, © Esri, Maxar, Earthstar Geographics.
+
+The Esri imagery endpoint is unauthenticated and is what Leaflet/OSM tooling generally points at,
+but Esri's terms nominally expect an ArcGIS account for production use. If that ever matters,
+swapping the satellite entry in `BASEMAPS` is a one-line change.
