@@ -27,7 +27,12 @@ html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
 p{margin:0}
-a{color:inherit;text-decoration-color:var(--rule);text-underline-offset:3px}
+/* Tailwind's preflight sets `text-decoration: inherit` on anchors, so links had no
+   underline at all — the decoration-color set here was colouring a line that was never
+   drawn. Put the line back explicitly, in the quietest ink that still shows (--rule is
+   the panel colour and reads as nothing). */
+a{color:inherit;text-decoration-line:underline;text-decoration-color:var(--stone);
+  text-underline-offset:3px}
 a:hover{text-decoration-color:var(--blaze)}
 a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--glacier);outline-offset:2px}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
@@ -132,9 +137,10 @@ tbody tr:hover{background:var(--raise)}
 td.n,th.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 a.go{font-family:var(--mono);font-size:.68rem;color:var(--blaze);white-space:nowrap;
   text-decoration-color:currentColor}
-/* hike options — the route name is the link out to komoot */
+/* hike options — the route name is the link out to komoot, so it carries a full-weight
+   underline rather than the quiet default */
 a.hike{display:block;font-weight:700;font-size:.9rem;letter-spacing:-.01em;color:var(--ink);
-  text-decoration-color:var(--rule)}
+  text-decoration-color:var(--glacier);text-decoration-thickness:1px}
 a.hike:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
 .hike-meta{display:block;font-family:var(--mono);font-size:.55rem;letter-spacing:.12em;
   text-transform:uppercase;color:var(--glacier);margin:.18rem 0 .1rem}
@@ -175,8 +181,8 @@ td .fine{display:block;margin-top:.15rem}
 .opt-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:.3rem .6rem;margin-bottom:.45rem}
 .opt-tag{font-family:var(--mono);font-size:.58rem;font-weight:700;letter-spacing:.1em;
   color:var(--blaze);border:1px solid var(--rule);padding:.05rem .34rem}
-.opt-name{font-size:.94rem;font-weight:700;letter-spacing:-.015em;color:var(--ink);
-  text-decoration-color:var(--rule)}
+.opt-name{font-size:.94rem;font-weight:700;letter-spacing:-.015em;color:var(--ink)}
+a.opt-name{text-decoration-color:var(--glacier);text-decoration-thickness:1px}
 a.opt-name:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
 .opt-meta{margin-left:auto;font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;
   color:var(--glacier);font-variant-numeric:tabular-nums;white-space:nowrap}
