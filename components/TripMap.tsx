@@ -7,26 +7,6 @@ type ML = typeof import("maplibre-gl");
 type MLMap = import("maplibre-gl").Map;
 
 const BASEMAPS = {
-  // CARTO Positron, label-free: pale and legible with clear national borders, and
-  // no place names of its own to fight the waypoint labels we draw ourselves.
-  osm: {
-    tiles: ["https://basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png"],
-    maxzoom: 20,
-    attribution:
-      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
-    paint: { "raster-saturation": 0, "raster-contrast": 0.06, "raster-opacity": 1 },
-  },
-  // Greyscale, and faded back hard. The colour sheet is a beautiful map but it is
-  // dense with its own type at this zoom and buries our waypoints. Muted to an
-  // underlay it still shows every trail and contour without competing for attention.
-  swisstopo: {
-    tiles: [
-      "https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.pixelkarte-grau/default/current/3857/{z}/{x}/{y}.jpeg",
-    ],
-    maxzoom: 17,
-    attribution: '© <a href="https://www.swisstopo.admin.ch/">swisstopo</a>',
-    paint: { "raster-saturation": 0, "raster-contrast": -0.05, "raster-opacity": 0.72 },
-  },
   // Colour, labelled, roads and place names — the familiar street-map look, for when
   // a contour sheet is not what you want.
   voyager: {
@@ -63,21 +43,20 @@ const BASEMAPS = {
   },
 } as const;
 
-/** What the switcher offers. `default` is whatever the active view declares. */
-export type Basemap = "default" | "voyager" | "satellite";
+/** What the switcher offers. The first is what the map opens on. */
+export type Basemap = "satellite" | "voyager";
 export const BASEMAP_CHOICES: { id: Basemap; label: string }[] = [
-  { id: "default", label: "Map" },
-  { id: "voyager", label: "Streets" },
   { id: "satellite", label: "Satellite" },
+  { id: "voyager", label: "Streets" },
 ];
 
 // Every basemap layer, so switching can hide the rest without listing them by hand.
-const BASEMAP_LAYERS = ["osm", "swisstopo", "voyager", "satellite", "satlabels"] as const;
+const BASEMAP_LAYERS = ["voyager", "satellite", "satlabels"] as const;
 
 // Colours resolve from CSS vars set on the map container, which flip with the
-// basemap — the dark drive map and the bright swisstopo sheets need opposite ink.
-// Deliberately large. These sit on printed map sheets already full of type and
-// line work — a subtle dot loses every time.
+// basemap — pale streets and dark imagery need opposite ink. Deliberately large:
+// these sit over aerial photography and labelled streets, both already busy, and a
+// subtle dot loses every time.
 const MARKER_STYLE: Record<Waypoint["kind"], { fill: string; stroke: string; r: number }> = {
   camp: { fill: "var(--map-accent)", stroke: "#FFFFFF", r: 8 },
   goal: { fill: "var(--map-cool)", stroke: "#FFFFFF", r: 8 },
@@ -206,14 +185,14 @@ export default function TripMap({
   activeId,
   waypoints,
   trail,
-  basemap = "default",
+  basemap = "satellite",
 }: {
   views: MapView[];
   activeId: string;
   waypoints: Waypoint[];
   /** Hovered hike, drawn over the day's map. */
   trail?: LngLat[];
-  /** Overrides the tiles the active view asks for. */
+  /** Which tiles to paint under the markers. */
   basemap?: Basemap;
 }) {
   const box = useRef<HTMLDivElement>(null);
@@ -258,24 +237,6 @@ export default function TripMap({
         style: {
           version: 8,
           sources: {
-            osm: {
-              type: "raster",
-              tiles: [...BASEMAPS.osm.tiles],
-              tileSize: 256,
-              maxzoom: BASEMAPS.osm.maxzoom,
-              attribution: BASEMAPS.osm.attribution,
-            },
-            swisstopo: {
-              type: "raster",
-              tiles: [...BASEMAPS.swisstopo.tiles],
-              tileSize: 256,
-              maxzoom: BASEMAPS.swisstopo.maxzoom,
-              // swisstopo only covers the Alps and 400s below z8. Without these the
-              // fly-down from the country-level view requests tiles it won't serve.
-              minzoom: 8,
-              bounds: [5.6, 45.6, 10.8, 48.0],
-              attribution: BASEMAPS.swisstopo.attribution,
-            },
             voyager: {
               type: "raster",
               tiles: [...BASEMAPS.voyager.tiles],
@@ -302,20 +263,6 @@ export default function TripMap({
           },
           layers: [
             { id: "bg", type: "background", paint: { "background-color": "#E9E8E3" } },
-            {
-              id: "osm",
-              type: "raster",
-              source: "osm",
-              layout: { visibility: "none" },
-              paint: { ...BASEMAPS.osm.paint },
-            },
-            {
-              id: "swisstopo",
-              type: "raster",
-              source: "swisstopo",
-              layout: { visibility: "none" },
-              paint: { ...BASEMAPS.swisstopo.paint },
-            },
             {
               id: "voyager",
               type: "raster",
@@ -448,20 +395,15 @@ export default function TripMap({
     const m = map.current;
     if (!ready || !m) return;
 
-    const view = views.find((v) => v.id === activeId) ?? views[0];
-    if (!view) return;
-
-    const shown = basemap === "default" ? view.basemap : basemap;
     for (const id of BASEMAP_LAYERS) {
       // Place names ride along with the imagery rather than being selectable alone.
-      const on = id === shown || (id === "satlabels" && shown === "satellite");
+      const on = id === basemap || (id === "satlabels" && basemap === "satellite");
       m.setLayoutProperty(id, "visibility", on ? "visible" : "none");
     }
 
-    // Drives the marker palette, and lets CSS thin the labels out on the wide-area
-    // drive map at phone sizes.
-    box.current?.setAttribute("data-basemap", shown);
-  }, [ready, activeId, views, basemap]);
+    // Drives the marker palette.
+    box.current?.setAttribute("data-basemap", basemap);
+  }, [ready, basemap]);
 
   // Its own effect: hovering a hike must not rebuild the markers, only redraw the
   // trail and move the camera onto it. Zooming in is the point — several of these

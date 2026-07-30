@@ -214,7 +214,6 @@ export const chamonixMatterhorn2026: Trip = {
     {
       id: "overview",
       title: "Praha → Argentière → Randa",
-      basemap: "osm",
       waypoints: ["praha", "nurnberg", "karlsruhe", "basel", "bern", "argentiere", "randa"],
       // Actual road geometry, not straight lines between cities. Generated with the
       // public OSRM demo server and pasted in, so there is no key, no runtime call and
@@ -257,7 +256,6 @@ export const chamonixMatterhorn2026: Trip = {
       // Both Saturday candidates on one sheet, so the choice is visible at a glance.
       id: "sat",
       title: "Sat · Lac Blanc or Mont Buet",
-      basemap: "swisstopo",
       waypoints: [
         "argentiere", "chamonix", "trelechamp", "coldesmontets", "lacblanc",
         "lebuet", "refugeberard", "montbuet",
@@ -268,7 +266,6 @@ export const chamonixMatterhorn2026: Trip = {
       // Both Sunday candidates: Hörnlihütte up the west side, the lakes on the east.
       id: "sun",
       title: "Sun · Hörnlihütte or 5 Lakes",
-      basemap: "swisstopo",
       waypoints: [
         "randa", "tasch", "zermatt", "zmutt", "schwarzsee", "hornlihutte", "matterhorn",
         "blauherd", "stellisee", "grindjisee", "grunsee", "leisee",

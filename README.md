@@ -20,14 +20,13 @@ waypoints it marks and, optionally, the ones to join into a route line:
 
 ```ts
 maps: [
-  { id: "overview", title: "…", basemap: "osm",       waypoints: [...], route: [...] },
-  { id: "sat",      title: "…", basemap: "swisstopo", waypoints: [...] },
+  { id: "overview", title: "…", waypoints: [...], route: [...] },
+  { id: "sat",      title: "…", waypoints: [...] },
 ]
 ```
 
-`basemap: "osm"` is CARTO dark (label-free, so it never fights our own labels);
-`"swisstopo"` is the Swiss 1:25k topographic sheet, which also covers the French side around
-Chamonix. Marker ink flips automatically between the two.
+A view does not choose its tiles — the reader does, with the switcher. Marker ink flips
+automatically to suit whichever basemap is showing.
 
 A `Day` can name a `mapId`; the sticky map follows the timeline as you scroll.
 
@@ -43,7 +42,7 @@ entities**: a text node containing an entity loses its leading whitespace in the
 `BASEMAPS` in `components/TripMap.tsx` is the whole story: add an entry, then declare a matching
 raster source and layer in the initial style — **below `route-casing`**, or the route and hover
 trail end up buried under the tiles. Add its id to `BASEMAP_LAYERS`, and to `BASEMAP_CHOICES` if it
-should get a button.
+should get a button. The first choice in that list is what the map opens on.
 
 Two traps worth knowing:
 
@@ -77,7 +76,7 @@ Deploys to Vercel; both routes are prerendered as static HTML.
 ## Attribution
 
 Required by the tile licences and wired into the map, switching with the selected basemap:
-© OpenStreetMap contributors, © CARTO, © swisstopo, © Esri, Maxar, Earthstar Geographics.
+© OpenStreetMap contributors, © CARTO, © Esri, Maxar, Earthstar Geographics.
 
 The Esri imagery endpoint is unauthenticated and is what Leaflet/OSM tooling generally points at,
 but Esri's terms nominally expect an ArcGIS account for production use. If that ever matters,

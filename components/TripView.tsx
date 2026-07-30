@@ -13,7 +13,7 @@ export default function TripView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const [active, setActive] = useState(trip?.maps[0]?.id ?? "");
   const [trail, setTrail] = useState<LngLat[] | undefined>(undefined);
-  const [basemap, setBasemap] = useState<Basemap>("default");
+  const [basemap, setBasemap] = useState<Basemap>("satellite");
 
   // Scrollspy: the last [data-map] block whose top has passed an anchor line near the
   // top of the reading column wins. Anchoring at the top rather than mid-viewport

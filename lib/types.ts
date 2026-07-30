@@ -19,7 +19,6 @@ export type Waypoint = {
 export type MapView = {
   id: string;
   title: string;
-  basemap: "osm" | "swisstopo";
   /** Waypoint ids to mark. Also what the map fits its bounds to. */
   waypoints: string[];
   /** Waypoint ids joined into a line, in order. A schematic — fine at hiking scale. */
