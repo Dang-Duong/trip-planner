@@ -120,6 +120,41 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
   assert.equal(net.get("Bobr"), 0, "the expense is skipped, not half-applied");
 }
 
+// Recording a payment squares exactly the pair it names, and nobody else.
+{
+  const bought: Expense[] = [
+    { id: "1", what: "Meat", amount: 100000, currency: "CZK", payer: "Bobr", shares: people },
+  ];
+  const owing = balances(bought, people);
+  assert.equal(owing.get("Chipi"), -250);
+  assert.equal(owing.get("Bobr"), 750);
+
+  const paidUp = balances(
+    [
+      ...bought,
+      {
+        id: "2",
+        what: "Chipi → Bobr",
+        amount: 25000,
+        currency: "CZK",
+        payer: "Chipi",
+        shares: ["Bobr"],
+        settlement: true,
+      },
+    ],
+    people,
+  );
+  assert.equal(paidUp.get("Chipi"), 0, "the person who paid is square");
+  assert.equal(paidUp.get("Bobr"), 500, "and is owed that much less");
+  assert.equal(paidUp.get("BM"), -250, "everyone else is untouched");
+  assert.equal(sum([...paidUp.values()]), 0);
+
+  // Once square, that pair drops out of the settle-up entirely.
+  for (const t of settle(paidUp)) {
+    assert.ok(!(t.from === "Chipi" && t.to === "Bobr"), "already paid, should not be listed");
+  }
+}
+
 // Nobody owes anybody when nothing has been bought.
 assert.deepEqual(settle(balances([], people)), []);
 

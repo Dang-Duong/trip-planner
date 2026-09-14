@@ -7,6 +7,8 @@ import { balances, RATES, settle, toCzk, type Currency, type Expense } from "@/l
 import { getTrip } from "@/trips";
 
 const CURRENCIES = Object.keys(RATES) as Currency[];
+
+const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 const NO_EXPENSES: Expense[] = [];
 
 /** Whole crowns in, "1 240" out. cs-CZ groups with a non-breaking space, which is what
@@ -32,7 +34,24 @@ export default function MoneyView({ slug }: { slug: string }) {
   // the header must not count them either, or the total won't match the split.
   const counts = (e: Expense) =>
     people.includes(e.payer) && e.shares.some((p) => people.includes(p));
-  const total = expenses.filter(counts).reduce((n, e) => n + toCzk(e), 0);
+
+  const receipts = expenses.filter((e) => !e.settlement);
+  const payments = expenses.filter((e) => e.settlement);
+  const total = receipts.filter(counts).reduce((n, e) => n + toCzk(e), 0);
+
+  const markPaid = (from: string, to: string, amount: number) =>
+    write((prev) => [
+      ...prev,
+      {
+        id: newId(),
+        what: `${from} → ${to}`,
+        amount: amount * 100,
+        currency: "CZK",
+        payer: from,
+        shares: [to],
+        settlement: true,
+      },
+    ]);
 
   if (!trip) return null;
 
@@ -46,7 +65,7 @@ export default function MoneyView({ slug }: { slug: string }) {
     write((prev) => [
       ...prev,
       {
-        id: `${Date.now()}`,
+        id: newId(),
         what: what.trim() || "Shopping",
         amount: Math.round(Number(amount) * 100),
         currency,
@@ -185,14 +204,14 @@ export default function MoneyView({ slug }: { slug: string }) {
         </button>
       </section>
 
-      {expenses.length > 0 && (
+      {receipts.length > 0 && (
         <>
           <section className="money-list">
             <h2>
               Receipts <i>{fmt(total)} Kč</i>
             </h2>
             <ul>
-              {expenses.map((e) => (
+              {receipts.map((e) => (
                 <li key={e.id} data-skipped={!counts(e)}>
                   <b>{e.what}</b>
                   <span className="money-meta">
@@ -246,10 +265,38 @@ export default function MoneyView({ slug }: { slug: string }) {
                     <span aria-hidden="true">→</span>
                     <b>{t.to}</b>
                     <i>{fmt(t.amount)} Kč</i>
+                    <button
+                      type="button"
+                      className="money-paid"
+                      onClick={() => markPaid(t.from, t.to, t.amount)}
+                    >
+                      Mark paid
+                    </button>
                   </li>
                 ))}
               </ol>
             )}
+            {payments.length > 0 && (
+              <div className="money-paid-list">
+                <h3>Already paid</h3>
+                <ul>
+                  {payments.map((e) => (
+                    <li key={e.id}>
+                      <span>{e.what}</span>
+                      <i>{fmt(toCzk(e))} Kč</i>
+                      <button
+                        type="button"
+                        aria-label={`Undo ${e.what}`}
+                        onClick={() => write((prev) => prev.filter((x) => x.id !== e.id))}
+                      >
+                        ×
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <button
               type="button"
               className="money-copy"

@@ -71,6 +71,15 @@ Two things it exists to protect:
 - **`settle()` is greedy, not optimal.** Largest debtor against largest creditor, at most
   n−1 transfers. Genuinely minimal is NP-hard and nobody cares.
 
+**Marking a transfer paid records a payment, it doesn't set a flag.** The transfer list
+is derived from the receipts, so it reshuffles whenever one is added — a "paid" tick
+would end up attached to a payment that no longer exists. Instead it appends an expense
+whose payer is the sender and whose only sharer is the recipient, which credits one and
+debits the other. The pair go square, the row disappears on its own, and the payment
+still counts after more receipts arrive. `settlement: true` is display-only: it keeps
+payments out of the receipts list and out of the total spent, since settling up isn't
+spending.
+
 Foreign currency converts at a fixed rate in `RATES` — rates don't move enough over four
 days to be worth fetching, and a live rate would make yesterday's totals drift.
 

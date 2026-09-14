@@ -27,6 +27,14 @@ export type Expense = {
   payer: string;
   /** Who the cost is divided between. Not necessarily everyone — see the drink lists. */
   shares: string[];
+  /**
+   * A payment between two people rather than something bought. It needs no special
+   * handling here: "Chipi paid Bobr 177" is exactly an expense Chipi paid for which
+   * Bobr is the only sharer, so it credits one and debits the other. The flag is only
+   * so the page can list payments apart from shopping and keep them out of the total
+   * spent — settling up isn't spending.
+   */
+  settlement?: boolean;
 };
 
 /** Minor units in the expense's own currency -> whole crowns. Rounds once, here. */
