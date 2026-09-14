@@ -475,3 +475,98 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
   padding:.4rem .68rem;transition:color .15s,background .15s}
 .shop-lang button:hover{color:var(--ink)}
 .shop-lang button[aria-pressed="true"]{color:var(--bg);background:var(--blaze)}
+
+/* ---------- who owes whom ---------- */
+.money-warn{max-width:58ch;font-size:.8rem;line-height:1.5;color:var(--stone);
+  border-left:2px solid var(--blaze);padding-left:.8rem}
+.money-warn b{color:var(--ink-2);font-weight:600}
+
+.shop .money-add,.shop .money-list,.shop .money-bal,.shop .money-settle{
+  margin-top:2.2rem;border-top:2px solid var(--rule);padding-top:1.2rem}
+.shop section h2{margin-bottom:1rem}
+.shop section h2 i{font-style:normal;font-family:var(--mono);color:var(--ink);
+  font-variant-numeric:tabular-nums;margin-left:.6rem;letter-spacing:0}
+
+/* --- the form --- */
+.money-row{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1.1rem}
+.money-f{display:grid;gap:.35rem;flex:1 1 130px;min-width:0}
+.money-f-wide{flex:2 1 220px}
+.money-f>span{font-family:var(--mono);font-size:.53rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--stone)}
+.money-f input,.money-f select{width:100%;background:var(--sunken);color:var(--ink);
+  border:1px solid var(--rule);padding:.55rem .65rem;font:inherit;font-size:.9rem;
+  border-radius:0;appearance:none}
+.money-f select{background-image:linear-gradient(45deg,transparent 50%,var(--stone) 50%),
+  linear-gradient(135deg,var(--stone) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:1.8rem}
+.money-f input:focus,.money-f select:focus{border-color:var(--glacier);outline:none}
+.money-f input::placeholder{color:var(--stone)}
+
+.money-who{border:1px solid var(--rule);background:var(--panel);padding:.9rem 1rem}
+.money-who-h{display:flex;align-items:center;justify-content:space-between;gap:.8rem;
+  flex-wrap:wrap;margin-bottom:.8rem}
+.money-who-h>span{font-family:var(--mono);font-size:.53rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--stone)}
+.money-presets{display:flex;gap:1px;background:var(--rule);flex-wrap:wrap}
+.money-presets button{background:var(--raise);color:var(--stone);border:0;cursor:pointer;
+  font-family:var(--mono);font-size:.54rem;letter-spacing:.1em;text-transform:uppercase;
+  padding:.36rem .6rem;transition:color .15s}
+.money-presets button:hover{color:var(--blaze)}
+.money-people{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.1rem .9rem}
+.money-people label{display:flex;gap:.55rem;align-items:start;padding:.3rem 0;
+  cursor:pointer;font-size:.86rem}
+
+.money-add-btn{margin-top:1.1rem;width:100%;background:var(--blaze);color:var(--bg);
+  border:0;padding:.8rem 1rem;cursor:pointer;font-family:var(--display);font-stretch:84%;
+  font-weight:800;font-size:.9rem;letter-spacing:.02em;text-transform:uppercase;
+  transition:opacity .15s}
+.money-add-btn:hover:not(:disabled){opacity:.86}
+.money-add-btn:disabled{background:var(--raise);color:var(--stone);cursor:not-allowed}
+
+/* --- receipts --- */
+.money-list ul{list-style:none;margin:0;padding:0}
+.money-list li{display:grid;grid-template-columns:minmax(0,1fr) auto auto;
+  gap:.2rem .9rem;align-items:baseline;padding:.6rem 0;border-bottom:1px solid var(--rule-2)}
+.money-list li>b{font-weight:600;font-size:.9rem}
+.money-meta{grid-column:1;font-size:.74rem;color:var(--stone)}
+.money-amt{grid-row:1/3;grid-column:2;align-self:center;font-family:var(--mono);
+  font-size:.9rem;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.money-amt i{display:block;font-style:normal;font-size:.64rem;color:var(--stone)}
+.money-list li>button{grid-row:1/3;grid-column:3;align-self:center;background:none;
+  border:1px solid var(--rule);color:var(--stone);cursor:pointer;width:1.6rem;height:1.6rem;
+  line-height:1;font-size:1rem;transition:color .15s,border-color .15s}
+.money-list li>button:hover{color:var(--blaze);border-color:var(--blaze)}
+
+/* --- balances --- */
+/* Flex, not grid: fourteen people in a grid leave an empty cell on the last row, and
+   the 1px-gap background renders it as a stray panel. */
+.money-bal ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.money-bal li{flex:1 1 210px;display:flex;justify-content:space-between;align-items:baseline;
+  gap:.8rem;background:var(--panel);padding:.6rem .8rem;font-size:.85rem}
+.money-bal li b{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
+.money-bal li[data-state="up"] b{color:var(--done,#6FB587)}
+.money-bal li[data-state="down"] b{color:var(--blaze)}
+.money-bal li[data-state="flat"]{color:var(--stone)}
+.money-bal li[data-state="flat"] b{color:var(--stone)}
+
+/* --- settle up --- */
+.money-settle ol{list-style:none;margin:0;padding:0;display:grid;gap:1px;
+  background:var(--rule);border:1px solid var(--rule)}
+.money-settle li{display:flex;align-items:baseline;gap:.7rem;background:var(--panel);
+  padding:.7rem .9rem;font-size:.92rem;flex-wrap:wrap}
+.money-settle li b{font-family:var(--display);font-stretch:84%;font-weight:800;
+  text-transform:uppercase;letter-spacing:.005em}
+.money-settle li span{color:var(--blaze);font-size:1.05rem}
+.money-settle li i{margin-left:auto;font-style:normal;font-family:var(--mono);
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.money-copy{margin-top:1rem;background:none;color:var(--stone);border:1px solid var(--rule);
+  padding:.5rem .85rem;cursor:pointer;font-family:var(--mono);font-size:.56rem;
+  letter-spacing:.13em;text-transform:uppercase;transition:color .15s,border-color .15s}
+.money-copy:hover{color:var(--glacier);border-color:var(--glacier)}
+
+@media(max-width:560px){
+  .money-settle li i{margin-left:0;width:100%}
+}

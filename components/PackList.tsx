@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useChecklist } from "@/lib/checklist";
+import { useChecklist } from "@/lib/local-state";
 import type { PackGroup } from "@/lib/types";
 
 export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: string }) {

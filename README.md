@@ -49,6 +49,29 @@ stored value lands on the pass after hydration. Reading localStorage into `useSt
 from an effect would hydrate English and then flip, which is both a flash and a lint
 error in this repo.
 
+## Who owes whom
+
+`/trips/[slug]/money` splits the shopping. You enter what a receipt came to, who paid, and
+**tick who it was for** — untick the youngest three on anything alcoholic and they stop
+paying for it. It nets everyone off and collapses the result into the fewest payments.
+
+The maths is in `lib/split.ts` and has a runnable check: `npm run check` (Node's type
+stripping, so the check imports the `.ts` directly — hence `allowImportingTsExtensions`).
+Two things it exists to protect:
+
+- **All money is integer minor units, never floats.** 1 240 Kč split 14 ways is 88.571…
+  each; in floats the balances stop cancelling and someone is owed 0.0000001 forever.
+  `shares()` hands out the remainder a unit at a time so the parts sum to the total exactly.
+- **`settle()` is greedy, not optimal.** Largest debtor against largest creditor, at most
+  n−1 transfers. Genuinely minimal is NP-hard and nobody cares.
+
+Foreign currency converts at a fixed rate in `RATES` — rates don't move enough over four
+days to be worth fetching, and a live rate would make yesterday's totals drift.
+
+**It is per-device, like the tick boxes.** One person keeps the book and shares the
+summary; the page says so. Making it shared needs a real store — that is the only part of
+this that breaks "no backend, no database".
+
 ## Adding a trip
 
 Copy `trips/chamonix-matterhorn-2026.tsx`, edit the content, and register it in `trips/index.ts`.

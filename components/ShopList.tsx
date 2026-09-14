@@ -1,6 +1,6 @@
 "use client";
 
-import { useChecklist } from "@/lib/checklist";
+import { useChecklist } from "@/lib/local-state";
 import type { ShopPerson } from "@/lib/types";
 
 export default function ShopList({

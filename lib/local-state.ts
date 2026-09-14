@@ -4,7 +4,7 @@
 // the server snapshot and the first client render agree, and the stored value arrives
 // on the pass straight after hydration — no setState inside an effect.
 
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 
 const EMPTY: ReadonlySet<string> = new Set();
 
@@ -132,14 +132,56 @@ function createChoiceStore(key: string, fallback: string) {
 
 const choices = new Map<string, ReturnType<typeof createChoiceStore>>();
 
-/** One remembered choice out of a fixed set — the language toggle. */
-export function useStoredChoice<T extends string>(key: string, options: readonly T[], fallback: T) {
+function parse<T>(text: string, fallback: T): T {
+  if (!text) return fallback;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return fallback; // corrupt entry — start clean rather than crash the page
+  }
+}
+
+function readRaw(key: string) {
+  try {
+    return localStorage.getItem(key) ?? "";
+  } catch {
+    return ""; // private mode — see createChoiceStore
+  }
+}
+
+/** The raw string behind one key. Both hooks below are built on this. */
+function useStoredString(key: string, fallback: string) {
   let store = choices.get(key);
   if (!store) choices.set(key, (store = createChoiceStore(key, fallback)));
   const s = store;
 
   const raw = useSyncExternalStore(s.subscribe, s.snapshot, () => fallback);
-  const value = (options as readonly string[]).includes(raw) ? (raw as T) : fallback;
+  return [raw, (next: string) => s.write(next)] as const;
+}
 
-  return [value, (next: T) => s.write(next)] as const;
+/** One remembered choice out of a fixed set — the language toggle. */
+export function useStoredChoice<T extends string>(key: string, options: readonly T[], fallback: T) {
+  const [raw, write] = useStoredString(key, fallback);
+  const value = (options as readonly string[]).includes(raw) ? (raw as T) : fallback;
+  return [value, (next: T) => write(next)] as const;
+}
+
+/** A JSON value kept in localStorage — the expense list. */
+export function useStoredJson<T>(key: string, fallback: T) {
+  const [raw, write] = useStoredString(key, "");
+
+  const value = useMemo<T>(() => parse(raw, fallback), [raw, fallback]);
+
+  // Takes an updater as well as a value: two writes inside one task both close over the
+  // same rendered value, and the second would drop the first. The updater form reads the
+  // store instead, so adding two receipts quickly keeps both.
+  const set = (next: T | ((prev: T) => T)) => {
+    const resolved =
+      typeof next === "function"
+        ? (next as (prev: T) => T)(parse(readRaw(key), fallback))
+        : next;
+    write(JSON.stringify(resolved));
+  };
+
+  return [value, set] as const;
 }

@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import BackLink from "@/components/BackLink";
+import Fab, { ARROW, COINS } from "@/components/Fab";
 import ShopList from "@/components/ShopList";
-import { useStoredChoice } from "@/lib/checklist";
+import { useStoredChoice } from "@/lib/local-state";
 import type { Lang } from "@/lib/types";
 import { getTrip } from "@/trips";
 
@@ -19,6 +19,8 @@ const COPY = {
     notes: "Before anyone buys anything",
     back: "Back to the plan",
     backSub: "Map & days",
+    money: "Who owes whom",
+    moneySub: "Settle up",
     switchTo: "Přepnout do češtiny",
   },
   cs: {
@@ -32,6 +34,8 @@ const COPY = {
     notes: "Než někdo začne nakupovat",
     back: "Zpátky na plán",
     backSub: "Mapa a dny",
+    money: "Kdo komu dluží",
+    moneySub: "Vyrovnání",
     switchTo: "Switch to English",
   },
 } as const;
@@ -133,7 +137,20 @@ export default function ShopView({ slug }: { slug: string }) {
         </ul>
       </section>
 
-      <BackLink slug={trip.slug} label={t.back} sub={t.backSub} />
+      <Fab
+        variant="back"
+        href={`/trips/${trip.slug}`}
+        label={t.back}
+        sub={t.backSub}
+        icon={ARROW}
+      />
+      <Fab
+        variant="launch"
+        href={`/trips/${trip.slug}/money`}
+        label={t.money}
+        sub={t.moneySub}
+        icon={COINS}
+      />
     </div>
   );
 }
