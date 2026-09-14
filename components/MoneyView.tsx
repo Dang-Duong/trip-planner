@@ -26,7 +26,13 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
   const transfers = useMemo(() => settle(net), [net]);
-  const total = expenses.reduce((n, e) => n + toCzk(e), 0);
+
+  // An expense can only name someone off the list if the trip data was renamed under it
+  // (or storage was hand-edited). `balances` skips those rather than invent money — so
+  // the header must not count them either, or the total won't match the split.
+  const counts = (e: Expense) =>
+    people.includes(e.payer) && e.shares.some((p) => people.includes(p));
+  const total = expenses.filter(counts).reduce((n, e) => n + toCzk(e), 0);
 
   if (!trip) return null;
 
@@ -187,10 +193,12 @@ export default function MoneyView({ slug }: { slug: string }) {
             </h2>
             <ul>
               {expenses.map((e) => (
-                <li key={e.id}>
+                <li key={e.id} data-skipped={!counts(e)}>
                   <b>{e.what}</b>
                   <span className="money-meta">
-                    {e.payer} paid · {e.shares.length} ways
+                    {counts(e)
+                      ? `${e.payer} paid · ${e.shares.length} ways`
+                      : `${e.payer} is not on this trip — not counted`}
                   </span>
                   <span className="money-amt">
                     {fmt(toCzk(e))} Kč

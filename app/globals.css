@@ -570,3 +570,8 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 @media(max-width:560px){
   .money-settle li i{margin-left:0;width:100%}
 }
+/* A receipt naming somebody who isn't on the trip: shown, but visibly not counted. */
+.money-list li[data-skipped="true"]{opacity:.5}
+.money-list li[data-skipped="true"] .money-meta{color:var(--blaze)}
+.money-list li[data-skipped="true"] .money-amt{text-decoration:line-through;
+  text-decoration-color:var(--stone)}
