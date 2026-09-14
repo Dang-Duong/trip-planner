@@ -1,59 +1,63 @@
 "use client";
 
 import BackLink from "@/components/BackLink";
-import PackList from "@/components/PackList";
+import ShopList from "@/components/ShopList";
 import { getTrip } from "@/trips";
 
 export default function ShopView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   if (!trip) return null;
 
-  const people = trip.shop.length;
-  const items = trip.shop.reduce((n, g) => n + g.items.length, 0);
+  const items = trip.shop.reduce((n, p) => n + p.items.length, 0);
 
   return (
-    <div className="shop-page">
-      <header className="phead">
+    <div className="shop">
+      <header className="shop-head">
         <span className="blz" aria-hidden="true">
           <i />
           <i />
           <i />
         </span>
         <h1>Who buys what</h1>
-        <p className="fine">
-          {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates} · one category each, so
-          nobody buys the same thing twice.
+        <p className="shop-sub">
+          {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates}
         </p>
-        <div className="stats">
+        <p className="shop-lede">
+          One category each, so nobody buys the same thing twice. Tick yours off as you go — it
+          saves on your own device. Buy in Czechia, top up in France, buy nothing in Switzerland.
+        </p>
+        <dl className="shop-vitals">
           <div>
-            <b>{people}</b>
-            <span>Lists</span>
+            <dt>People</dt>
+            <dd>{trip.shop.length}</dd>
           </div>
           <div>
-            <b>{items}</b>
-            <span>Items</span>
+            <dt>Items</dt>
+            <dd>{items}</dd>
           </div>
           <div>
-            <b>5,2 kg</b>
-            <span>Meat</span>
+            <dt>Meat</dt>
+            <dd>5,2 kg</dd>
           </div>
           <div>
-            <b>54 L</b>
-            <span>Water</span>
+            <dt>Water</dt>
+            <dd>54 L</dd>
           </div>
-        </div>
+        </dl>
       </header>
 
-      <section style={{ paddingTop: "1.4rem" }}>
-        <PackList groups={trip.shop} slug={trip.slug} storeKey="shop" />
-        {trip.shopNotes && (
-          <ul className="flags" style={{ marginTop: "1.4rem" }}>
+      <ShopList people={trip.shop} slug={trip.slug} />
+
+      {trip.shopNotes && (
+        <section className="shop-notes">
+          <h2>Before anyone buys anything</h2>
+          <ul>
             {trip.shopNotes.map((note, i) => (
               <li key={i}>{note}</li>
             ))}
           </ul>
-        )}
-      </section>
+        </section>
+      )}
 
       <BackLink slug={trip.slug} />
     </div>

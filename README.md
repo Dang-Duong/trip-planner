@@ -12,22 +12,29 @@ npm run dev      # http://localhost:3000
 
 ## Who buys what
 
-`shop` on a trip is the grocery split — one `PackGroup` per person rather than per category, with
-`eyebrow` naming their job and `qty` carrying the amount. It renders with the **same `PackList`**
-the packing checklist uses; `storeKey` namespaces the localStorage entry so the two lists don't
-share ticks, and a card showing an eyebrow is what switches the heading from a mono category label
-to a person's name (`.pc h3:has(i)`).
+`shop` on a trip is the grocery split — one `ShopPerson` per person, with `job` naming
+what they cover and `qty` on each item. It lives at `/trips/[slug]/shop`, not on the trip
+page; at sixty-odd items it made the plan too long to scroll. The trip page links out to
+it with the floating `ShopLink` button, and `BackLink` comes back.
 
-It lives on `/trips/[slug]/shop`, not the trip page — the split is 60-odd lines and made the plan
-too long to scroll. The trip page links out to it with the floating `ShopLink` button.
+`ShopList` and `PackList` are deliberately **separate components** with separate looks.
+They share only `useChecklist` in `lib/checklist.ts` — the localStorage store — under
+different keys, so the two lists never share ticks. An earlier version reused `PackList`
+for both; the packing grid welds its cards together with a `gap: 1px` rule background,
+which is right for a dense category list and wrong for fourteen separate assignments.
 
-The grid is two cards at most (one below 880px), because fourteen narrow columns of
-short items read as a stack of gaps. Past 1180px a card is wide enough that the person
-moves *beside* their list rather than above it — that is grid placement on the existing
-three children, so the markup is identical at every width.
+Two things in `ShopList` are load-bearing:
 
-`shopNotes` are the caveats the split depends on (the car fridge, bread shelf life, the settle-up)
-and render as a `.flags` list under the cards.
+- **Multi-column, not grid.** The lists run from one item to eight. A grid row sizes
+  every card to the tallest card in it, so half of them ended as voids. `columns: 2`
+  packs them; `display: inline-block` on the card is what makes `break-inside: avoid`
+  hold up across browsers.
+- **Colour encodes state, not category.** The left rail is the blaze accent until a
+  person's list is complete, then it goes to `--stone` and the card stands down. That is
+  the only colour the card spends.
+
+`shopNotes` are the caveats the split depends on (the car fridge, bread shelf life, the
+settle-up) and render under the cards.
 
 ## Adding a trip
 

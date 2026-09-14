@@ -802,8 +802,8 @@ export const chamonixMatterhorn2026: Trip = {
 
   shop: [
     {
-      title: "Fatboi Tomáš",
-      eyebrow: "Grill station",
+      name: "Fatboi Tomáš",
+      job: "Grill station",
       note: (
         <>
           Buys <b>no food at all</b> — the grill is his stake in the trip, and nothing gets cooked
@@ -820,8 +820,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Čongus",
-      eyebrow: "Stove, gas, cookware",
+      name: "Čongus",
+      job: "Stove, gas, cookware",
       note: (
         <>
           The little Forclaz does morning coffee and night three. <b>Check which fitting it takes</b>{" "}
@@ -838,8 +838,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Bobr",
-      eyebrow: "KBBQ meat",
+      name: "Bobr",
+      job: "KBBQ meat",
       note: (
         <>
           Buy it <b>the day we leave</b> and freeze it solid overnight — it thaws on the drive and
@@ -855,8 +855,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "FandusChcankus",
-      eyebrow: "KBBQ vegetables",
+      name: "FandusChcankus",
+      job: "KBBQ vegetables",
       note: (
         <>
           Everything that goes on the plate beside the meat, plus lettuce for <b>ssam</b> — the
@@ -874,8 +874,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Vien",
-      eyebrow: "Asian shop",
+      name: "Vien",
+      job: "Asian shop",
       note: (
         <>
           One run to SAPA covers half the trip. <b>Go with BM</b> — the soju is in the same aisle,
@@ -894,8 +894,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Hokage",
-      eyebrow: "Bread and cold cuts",
+      name: "Hokage",
+      job: "Bread and cold cuts",
       note: (
         <>
           The Czech carbs. Rohlíky only for the drive — <b>they do not survive the week</b>, see the
@@ -914,8 +914,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Paprikason",
-      eyebrow: "Mornings",
+      name: "Paprikason",
+      job: "Mornings",
       note: (
         <>
           No fridge, so <b>UHT milk</b> and no yoghurt. A moka pot beats a french press on a camp
@@ -932,8 +932,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "BMLock-in",
-      eyebrow: "Soju and beer",
+      name: "BMLock-in",
+      job: "Soju and beer",
       note: (
         <>
           <b>Buy it at home.</b> Soju in Switzerland costs what lunch costs. Mix the flavours —
@@ -946,8 +946,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Filipino",
-      eyebrow: "Caffeine",
+      name: "Filipino",
+      job: "Caffeine",
       note: (
         <>
           Tradition obliges. Works out at six or seven cans each. <b>Buy in Czechia</b> — a Swiss
@@ -960,8 +960,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Crispy Pork Davinki",
-      eyebrow: "Drinks",
+      name: "Crispy Pork Davinki",
+      job: "Drinks",
       note: (
         <>
           A third of the group’s drinks, <b>whatever you actually want to drink</b>. Coordinate with
@@ -974,8 +974,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "FemboiTommy",
-      eyebrow: "Drinks",
+      name: "FemboiTommy",
+      job: "Drinks",
       note: (
         <>
           The other third, same rule — <b>your taste, your call</b>. One of you please remember a
@@ -989,8 +989,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Chipi",
-      eyebrow: "Water",
+      name: "Chipi",
+      job: "Water",
       note: (
         <>
           Easy job — <b>it all goes in the car</b>, nothing gets carried. Water is still the first
@@ -1000,8 +1000,8 @@ export const chamonixMatterhorn2026: Trip = {
       items: [{ label: "Bottled water", qty: "2 × 6 × 1,5 L" }],
     },
     {
-      title: "Tuty",
-      eyebrow: "Water and tableware",
+      name: "Tuty",
+      job: "Water and tableware",
       note: (
         <>
           Also straight into the car. Get the <b>sturdy</b> plates, not the cheapest — a Korean
@@ -1014,8 +1014,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Meloun",
-      eyebrow: "Water and clean-up",
+      name: "Meloun",
+      job: "Water and clean-up",
       note: (
         <>
           The dull list that matters most: alpine sites are strict, and <b>everything we bring in
