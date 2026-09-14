@@ -59,9 +59,15 @@ The maths is in `lib/split.ts` and has a runnable check: `npm run check` (Node's
 stripping, so the check imports the `.ts` directly — hence `allowImportingTsExtensions`).
 Two things it exists to protect:
 
-- **All money is integer minor units, never floats.** 1 240 Kč split 14 ways is 88.571…
-  each; in floats the balances stop cancelling and someone is owed 0.0000001 forever.
-  `shares()` hands out the remainder a unit at a time so the parts sum to the total exactly.
+- **Round once, at the end.** Each person's share is summed exactly across every
+  receipt and only the total is rounded, by largest remainder. Rounding each receipt to
+  whole crowns and adding those up compounds the error: two 1 240 Kč receipts split
+  fourteen ways each round to 88 or 89, so one person could owe 176 and another 178 for
+  what is arithmetically the same 177.14 obligation. Rounding once keeps the spread to a
+  single crown, which is the best possible when the total doesn't divide evenly.
+- **Whole crowns, never haléře.** They haven't existed in cash since 2008, and settling
+  in them produced transfers of 0.02 Kč that displayed as "0 Kč" — asking someone to send
+  money they cannot send.
 - **`settle()` is greedy, not optimal.** Largest debtor against largest creditor, at most
   n−1 transfers. Genuinely minimal is NP-hard and nobody cares.
 

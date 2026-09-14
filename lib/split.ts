@@ -1,17 +1,15 @@
 /**
  * Who owes whom, for a group buying things for each other.
  *
- * Balances and transfers are in **whole crowns**, as integers. Two reasons, and the
- * second one bites:
+ * Balances and transfers are whole crowns. Haléře haven't existed in cash since 2008,
+ * and a settle-up that asks somebody to send 0.02 Kč is asking for something they
+ * cannot do.
  *
- * - Floats don't cancel. 1 240 Kč split 14 ways is 88.571… each, and in floating point
- *   the balances stop summing to zero, so somebody is owed 0.0000001 forever.
- * - Sub-crown precision creates transfers nobody can make. Settling in haléře left
- *   people owing each other two of them, which displayed as a "0 Kč" payment. Haléře
- *   haven't existed in cash since 2008; a split that produces them is wrong, not precise.
- *
- * Amounts are still *entered* in minor units, so €46.50 stays exact on its receipt line —
- * it's the conversion into the shared pot that rounds, once, to a whole crown.
+ * The important rule is that rounding happens **once**, at the end. Dividing every
+ * receipt into whole crowns and adding those up compounds the error: two 1 240 Kč
+ * receipts split fourteen ways each round to 88 or 89, so the same person could end up
+ * owing 176, 177 or 178 for what is arithmetically one 177.14 Kč obligation. Each
+ * person's share is summed exactly first, and only the total is rounded.
  */
 
 export type Currency = "CZK" | "EUR" | "CHF";
@@ -22,7 +20,7 @@ export const RATES: Record<Currency, number> = { CZK: 1, EUR: 25, CHF: 27 };
 export type Expense = {
   id: string;
   what: string;
-  /** In `currency`, minor units. */
+  /** In `currency`, minor units, so 46.50 EUR stays exact on its own receipt line. */
   amount: number;
   currency: Currency;
   /** Who actually paid at the till. */
@@ -31,47 +29,63 @@ export type Expense = {
   shares: string[];
 };
 
-/** Minor units in the expense's own currency -> whole crowns. */
+/** Minor units in the expense's own currency -> whole crowns. Rounds once, here. */
 export const toCzk = (e: Pick<Expense, "amount" | "currency">) =>
   Math.round((e.amount * RATES[e.currency]) / 100);
 
 /**
- * Divide `amount` into `n` whole parts that sum to exactly `amount`. The remainder is
- * handed out a crown at a time rather than rounded, so nothing appears or vanishes.
+ * Round fractional shares to whole crowns so they still add up to `target`.
  *
- * `offset` rotates who picks up those extra crowns. Without it the remainder always
- * lands on whoever is first in the list, and over twenty-five receipts Tomáš
- * systematically pays more than Meloun for no reason.
+ * Largest remainder: everyone gets their whole crowns, then the few left over go to
+ * whoever was cut by the most. This is what keeps the spread to a single crown — the
+ * best possible when the total doesn't divide evenly.
  */
-export function shares(amount: number, n: number, offset = 0): number[] {
-  if (n <= 0) return [];
-  const base = Math.trunc(amount / n);
-  const rest = amount - base * n;
-  const from = ((offset % n) + n) % n;
-  return Array.from({ length: n }, (_, i) => {
-    const place = (i - from + n) % n;
-    return base + (place < rest ? 1 : 0);
-  });
-}
+function roundShares(exact: Map<string, number>, target: number): Map<string, number> {
+  const out = new Map<string, number>();
+  const cut: { who: string; by: number }[] = [];
+  let given = 0;
 
-/** A stable number per expense, so the rotation is deterministic but varies between them. */
-const spin = (id: string) => [...id].reduce((n, c) => (n * 31 + c.charCodeAt(0)) | 0, 7);
+  for (const [who, share] of exact) {
+    // Nudge before flooring: a share that is mathematically a whole number can land on
+    // 176.99999999 after a few divisions, and floor() would quietly lose a crown.
+    const whole = Math.floor(share + 1e-9);
+    out.set(who, whole);
+    given += whole;
+    cut.push({ who, by: share - whole });
+  }
+
+  cut.sort((a, b) => b.by - a.by);
+  let left = target - given;
+  for (let i = 0; left > 0 && i < cut.length; i++, left--) {
+    out.set(cut[i].who, out.get(cut[i].who)! + 1);
+  }
+  return out;
+}
 
 /** Net position per person, in whole crowns. Positive = owed money. */
 export function balances(expenses: Expense[], people: string[]): Map<string, number> {
-  const net = new Map(people.map((p) => [p, 0]));
-  const add = (person: string, delta: number) => {
-    if (net.has(person)) net.set(person, net.get(person)! + delta);
-  };
+  const paid = new Map(people.map((p) => [p, 0]));
+  const owed = new Map(people.map((p) => [p, 0]));
+  let pot = 0;
 
   for (const e of expenses) {
+    const who = e.shares.filter((p) => owed.has(p));
+    // Skip rather than half-apply: crediting nobody while still debiting the sharers
+    // would invent money, and the balances would stop summing to zero.
+    if (!who.length || !paid.has(e.payer)) continue;
+
     const total = toCzk(e);
-    const who = e.shares.filter((p) => net.has(p));
-    if (!who.length) continue;
-    add(e.payer, total);
-    shares(total, who.length, spin(e.id)).forEach((part, i) => add(who[i], -part));
+    pot += total;
+    paid.set(e.payer, paid.get(e.payer)! + total);
+
+    const each = total / who.length;
+    for (const p of who) owed.set(p, owed.get(p)! + each);
   }
-  return net;
+
+  const share = roundShares(owed, pot);
+  // Payments are whole crowns and the rounded shares add up to the same pot, so the
+  // balances sum to exactly zero without any correction pass.
+  return new Map(people.map((p) => [p, (paid.get(p) ?? 0) - (share.get(p) ?? 0)]));
 }
 
 export type Transfer = { from: string; to: string; amount: number };

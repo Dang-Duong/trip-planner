@@ -1,18 +1,9 @@
 // Run: npm run check
 import assert from "node:assert/strict";
-import { balances, settle, shares, toCzk, type Expense } from "./split.ts";
+import { balances, settle, toCzk, type Expense } from "./split.ts";
 
-// --- dividing up ---
-assert.deepEqual(shares(100, 3), [34, 33, 33]);
-assert.equal(shares(1240, 14).reduce((a, b) => a + b, 0), 1240, "parts sum to the whole");
-assert.deepEqual(shares(10, 0), []);
-assert.deepEqual(shares(0, 4), [0, 0, 0, 0]);
-
-// The extra crowns rotate, so the same people don't always pay them.
-assert.deepEqual(shares(10, 4, 0), [3, 3, 2, 2]);
-assert.deepEqual(shares(10, 4, 2), [2, 2, 3, 3]);
-assert.equal(shares(10, 4, 2).reduce((a, b) => a + b, 0), 10);
-assert.deepEqual(shares(10, 4, -1), shares(10, 4, 3), "negative offsets wrap");
+const sum = (ns: number[]) => ns.reduce((a, b) => a + b, 0);
+const spread = (ns: number[]) => Math.max(...ns) - Math.min(...ns);
 
 // --- currency ---
 assert.equal(toCzk({ amount: 124000, currency: "CZK" }), 1240);
@@ -41,19 +32,25 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
   assert.equal(net.get("Chipi"), 0, "not on the expense, so owes nothing");
 }
 
-// Two people paying the same amount owe each other nothing — and no dust transfer
-// appears between them. This is the "PAPRIKASON -> BOBR 0 Kč" bug.
+// The reported case: two identical receipts, everyone shares both.
+// 2 480 / 14 = 177.14, so every share must be 177 or 178 — never 176. Rounding each
+// receipt on its own used to compound into a 2-crown spread.
 {
-  const all = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N"];
+  const all = "ABCDEFGHIJKLMN".split("");
   const e: Expense[] = [
     { id: "r1", what: "x", amount: 124000, currency: "CZK", payer: "A", shares: all },
     { id: "r2", what: "y", amount: 124000, currency: "CZK", payer: "B", shares: all },
   ];
   const net = balances(e, all);
-  // 2 480 doesn't divide by 14, so the spare crown lands on somebody — two equal payers
-  // can differ by one. What must never happen is the two of them paying each other.
-  assert.ok(Math.abs(net.get("A")! - net.get("B")!) <= 1, "equal payers stand within a crown");
-  assert.ok(net.get("A")! > 0 && net.get("B")! > 0, "both are owed money");
+
+  assert.equal(sum([...net.values()]), 0, "money cannot appear or vanish");
+  assert.ok(net.get("A")! > 0 && net.get("B")! > 0, "both payers are owed money");
+  assert.ok(Math.abs(net.get("A")! - net.get("B")!) <= 1, "equal payers within a crown");
+
+  const debts = all.filter((p) => net.get(p)! < 0).map((p) => -net.get(p)!);
+  assert.equal(debts.length, 12);
+  assert.ok(spread(debts) <= 1, `everyone shares both receipts: spread was ${spread(debts)}`);
+  for (const d of debts) assert.ok(d === 177 || d === 178, `${d} is not a share of 177.14`);
 
   const transfers = settle(net);
   for (const t of transfers) {
@@ -66,6 +63,27 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
   }
 }
 
+// Rounding once holds up over many receipts too — the case that compounds worst.
+{
+  const all = "ABCDEFGHIJKLMN".split("");
+  const e: Expense[] = Array.from({ length: 25 }, (_, i) => ({
+    id: `r${i}`,
+    what: "x",
+    amount: 100000 + i * 777,
+    currency: "CZK" as const,
+    payer: all[i % all.length],
+    shares: all,
+  }));
+  const net = balances(e, all);
+  assert.equal(sum([...net.values()]), 0);
+
+  // Everyone shared every receipt, so every share is the same to within one crown.
+  const paidBy = new Map(all.map((p) => [p, 0]));
+  for (const x of e) paidBy.set(x.payer, paidBy.get(x.payer)! + toCzk(x));
+  const dues = all.map((p) => paidBy.get(p)! - net.get(p)!);
+  assert.ok(spread(dues) <= 1, `25 receipts compounded into a ${spread(dues)}-crown spread`);
+}
+
 // Mixed currencies and uneven groups still balance, and settling squares everyone.
 {
   const e: Expense[] = [
@@ -74,10 +92,10 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
     { id: "c", what: "Beer", amount: 7777, currency: "CZK", payer: "BM", shares: ["BM", "Bobr"] },
   ];
   const net = balances(e, people);
-  assert.equal([...net.values()].reduce((a, b) => a + b, 0), 0, "money cannot appear or vanish");
+  assert.equal(sum([...net.values()]), 0, "money cannot appear or vanish");
 
-  const transfers = settle(net);
   const after = new Map(net);
+  const transfers = settle(net);
   for (const t of transfers) {
     assert.ok(t.amount > 0 && Number.isInteger(t.amount));
     after.set(t.from, after.get(t.from)! + t.amount);
@@ -87,12 +105,19 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
   assert.ok(transfers.length <= people.length - 1, "at most n-1 transfers");
 }
 
-// An expense naming someone not on the trip is ignored rather than losing their share.
+// Someone not on the trip, as a sharer and as a payer. Neither may unbalance the books.
 {
-  const e: Expense[] = [
+  const ghostShare: Expense[] = [
     { id: "1", what: "x", amount: 1000, currency: "CZK", payer: "Bobr", shares: ["Bobr", "Ghost"] },
   ];
-  assert.equal([...balances(e, people).values()].reduce((a, b) => a + b, 0), 0);
+  assert.equal(sum([...balances(ghostShare, people).values()]), 0);
+
+  const ghostPaid: Expense[] = [
+    { id: "1", what: "x", amount: 1000, currency: "CZK", payer: "Ghost", shares: people },
+  ];
+  const net = balances(ghostPaid, people);
+  assert.equal(sum([...net.values()]), 0, "an unknown payer must not invent debt");
+  assert.equal(net.get("Bobr"), 0, "the expense is skipped, not half-applied");
 }
 
 // Nobody owes anybody when nothing has been bought.
