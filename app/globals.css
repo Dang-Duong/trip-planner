@@ -7,6 +7,7 @@
   --bg:#0A0E10;--panel:#12181B;--raise:#161E22;--sunken:#06090A;
   --ink:#EAF0F2;--ink-2:#9FADB4;--stone:#63727A;
   --rule:#1F282C;--rule-2:#161D20;--tick:#39474F;
+  --check:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M1.7 6.3 4.6 9.1 10.3 2.9' fill='none' stroke='%23000' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --glacier:#5FC9E8;--blaze:#FF5A45;
   /* next/font sets --f-* on <html>; the stacks behind them are what shows if it fails. */
   --sans:var(--f-sans),"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
@@ -214,9 +215,12 @@ a.opt-name:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
 label:hover>.tick{border-color:var(--glacier)}
 .tick:checked{background:var(--blaze);border-color:var(--blaze);
   box-shadow:0 0 0 3px rgba(255,90,69,.13)}
-.tick:checked::after{content:"";position:absolute;left:.3rem;top:.09rem;
-  width:.22rem;height:.5rem;border:solid var(--bg);border-width:0 2px 2px 0;
-  transform:rotate(43deg)}
+/* A masked SVG, not a rotated border corner: that trick's bounding box grows when it
+   rotates, so the long arm overran the 14px inner box and clipped at the corner. The
+   mask keeps the stroke tokenised — the fill under it is the only colour. */
+.tick:checked::after{content:"";position:absolute;inset:0;background-color:var(--bg);
+  -webkit-mask:var(--check) no-repeat center/.6rem .6rem;
+  mask:var(--check) no-repeat center/.6rem .6rem}
 .pc .tick:checked+span{color:var(--stone);text-decoration:line-through;
   text-decoration-color:var(--rule)}
 .pc s{display:block;font-size:.71rem;color:var(--stone);text-decoration:none;line-height:1.35}
