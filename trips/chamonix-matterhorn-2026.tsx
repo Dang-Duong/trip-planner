@@ -824,6 +824,10 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Firelighters + two lighters" },
             { label: "Tongs + kitchen scissors", qty: "2 sets" },
             { label: "Foil trays + grill brush" },
+            {
+              label: "Sharp knife + board",
+              sub: "KBBQ is non-stop cutting — the most forgotten item here",
+            },
             { label: <b>Big pot</b>, sub: "Nothing else we own holds 14 portions", qty: "5 L+" },
           ],
         },
@@ -841,10 +845,6 @@ export const chamonixMatterhorn2026: Trip = {
             { label: <b>Instant noodles (mi tom)</b>, sub: "Night three lives on these", qty: "20" },
             { label: "Gas cartridges", sub: "Never leave one in a hot car", qty: "4 × 230 g" },
             { label: "Second pot + kettle" },
-            {
-              label: "Sharp knife + board",
-              sub: "KBBQ is non-stop cutting — the most forgotten item here",
-            },
             { label: "Spare headtorch + power bank" },
             { label: "Drinks, your own taste", qty: "your call" },
           ],
@@ -863,16 +863,16 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Pork belly, sliced 5 mm", qty: "2,5 kg" },
             { label: "Beef for bulgogi, thin sliced", qty: "1,5 kg" },
             { label: "Boneless chicken thigh", qty: "1,2 kg" },
-            { label: "Kimchi in jars", sub: "Fermented — it keeps without a fridge", qty: "1,5 kg" },
           ],
         },
         {
           name: "FandusChcankus",
-          job: "KBBQ vegetables",
+          job: "Vegetables and cheese",
           note: (
             <>
               Everything that goes on the plate beside the meat, plus lettuce for <b>ssam</b> — the
-              wrap that makes it Korean rather than just grilled pork.
+              wrap that makes it Korean rather than just grilled pork. The grilling cheese goes on
+              the same plate and carries the night for anyone off the meat.
             </>
           ),
           items: [
@@ -883,6 +883,12 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Spring onions", qty: "1 bunch" },
             { label: "Garlic", qty: "3 heads" },
             { label: "Carrots", qty: "4" },
+            {
+              label: <b>Halloumi-style grilling cheese</b>,
+              sub: "Straight on the plate beside the meat — and it feeds whoever isn’t eating that",
+              qty: "1,5 kg",
+            },
+            { label: "Eidam block + tavený sýr", qty: "1 kg + 10" },
           ],
         },
         {
@@ -896,6 +902,7 @@ export const chamonixMatterhorn2026: Trip = {
           ),
           items: [
             { label: "Ssamjang, ready made", qty: "1 tub" },
+            { label: "Kimchi in jars", sub: "Fermented — it keeps without a fridge", qty: "1,5 kg" },
             { label: "Sesame oil + sesame seeds", qty: "250 ml" },
             { label: "Mirin, brown sugar, nori" },
             { label: "Perilla leaves, if they have them", qty: "2 packs" },
@@ -921,8 +928,6 @@ export const chamonixMatterhorn2026: Trip = {
               qty: "1,5 kg",
             },
             { label: "Vacuum-packed šunka", sub: "First two days only", qty: "500 g" },
-            { label: "Eidam block + tavený sýr", qty: "1 kg + 10" },
-            { label: "Butter, jam, Nutella, Májka" },
           ],
         },
         {
@@ -931,18 +936,20 @@ export const chamonixMatterhorn2026: Trip = {
           note: (
             <>
               Coffee for four or five of us, not fourteen — <b>250 g is plenty</b>, and the instant
-              covers whoever else wants one. No fridge, so UHT milk and no yoghurt.
+              covers whoever else wants one. No fridge, so UHT milk and no yoghurt. The jam and the
+              Nutella are breakfast too, so they live on this list.
             </>
           ),
           items: [
             { label: "Ground coffee", sub: "Four or five coffee drinkers, not the whole group", qty: "250 g" },
-            { label: "Moka pot + a small jar of instant" },
+            { label: "Moka pot, if nobody already owns one, + a small jar of instant" },
             { label: "Tea, black + fruit", qty: "2 boxes" },
             { label: <b>UHT milk</b>, qty: "2 L" },
             { label: "Sugar", qty: "1 kg" },
             { label: "Oats / muesli", qty: "2 kg" },
             { label: "Gochujang", sub: "Asian shop or a big Albert", qty: "500 g" },
             { label: "Soy sauce", qty: "1 L" },
+            { label: "Butter, jam, Nutella, Májka" },
           ],
         },
         {
@@ -955,8 +962,8 @@ export const chamonixMatterhorn2026: Trip = {
             </>
           ),
           items: [
-            { label: "Soju, mixed flavours", qty: "12 × 360 ml" },
-            { label: "Beer for somaek", qty: "20 × 0,5 L" },
+            { label: "Soju, mixed flavours", qty: "10 × 360 ml" },
+            { label: "Beer for somaek", qty: "10 × 0,5 L" },
           ],
         },
         {
@@ -964,12 +971,12 @@ export const chamonixMatterhorn2026: Trip = {
           job: "Caffeine",
           note: (
             <>
-              Tradition obliges. Works out at six or seven cans each. <b>Buy in Czechia</b> — a
-              Swiss can is three francs.
+              Tradition obliges. Two packs is about four cans each, which is plenty for four days
+              of walking. <b>Buy in Czechia</b> — a Swiss can is three francs.
             </>
           ),
           items: [
-            { label: "Red Bull", qty: "3 × 24" },
+            { label: "Red Bull", qty: "2 × 24" },
             { label: "Something for the summit day", qty: "your call" },
           ],
         },
@@ -1078,10 +1085,10 @@ export const chamonixMatterhorn2026: Trip = {
           supermarkets; Decathlon in Sallanches has them.
         </>,
         <>
-          <b>Photograph every receipt.</b> These lists are nowhere near equal — the Red Bull and the
-          meat are each worth about twenty times the bin bags — so we total up at the end and split
-          across 14. Nobody is meant to be out of pocket for drawing an expensive category. Tomáš
-          sits out the food split; the grill and the charcoal are his share.
+          <b>Photograph every receipt.</b> The lists are deliberately close in price now — most of
+          them land somewhere between 900 and 1 400 Kč — but close is not equal, so we still total
+          up at the end and split across 14. Chipi, Tuty and Meloun carry the water and the light
+          kit on purpose. Tomáš sits out the food split; the grill and the charcoal are his share.
         </>,
       ],
     },
@@ -1110,6 +1117,10 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Podpalovač + dva zapalovače" },
             { label: "Kleště + kuchyňské nůžky", qty: "2 sady" },
             { label: "Hliníkové tácky + kartáč na gril" },
+            {
+              label: "Ostrý nůž + prkénko",
+              sub: "U korejského grilu se krájí pořád — nejčastěji zapomenutá věc",
+            },
             { label: <b>Velký hrnec</b>, sub: "Nic jiného, co máme, nepojme 14 porcí", qty: "5 L+" },
           ],
         },
@@ -1127,10 +1138,6 @@ export const chamonixMatterhorn2026: Trip = {
             { label: <b>Instantní nudle (mi tom)</b>, sub: "Třetí večer stojí na nich", qty: "20" },
             { label: "Kartuše k vařiči", sub: "Nikdy ji nenech v rozpáleném autě", qty: "4 × 230 g" },
             { label: "Druhý hrnec + konvice" },
-            {
-              label: "Ostrý nůž + prkénko",
-              sub: "U korejského grilu se krájí pořád — nejčastěji zapomenutá věc",
-            },
             { label: "Čelovka navíc + powerbanka" },
             { label: "Pití podle sebe", qty: "dle chuti" },
           ],
@@ -1148,16 +1155,16 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Bůček, plátky 5 mm", qty: "2,5 kg" },
             { label: "Hovězí na bulgogi, tenké plátky", qty: "1,5 kg" },
             { label: "Kuřecí stehenní maso bez kosti", qty: "1,2 kg" },
-            { label: "Kimchi ve skle", sub: "Fermentované — lednici nepotřebuje", qty: "1,5 kg" },
           ],
         },
         {
           name: "FandusChcankus",
-          job: "Zelenina na gril",
+          job: "Zelenina a sýry",
           note: (
             <>
               Všechno, co jde na plotnu vedle masa, plus salát na <b>ssam</b> — zábal, díky kterému
-              je to korejské, a ne jen grilované maso.
+              je to korejské, a ne jen grilované maso. Grilovací sýr jde na stejnou plotnu a zachrání
+              večer každému, kdo maso nejí.
             </>
           ),
           items: [
@@ -1168,6 +1175,12 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Jarní cibulka", qty: "1 svazek" },
             { label: "Česnek", qty: "3 palice" },
             { label: "Mrkev", qty: "4" },
+            {
+              label: <b>Grilovací sýr</b>,
+              sub: "Rovnou na plotnu vedle masa — a nají se z něj i ten, kdo maso nejí",
+              qty: "1,5 kg",
+            },
+            { label: "Eidam v bloku + tavený sýr", qty: "1 kg + 10" },
           ],
         },
         {
@@ -1181,6 +1194,7 @@ export const chamonixMatterhorn2026: Trip = {
           ),
           items: [
             { label: "Ssamjang, hotový", qty: "1 kelímek" },
+            { label: "Kimchi ve skle", sub: "Fermentované — lednici nepotřebuje", qty: "1,5 kg" },
             { label: "Sezamový olej + semínka", qty: "250 ml" },
             { label: "Mirin, hnědý cukr, nori" },
             { label: "Listy perilla, pokud budou", qty: "2 balení" },
@@ -1205,8 +1219,6 @@ export const chamonixMatterhorn2026: Trip = {
               qty: "1,5 kg",
             },
             { label: "Šunka ve vakuu", sub: "Jen první dva dny", qty: "500 g" },
-            { label: "Eidam v bloku + tavený sýr", qty: "1 kg + 10" },
-            { label: "Máslo, džem, Nutella, Májka" },
           ],
         },
         {
@@ -1215,18 +1227,20 @@ export const chamonixMatterhorn2026: Trip = {
           note: (
             <>
               Kafe pro čtyři pět lidí, ne pro čtrnáct — <b>250 g bohatě stačí</b> a instantní pokryje
-              zbytek. Bez lednice, takže trvanlivé mléko a žádné jogurty.
+              zbytek. Bez lednice, takže trvanlivé mléko a žádné jogurty. Džem a Nutella jsou taky
+              snídaně, takže patří sem.
             </>
           ),
           items: [
             { label: "Mletá káva", sub: "Kafe pije čtyři pět lidí, ne celá parta", qty: "250 g" },
-            { label: "Moka konvice + malá sklenice instantní" },
+            { label: "Moka konvice, pokud ji nikdo nemá, + malá sklenice instantní" },
             { label: "Čaj, černý + ovocný", qty: "2 krabičky" },
             { label: <b>Trvanlivé mléko</b>, qty: "2 L" },
             { label: "Cukr", qty: "1 kg" },
             { label: "Vločky / müsli", qty: "2 kg" },
             { label: "Gochujang", sub: "Asijský obchod nebo větší Albert", qty: "500 g" },
             { label: "Sójová omáčka", qty: "1 L" },
+            { label: "Máslo, džem, Nutella, Májka" },
           ],
         },
         {
@@ -1239,8 +1253,8 @@ export const chamonixMatterhorn2026: Trip = {
             </>
           ),
           items: [
-            { label: "Soju, mix příchutí", qty: "12 × 360 ml" },
-            { label: "Pivo na somaek", qty: "20 × 0,5 L" },
+            { label: "Soju, mix příchutí", qty: "10 × 360 ml" },
+            { label: "Pivo na somaek", qty: "10 × 0,5 L" },
           ],
         },
         {
@@ -1248,8 +1262,8 @@ export const chamonixMatterhorn2026: Trip = {
           job: "Kofein",
           note: (
             <>
-              Tradice zavazuje. Vychází to na šest sedm plechovek na osobu. <b>Kup to v ČR</b> —
-              švýcarská plechovka stojí tři franky.
+              Tradice zavazuje. Dvě balení jsou zhruba čtyři plechovky na osobu, což na čtyři dny
+              chůze bohatě stačí. <b>Kup to v ČR</b> — švýcarská plechovka stojí tři franky.
             </>
           ),
           items: [
@@ -1361,10 +1375,10 @@ export const chamonixMatterhorn2026: Trip = {
           v supermarketu nejsou, má je Decathlon v Sallanches.
         </>,
         <>
-          <b>Vyfoť každou účtenku.</b> Seznamy nejsou ani zdaleka stejně drahé — Red Bull a maso
-          vyjdou každý zhruba dvacetkrát dráž než pytle na odpad — takže na konci se to sečte
-          a rozpočítá na 14. Nikdo nemá tratit na tom, že mu vyšla drahá kategorie. Tomáš je
-          z jídelního rozpočtu venku, gril a uhlí jsou jeho vklad.
+          <b>Vyfoť každou účtenku.</b> Seznamy jsou teď schválně cenově blízko — většina vyjde mezi
+          900 a 1 400 Kč — ale blízko není stejně, takže na konci se to stejně sečte a rozpočítá na
+          14. Chipi, Tuty a Meloun mají vodu a lehké věci záměrně. Tomáš je z jídelního rozpočtu
+          venku, gril a uhlí jsou jeho vklad.
         </>,
       ],
     },
