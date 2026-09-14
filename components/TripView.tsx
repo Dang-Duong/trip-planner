@@ -216,7 +216,7 @@ export default function TripView({ slug }: { slug: string }) {
         </footer>
       </div>
 
-      <ShopLink slug={trip.slug} lists={trip.shop.length} />
+      <ShopLink slug={trip.slug} lists={trip.shop.en.people.length} />
     </div>
   );
 }

@@ -3,7 +3,15 @@ import Link from "next/link";
 import { PARTICLES } from "@/components/ShopLink";
 
 /** Floats top-left on the shopping split and returns to the map. */
-export default function BackLink({ slug }: { slug: string }) {
+export default function BackLink({
+  slug,
+  label,
+  sub,
+}: {
+  slug: string;
+  label: string;
+  sub: string;
+}) {
   return (
     <Link className="fab back" href={`/trips/${slug}`}>
       <span className="trail" aria-hidden="true">
@@ -16,8 +24,8 @@ export default function BackLink({ slug }: { slug: string }) {
         <path d="M3 12h7a11 11 0 0 1 11 11" strokeLinecap="round" />
       </svg>
       <span className="fab-t">
-        Back to the plan
-        <b>Map &amp; days</b>
+        {label}
+        <b>{sub}</b>
       </span>
     </Link>
   );

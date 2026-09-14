@@ -3,7 +3,17 @@
 import { useChecklist } from "@/lib/checklist";
 import type { ShopPerson } from "@/lib/types";
 
-export default function ShopList({ people, slug }: { people: ShopPerson[]; slug: string }) {
+export default function ShopList({
+  people,
+  slug,
+  boughtLabel,
+  resetLabel,
+}: {
+  people: ShopPerson[];
+  slug: string;
+  boughtLabel: string;
+  resetLabel: string;
+}) {
   const { done, toggle, clear } = useChecklist(`shop:${slug}:v1`);
 
   const total = people.reduce((n, p) => n + p.items.length, 0);
@@ -17,7 +27,9 @@ export default function ShopList({ people, slug }: { people: ShopPerson[]; slug:
       <div className="shop-bar">
         <span className="shop-tally" id="shop-count">
           <b>{bought}</b>
-          <i>/ {total} bought</i>
+          <i>
+            / {total} {boughtLabel}
+          </i>
         </span>
         <span
           className="shop-pr"
@@ -30,7 +42,7 @@ export default function ShopList({ people, slug }: { people: ShopPerson[]; slug:
           <i style={{ width: `${total ? (bought / total) * 100 : 0}%` }} />
         </span>
         <button type="button" onClick={clear}>
-          Reset
+          {resetLabel}
         </button>
       </div>
 
@@ -48,7 +60,7 @@ export default function ShopList({ people, slug }: { people: ShopPerson[]; slug:
                   <h3>{person.name}</h3>
                   <span className="sc-job">{person.job}</span>
                 </div>
-                <span className="sc-n" aria-label={`${mine} of ${person.items.length} bought`}>
+                <span className="sc-n" aria-label={`${mine} / ${person.items.length} ${boughtLabel}`}>
                   {mine}
                   <i>/{person.items.length}</i>
                 </span>

@@ -79,6 +79,16 @@ export type ShopPerson = {
   items: ShopItem[];
 };
 
+export type Lang = "en" | "cs";
+
+/** The whole split in one language. Names stay as they are — nobody translates a nickname. */
+export type ShopContent = {
+  lede: ReactNode;
+  people: ShopPerson[];
+  /** Caveats the split depends on — the fridge, the bread, the settle-up. */
+  notes: ReactNode[];
+};
+
 export type Pin = {
   when: string;
   what: ReactNode;
@@ -126,10 +136,8 @@ export type Trip = {
   hikes: Hike[];
   hikesNote?: ReactNode;
   pack: PackGroup[];
-  /** Who buys what — one list per person, on its own page. */
-  shop: ShopPerson[];
-  /** Caveats the split depends on — the fridge, the bread, the settle-up. */
-  shopNotes?: ReactNode[];
+  /** Who buys what — one list per person, on its own page, in both languages. */
+  shop: Record<Lang, ShopContent>;
   prep: PrepRow[];
   sources: Source[];
   sourcesNote?: string;

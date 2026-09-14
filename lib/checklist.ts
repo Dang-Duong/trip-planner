@@ -1,5 +1,9 @@
 "use client";
 
+// localStorage-backed UI state. Everything here goes through useSyncExternalStore so
+// the server snapshot and the first client render agree, and the stored value arrives
+// on the pass straight after hydration — no setState inside an effect.
+
 import { useSyncExternalStore } from "react";
 
 const EMPTY: ReadonlySet<string> = new Set();
@@ -83,4 +87,59 @@ export function useChecklist(key: string) {
   };
 
   return { done, toggle, clear: () => store.write(EMPTY) };
+}
+
+/** The same idea as above, for a single remembered value rather than a set. */
+function createChoiceStore(key: string, fallback: string) {
+  let raw: string | null = null;
+  let value = fallback;
+  const listeners = new Set<() => void>();
+
+  return {
+    subscribe(onChange: () => void) {
+      listeners.add(onChange);
+      window.addEventListener("storage", onChange);
+      return () => {
+        listeners.delete(onChange);
+        window.removeEventListener("storage", onChange);
+      };
+    },
+    snapshot() {
+      let next: string | null = null;
+      try {
+        next = localStorage.getItem(key);
+      } catch {
+        next = null; // private mode — the choice just won't persist
+      }
+      if (next !== raw) {
+        raw = next;
+        value = next ?? fallback;
+      }
+      return value;
+    },
+    write(next: string) {
+      try {
+        localStorage.setItem(key, next);
+      } catch {
+        // ignore, as above
+      }
+      raw = next;
+      value = next;
+      listeners.forEach((l) => l());
+    },
+  };
+}
+
+const choices = new Map<string, ReturnType<typeof createChoiceStore>>();
+
+/** One remembered choice out of a fixed set — the language toggle. */
+export function useStoredChoice<T extends string>(key: string, options: readonly T[], fallback: T) {
+  let store = choices.get(key);
+  if (!store) choices.set(key, (store = createChoiceStore(key, fallback)));
+  const s = store;
+
+  const raw = useSyncExternalStore(s.subscribe, s.snapshot, () => fallback);
+  const value = (options as readonly string[]).includes(raw) ? (raw as T) : fallback;
+
+  return [value, (next: T) => s.write(next)] as const;
 }

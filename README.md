@@ -33,8 +33,21 @@ Two things in `ShopList` are load-bearing:
   person's list is complete, then it goes to `--stone` and the card stands down. That is
   the only colour the card spends.
 
-`shopNotes` are the caveats the split depends on (the car fridge, bread shelf life, the
+`notes` are the caveats the split depends on (the car fridge, bread shelf life, the
 settle-up) and render under the cards.
+
+**Both languages are one array each, and their order is load-bearing.** A tick is stored
+as `<person index>.<item index>`, so a person keeps their ticks across a language switch
+only while `shop.en.people` and `shop.cs.people` hold the same people in the same order,
+each with the same items in the same order. Reorder one and everyone's ticks silently
+shift to the wrong lines. Add, remove or move an item in both, or not at all.
+
+The switcher writes the choice to localStorage and reads it back through
+`useStoredChoice` in `lib/checklist.ts` — same `useSyncExternalStore` shape as the
+checklists, so the server snapshot ("en") and the first client render agree and the
+stored value lands on the pass after hydration. Reading localStorage into `useState`
+from an effect would hydrate English and then flip, which is both a flash and a lint
+error in this repo.
 
 ## Adding a trip
 
