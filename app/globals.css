@@ -8,8 +8,10 @@
   --ink:#EAF0F2;--ink-2:#9FADB4;--stone:#63727A;
   --rule:#1F282C;--rule-2:#161D20;
   --glacier:#5FC9E8;--blaze:#FF5A45;
-  --sans:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
-  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,"DejaVu Sans Mono",monospace;
+  /* next/font sets --f-* on <html>; the stacks behind them are what shows if it fails. */
+  --sans:var(--f-sans),"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;
+  --mono:var(--f-mono),ui-monospace,"SF Mono",SFMono-Regular,Menlo,"DejaVu Sans Mono",monospace;
+  --display:var(--f-display),"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 @theme inline{
@@ -20,6 +22,7 @@
   --color-rule-2:var(--rule-2);
   --color-glacier:var(--glacier); --color-blaze:var(--blaze);
   --font-sans:var(--sans);    --font-mono:var(--mono);
+  --font-display:var(--display);
 }
 
 *{box-sizing:border-box}
@@ -104,7 +107,8 @@ html{scroll-snap-type:y proximity}
 .blz{display:inline-flex;width:30px;height:10px;border:1px solid var(--rule)}
 .blz i{flex:1}.blz i:nth-child(2){background:var(--blaze)}
 .blz i:nth-child(1),.blz i:nth-child(3){background:var(--panel)}
-h1{margin:0;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.02;letter-spacing:-.04em;font-weight:700}
+h1{margin:0;font-family:var(--display);font-stretch:78%;font-weight:800;
+  font-size:clamp(2rem,5.4vw,3.2rem);line-height:1;letter-spacing:-.02em;text-wrap:balance}
 h1 span{color:var(--blaze);font-weight:400}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:1px;
   background:var(--rule);border:1px solid var(--rule);margin-top:.35rem}
@@ -195,11 +199,24 @@ a.opt-name:hover{color:var(--blaze);text-decoration-color:var(--blaze)}
 .pc h3{margin:0 0 .5rem;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;
   text-transform:uppercase;color:var(--stone);padding-bottom:.4rem;border-bottom:1px solid var(--rule)}
 .pc ul{list-style:none;margin:0;padding:0}
-.pc label{display:grid;grid-template-columns:.95rem 1fr;gap:.5rem;align-items:start;
+.pc label{display:grid;grid-template-columns:.95rem 1fr auto;gap:.5rem;align-items:start;
   padding:.2rem 0;cursor:pointer;font-size:.83rem;line-height:1.35}
 .pc input{margin:.2rem 0 0;accent-color:var(--blaze);width:.95rem;height:.95rem}
 .pc input:checked+span{color:var(--stone);text-decoration:line-through;text-decoration-color:var(--rule)}
 .pc s{display:block;font-size:.71rem;color:var(--stone);text-decoration:none;line-height:1.35}
+/* A card carrying an eyebrow is a person rather than a category — the shopping split.
+   Lead with the name instead of the mono label, and hang the job under it. */
+.pc h3:has(i){font-family:var(--display);font-stretch:82%;font-size:1.05rem;font-weight:800;
+  letter-spacing:.005em;color:var(--ink)}
+.pc h3 i{display:block;font-family:var(--mono);font-size:.55rem;font-weight:600;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--glacier);font-style:normal;
+  margin-top:.25rem}
+.pc .pn{font-size:.76rem;color:var(--ink-2);line-height:1.45;margin:0 0 .5rem}
+.pc .pn b{color:var(--ink);font-weight:600}
+.pc .qty{font-family:var(--mono);font-size:.66rem;font-weight:400;color:var(--stone);
+  font-variant-numeric:tabular-nums;white-space:nowrap;padding-top:.08rem}
+.pc input:checked~.qty{opacity:.4}
+
 .bar{display:flex;align-items:center;gap:.8rem;margin-bottom:.9rem}
 .bar .pr{flex:1;height:5px;background:var(--sunken);border:1px solid var(--rule)}
 .bar .pr i{display:block;height:100%;background:var(--blaze);width:0;transition:width .2s}
@@ -217,7 +234,8 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .trip:hover{background:var(--raise);border-left-color:var(--blaze)}
 .trip .td{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;
   text-transform:uppercase;color:var(--stone)}
-.trip .tt{font-size:1.3rem;font-weight:700;letter-spacing:-.03em}
+.trip .tt{font-family:var(--display);font-stretch:82%;font-size:1.4rem;font-weight:800;
+  letter-spacing:-.01em}
 .trip .tt span{color:var(--blaze);font-weight:400}
 
 /* ---------- map markers ---------- */
@@ -272,3 +290,62 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 /* "use ⌘ + scroll to zoom" hint shown when a plain wheel is passed through to the page */
 .maplibregl-cooperative-gesture-screen{background:rgba(10,14,16,.72);font-family:var(--mono);
   font-size:.7rem;letter-spacing:.04em}
+
+/* ---------- launch button ---------- */
+/* Floats over the plan and goes to the shopping split. The exhaust is nine absolutely
+   positioned embers on one keyframe, fanned and staggered off a single --i custom
+   property — cheaper than canvas and it composites on the GPU. */
+.launch{
+  position:fixed;right:clamp(1rem,3vw,1.8rem);bottom:clamp(1rem,3vw,1.8rem);z-index:5;
+  display:flex;align-items:center;gap:.7rem;padding:.7rem 1.05rem .7rem .95rem;
+  text-decoration:none;color:var(--ink);
+  background:linear-gradient(158deg,rgba(22,30,34,.94),rgba(10,14,16,.94));
+  border:1px solid var(--rule);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  box-shadow:0 10px 30px -12px rgba(0,0,0,.9),inset 0 0 0 1px rgba(95,201,232,.05);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1),border-color .25s,box-shadow .25s}
+/* A charging strip along the top edge, so the thing reads as powered up at rest. */
+.launch::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--glacier),transparent);
+  animation:charge 3.4s ease-in-out infinite}
+@keyframes charge{0%,100%{transform:scaleX(.15);opacity:.25}50%{transform:scaleX(1);opacity:.85}}
+
+.launch .rocket{width:20px;height:20px;flex:none;color:var(--glacier);
+  animation:bob 2.6s ease-in-out infinite;transition:color .25s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-2.5px)}}
+
+.launch-t{display:grid;gap:.12rem;font-family:var(--display);font-stretch:84%;font-weight:800;
+  font-size:.9rem;line-height:1.1;letter-spacing:.005em;text-transform:uppercase;white-space:nowrap}
+.launch-t b{font-family:var(--mono);font-size:.55rem;font-weight:600;letter-spacing:.13em;
+  color:var(--stone);transition:color .25s}
+
+/* Zero-size anchor under the nose of the rocket; the embers hang off it. */
+.exhaust{position:absolute;left:1.55rem;bottom:-2px;width:0;height:0;pointer-events:none}
+.exhaust i{position:absolute;left:0;bottom:0;width:3px;height:3px;border-radius:99px;
+  background:var(--blaze);box-shadow:0 0 6px var(--blaze);opacity:0;
+  animation:ember 1.1s linear infinite;animation-delay:calc(var(--i) * -137ms)}
+.exhaust i:nth-child(odd){background:#FFC46B;box-shadow:0 0 6px #FFC46B;width:2px;height:2px}
+@keyframes ember{
+  0%{opacity:0;transform:translate(-50%,0) scale(.4)}
+  15%{opacity:1}
+  100%{opacity:0;transform:translate(calc(-50% + (var(--i) - 4) * 3.2px),26px) scale(.15)}}
+/* The pool of light the embers fall into. */
+.exhaust::after{content:"";position:absolute;left:0;bottom:-1px;width:28px;height:13px;
+  transform:translateX(-50%);border-radius:50%;filter:blur(3px);
+  background:radial-gradient(ellipse at center,rgba(255,90,69,.55),transparent 70%);
+  animation:flare 1.6s ease-in-out infinite}
+@keyframes flare{0%,100%{opacity:.45;transform:translateX(-50%) scaleY(.75)}
+  50%{opacity:1;transform:translateX(-50%) scaleY(1.3)}}
+
+.launch:hover,.launch:focus-visible{transform:translateY(-3px);border-color:var(--glacier);
+  box-shadow:0 18px 42px -14px rgba(0,0,0,.95),0 0 26px -6px rgba(95,201,232,.35)}
+.launch:hover .rocket,.launch:focus-visible .rocket{color:var(--ink)}
+.launch:hover .launch-t b,.launch:focus-visible .launch-t b{color:var(--glacier)}
+/* Throttle up: same keyframes, less time. */
+.launch:hover .exhaust i,.launch:focus-visible .exhaust i{animation-duration:.5s}
+.launch:hover .exhaust::after,.launch:focus-visible .exhaust::after{animation-duration:.7s}
+
+@media(prefers-reduced-motion:reduce){
+  .launch,.launch *,.launch::before,.exhaust::after{animation:none!important;transition:none!important}
+  .launch::before{transform:none;opacity:.6}
+}

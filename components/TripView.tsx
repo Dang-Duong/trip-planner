@@ -5,6 +5,7 @@ import DayTimeline from "@/components/DayTimeline";
 import PackList from "@/components/PackList";
 import HikeTable from "@/components/HikeTable";
 import PinTable from "@/components/PinTable";
+import ShopLink from "@/components/ShopLink";
 import TripMap, { BASEMAP_CHOICES, type Basemap } from "@/components/TripMap";
 import type { LngLat } from "@/lib/types";
 import { getTrip } from "@/trips";
@@ -214,6 +215,8 @@ export default function TripView({ slug }: { slug: string }) {
           </p>
         </footer>
       </div>
+
+      <ShopLink slug={trip.slug} lists={trip.shop.length} />
     </div>
   );
 }

@@ -1,6 +1,25 @@
 import type { Metadata, Viewport } from "next";
+import { Archivo, IBM_Plex_Mono, Instrument_Sans } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+
+// Self-hosted by next/font, so no request to Google at runtime and no swap flash.
+// Archivo is variable on both width and weight — the headline voice is the narrow,
+// heavy end of it, which is why the `wdth` axis has to come along.
+const display = Archivo({
+  subsets: ["latin", "latin-ext"],
+  axes: ["wdth"],
+  variable: "--f-display",
+});
+const sans = Instrument_Sans({
+  subsets: ["latin", "latin-ext"],
+  variable: "--f-sans",
+});
+const mono = IBM_Plex_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "600"],
+  variable: "--f-mono",
+});
 
 // Vercel sets this at build time, so links shared out of the group chat resolve
 // without a hardcoded domain here. Falls back to the dev server locally.
@@ -38,7 +57,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
       <body>{children}</body>
     </html>
   );

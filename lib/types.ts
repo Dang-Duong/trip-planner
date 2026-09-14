@@ -60,8 +60,20 @@ export type Day = {
   mapId?: string;
 };
 
-export type PackItem = { label: ReactNode; sub?: string };
-export type PackGroup = { title: string; items: PackItem[] };
+export type PackItem = {
+  label: ReactNode;
+  sub?: string;
+  /** Right-aligned amount. A shopping line needs one; a packing line rarely does. */
+  qty?: string;
+};
+
+export type PackGroup = {
+  title: string;
+  /** Small line under the title. Used by the shopping split to name someone’s job. */
+  eyebrow?: string;
+  note?: ReactNode;
+  items: PackItem[];
+};
 
 export type Pin = {
   when: string;
@@ -110,6 +122,10 @@ export type Trip = {
   hikes: Hike[];
   hikesNote?: ReactNode;
   pack: PackGroup[];
+  /** Who buys what. Same widget as `pack`, one group per person instead of per category. */
+  shop: PackGroup[];
+  /** Caveats the split depends on — the fridge, the bread, the settle-up. */
+  shopNotes?: ReactNode[];
   prep: PrepRow[];
   sources: Source[];
   sourcesNote?: string;

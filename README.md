@@ -10,6 +10,20 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
+## Who buys what
+
+`shop` on a trip is the grocery split — one `PackGroup` per person rather than per category, with
+`eyebrow` naming their job and `qty` carrying the amount. It renders with the **same `PackList`**
+the packing checklist uses; `storeKey` namespaces the localStorage entry so the two lists don't
+share ticks, and a card showing an eyebrow is what switches the heading from a mono category label
+to a person's name (`.pc h3:has(i)`).
+
+It lives on `/trips/[slug]/shop`, not the trip page — the split is 60-odd lines and made the plan
+too long to scroll. The trip page links out to it with the floating `ShopLink` button.
+
+`shopNotes` are the caveats the split depends on (the car fridge, bread shelf life, the settle-up)
+and render as a `.flags` list under the cards.
+
 ## Adding a trip
 
 Copy `trips/chamonix-matterhorn-2026.tsx`, edit the content, and register it in `trips/index.ts`.
@@ -66,10 +80,28 @@ map that draws raster tiles but never loads any GeoJSON, so route lines just nev
 `predev`/`prebuild`, and `TripMap` points `setWorkerUrl()` at it. Both files are gitignored so they
 can't drift from the installed version. If you upgrade maplibre and routes vanish, look here first.
 
+## Type
+
+Three faces, loaded through `next/font` in `app/layout.tsx` and self-hosted, so there is no request
+to Google at runtime and no swap flash. Each is wired to a CSS variable in `globals.css` with its
+old stack still behind it as the fallback:
+
+| Role | Face | Variable |
+| --- | --- | --- |
+| Display — `h1`, trip cards, person names | Archivo | `--display` |
+| Body | Instrument Sans | `--sans` |
+| Data, labels, quantities | IBM Plex Mono | `--mono` |
+
+Archivo is variable on **both** width and weight, and the headline voice is its narrow, heavy end —
+hence `font-stretch: 78%` on `h1`. `axes: ["wdth"]` is what pulls the width axis in, and next/font
+rejects it alongside a `weight` array: with `axes` set, the weight must be omitted (the whole
+variable range comes along) or be `"variable"`.
+
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind v4 · MapLibre GL · localStorage for the packing
-checkboxes (per person, per device — deliberately not shared). No backend, no auth, no database.
+Next.js (App Router) · TypeScript · Tailwind v4 · MapLibre GL · localStorage for the packing and
+shopping checkboxes (per person, per device — deliberately not shared). No backend, no auth, no
+database.
 
 Deploys to Vercel; both routes are prerendered as static HTML.
 

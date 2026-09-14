@@ -75,8 +75,17 @@ function usePacked(key: string) {
   return [done, store.write] as const;
 }
 
-export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: string }) {
-  const [done, write] = usePacked(`pack:${slug}:v1`);
+export default function PackList({
+  groups,
+  slug,
+  storeKey = "pack",
+}: {
+  groups: PackGroup[];
+  slug: string;
+  /** Namespaces the localStorage entry, so two lists on one page don’t share ticks. */
+  storeKey?: string;
+}) {
+  const [done, write] = usePacked(`${storeKey}:${slug}:v1`);
 
   const ids = useMemo(
     () => groups.flatMap((g, gi) => g.items.map((_, ii) => `${gi}.${ii}`)),
@@ -94,13 +103,15 @@ export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: 
   return (
     <>
       <div className="bar">
-        <span className="mono fine" id="pack-count">
+        <span className="mono fine" id={`${storeKey}-count`}>
           {count} / {ids.length}
         </span>
         <span
           className="pr"
           role="progressbar"
-          aria-labelledby="pack-count"
+          // Two lists share this component on one page, so the id has to be per-list
+          // or the second progressbar labels itself with the first one's count.
+          aria-labelledby={`${storeKey}-count`}
           aria-valuenow={count}
           aria-valuemin={0}
           aria-valuemax={ids.length}
@@ -115,7 +126,11 @@ export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: 
       <div className="pack">
         {groups.map((group, gi) => (
           <div className="pc" key={group.title}>
-            <h3>{group.title}</h3>
+            <h3>
+              {group.title}
+              {group.eyebrow && <i>{group.eyebrow}</i>}
+            </h3>
+            {group.note && <p className="pn">{group.note}</p>}
             <ul>
               {group.items.map((item, ii) => {
                 const id = `${gi}.${ii}`;
@@ -127,6 +142,7 @@ export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: 
                         {item.label}
                         {item.sub && <s>{item.sub}</s>}
                       </span>
+                      {item.qty && <b className="qty">{item.qty}</b>}
                     </label>
                   </li>
                 );

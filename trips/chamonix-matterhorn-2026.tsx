@@ -800,6 +800,277 @@ export const chamonixMatterhorn2026: Trip = {
     },
   ],
 
+  shop: [
+    {
+      title: "Fatboi Tomáš",
+      eyebrow: "Grill station",
+      note: (
+        <>
+          Buys <b>no food at all</b> — the grill is his stake in the trip, and nothing gets cooked
+          on any night without it.
+        </>
+      ),
+      items: [
+        { label: "Grill station + flat top for the KBBQ" },
+        { label: "Charcoal or gas", qty: "5–6 kg" },
+        { label: "Firelighters + two lighters" },
+        { label: "Tongs + kitchen scissors", qty: "2 sets" },
+        { label: "Foil trays + grill brush" },
+        { label: <b>Big pot</b>, sub: "Nothing else we own holds 14 portions", qty: "5 L+" },
+      ],
+    },
+    {
+      title: "Čongus",
+      eyebrow: "Stove, gas, cookware",
+      note: (
+        <>
+          The little Forclaz does morning coffee and night three. <b>Check which fitting it takes</b>{" "}
+          before buying gas — screw-on and clip-on cartridges are not interchangeable, and you
+          can’t sort that out at the campsite.
+        </>
+      ),
+      items: [
+        { label: "Gas cartridges", sub: "Never leave one in a hot car", qty: "4 × 230 g" },
+        { label: "Second pot + kettle" },
+        { label: <b>Sharp knife + board</b>, sub: "KBBQ is non-stop cutting — the most forgotten item here" },
+        { label: "Spare headtorch + power bank" },
+        { label: "Drinks, your own taste", qty: "your call" },
+      ],
+    },
+    {
+      title: "Bobr",
+      eyebrow: "KBBQ meat",
+      note: (
+        <>
+          Buy it <b>the day we leave</b> and freeze it solid overnight — it thaws on the drive and
+          chills the cool box on the way. Ask the butcher for 5 mm slices; you can’t cut bůček that
+          thin at camp.
+        </>
+      ),
+      items: [
+        { label: "Pork belly, sliced 5 mm", qty: "2,5 kg" },
+        { label: "Beef for bulgogi, thin sliced", qty: "1,5 kg" },
+        { label: "Boneless chicken thigh", qty: "1,2 kg" },
+        { label: "Kimchi in jars", sub: "Fermented — it keeps without a fridge", qty: "1,5 kg" },
+      ],
+    },
+    {
+      title: "FandusChcankus",
+      eyebrow: "KBBQ vegetables",
+      note: (
+        <>
+          Everything that goes on the plate beside the meat, plus lettuce for <b>ssam</b> — the
+          wrap that makes it Korean rather than just grilled pork.
+        </>
+      ),
+      items: [
+        { label: "Butterhead or gem lettuce", qty: "5 heads" },
+        { label: "Mushrooms, king oyster if there are any", qty: "800 g" },
+        { label: "Onions", qty: "6" },
+        { label: "Courgettes", qty: "3" },
+        { label: "Spring onions", qty: "1 bunch" },
+        { label: "Garlic", qty: "3 heads" },
+        { label: "Carrots", qty: "4" },
+      ],
+    },
+    {
+      title: "Vien",
+      eyebrow: "Asian shop",
+      note: (
+        <>
+          One run to SAPA covers half the trip. <b>Go with BM</b> — the soju is in the same aisle,
+          and there is no reason to drive out there twice.
+        </>
+      ),
+      items: [
+        { label: <b>Instant noodles (mi tom)</b>, sub: "Night three lives on these", qty: "20" },
+        { label: "Rice", qty: "2,5 kg" },
+        { label: "Gochujang", qty: "500 g" },
+        { label: "Ssamjang, ready made", qty: "1 tub" },
+        { label: "Soy sauce", qty: "1 L" },
+        { label: "Sesame oil + sesame seeds", qty: "250 ml" },
+        { label: "Mirin, brown sugar, nori" },
+        { label: "Perilla leaves, if they have them", qty: "2 packs" },
+      ],
+    },
+    {
+      title: "Hokage",
+      eyebrow: "Bread and cold cuts",
+      note: (
+        <>
+          The Czech carbs. Rohlíky only for the drive — <b>they do not survive the week</b>, see the
+          notes under this list.
+        </>
+      ),
+      items: [
+        { label: "Rohlíky", sub: "Drive + first morning only", qty: "20" },
+        { label: "Šumava / kmínový chléb", qty: "2 loaves" },
+        { label: "Toast bread", qty: "2 packs" },
+        { label: "Tortillas", sub: "Best weight-to-calorie ratio in the rucksack", qty: "2 packs" },
+        { label: <b>Trvanlivý salám</b>, sub: "Poličan, Herkules, Vysočina — no fridge needed", qty: "1,5 kg" },
+        { label: "Vacuum-packed šunka", sub: "First two days only", qty: "500 g" },
+        { label: "Eidam block + tavený sýr", qty: "1 kg + 10" },
+        { label: "Butter, jam, Nutella, Májka" },
+      ],
+    },
+    {
+      title: "Paprikason",
+      eyebrow: "Mornings",
+      note: (
+        <>
+          No fridge, so <b>UHT milk</b> and no yoghurt. A moka pot beats a french press on a camp
+          stove — one burner, no timing.
+        </>
+      ),
+      items: [
+        { label: "Ground coffee", qty: "500 g" },
+        { label: "Moka pot + a jar of instant", sub: "Instant is for the 06:00 starts" },
+        { label: "Tea, black + fruit for the kids", qty: "2 boxes" },
+        { label: <b>UHT milk</b>, qty: "2 L" },
+        { label: "Sugar", qty: "1 kg" },
+        { label: "Oats / muesli", qty: "2 kg" },
+      ],
+    },
+    {
+      title: "BMLock-in",
+      eyebrow: "Soju and beer",
+      note: (
+        <>
+          <b>Buy it at home.</b> Soju in Switzerland costs what lunch costs. Mix the flavours —
+          not everyone drinks the original.
+        </>
+      ),
+      items: [
+        { label: "Soju, mixed flavours", qty: "12 × 360 ml" },
+        { label: "Beer for somaek", qty: "20 × 0,5 L" },
+      ],
+    },
+    {
+      title: "Filipino",
+      eyebrow: "Caffeine",
+      note: (
+        <>
+          Tradition obliges. Works out at six or seven cans each. <b>Buy in Czechia</b> — a Swiss
+          can is three francs.
+        </>
+      ),
+      items: [
+        { label: "Red Bull", qty: "3 × 24" },
+        { label: "Something for the summit day", qty: "your call" },
+      ],
+    },
+    {
+      title: "Crispy Pork Davinki",
+      eyebrow: "Drinks",
+      note: (
+        <>
+          A third of the group’s drinks, <b>whatever you actually want to drink</b>. Coordinate with
+          Femboi and Čongus so we don’t arrive with three of the same thing.
+        </>
+      ),
+      items: [
+        { label: "Beer / cider / whatever", qty: "your call" },
+        { label: "Something soft with dinner", qty: "6–8 L" },
+      ],
+    },
+    {
+      title: "FemboiTommy",
+      eyebrow: "Drinks",
+      note: (
+        <>
+          The other third, same rule — <b>your taste, your call</b>. One of you please remember a
+          bottle opener.
+        </>
+      ),
+      items: [
+        { label: "Beer / wine / whatever", qty: "your call" },
+        { label: "Juice or limo for the kids", qty: "6 L" },
+        { label: <b>Bottle opener + can opener</b> },
+      ],
+    },
+    {
+      title: "Chipi",
+      eyebrow: "Water",
+      note: (
+        <>
+          Easy job — <b>it all goes in the car</b>, nothing gets carried. Water is still the first
+          thing the group runs out of.
+        </>
+      ),
+      items: [{ label: "Bottled water", qty: "2 × 6 × 1,5 L" }],
+    },
+    {
+      title: "Tuty",
+      eyebrow: "Water and tableware",
+      note: (
+        <>
+          Also straight into the car. Get the <b>sturdy</b> plates, not the cheapest — a Korean
+          grill beats paper ones in one round.
+        </>
+      ),
+      items: [
+        { label: "Bottled water", qty: "2 × 6 × 1,5 L" },
+        { label: "Cups, plates, cutlery", qty: "for 20" },
+      ],
+    },
+    {
+      title: "Meloun",
+      eyebrow: "Water and clean-up",
+      note: (
+        <>
+          The dull list that matters most: alpine sites are strict, and <b>everything we bring in
+          leaves with us</b>.
+        </>
+      ),
+      items: [
+        { label: "Bottled water", qty: "2 × 6 × 1,5 L" },
+        { label: "Bin bags", qty: "2 rolls" },
+        { label: "Kitchen roll + wet wipes" },
+        { label: "Washing-up liquid, sponge, tea towel" },
+        { label: "Aluminium foil", sub: "Potatoes go in the embers on night two" },
+      ],
+    },
+  ],
+
+  shopNotes: [
+    <>
+      <b>The car fridge only runs while the engine does.</b> Fresh meat is night one and nothing
+      else. Buy it the day we leave, freeze it solid overnight, and it thaws on the drive while
+      chilling everything packed around it. A cool box with ice packs is not optional.
+    </>,
+    <>
+      <b>Rohlík will not make it to the last day.</b> Lean dough with almost no fat: it doesn’t go
+      mouldy, it goes hard — tough on day two, a weapon on day three. Twenty for the drive and the
+      first morning, then Šumava (4–5 days), toast bread (5–7) and tortillas (weeks). Anything
+      stale gets toasted on the grill and is fine.
+    </>,
+    <>
+      <b>Šunka is a day-one-or-two item</b> and lives in the cool box. Trvanlivý salám, tavený sýr
+      and Májka need no fridge at all — that is the food that actually goes in the rucksack.
+    </>,
+    <>
+      <b>Nights two and three cook without a fridge.</b> Two: vacuum-packed klobásy and foil-wrapped
+      potatoes in the embers, with whatever vegetables survived night one. Three: mi tom on the
+      small stove with sliced salám, the last of the kimchi and tavený sýr melted over the top —
+      budae jjigae by accident, and precisely what will be left.
+    </>,
+    <>
+      <b>Trail snacks are everyone’s own.</b> Bring what you will actually eat, carry it yourself,
+      it is yours. Nobody is buying 14 people’s müsli bars.
+    </>,
+    <>
+      <b>Buy in Czechia, top up in France, buy nothing in Switzerland</b> — Swiss groceries run two
+      to three times the price and Zermatt more. French supermarkets shut on Sunday afternoon and
+      Swiss ones all day Sunday, so the shop is Saturday. Gas cartridges aren’t in supermarkets;
+      Decathlon in Sallanches has them.
+    </>,
+    <>
+      <b>Photograph every receipt.</b> The categories are wildly unequal — the meat run is ten
+      times the bin bags — so we total up at the end and split across 14. Tomáš sits out the food
+      split; the grill and the charcoal are his share.
+    </>,
+  ],
+
   prep: [
     {
       what: (
