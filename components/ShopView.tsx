@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import BackLink from "@/components/BackLink";
 import PackList from "@/components/PackList";
 import { getTrip } from "@/trips";
 
@@ -12,7 +12,7 @@ export default function ShopView({ slug }: { slug: string }) {
   const items = trip.shop.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <div className="idx">
+    <div className="shop-page">
       <header className="phead">
         <span className="blz" aria-hidden="true">
           <i />
@@ -55,11 +55,7 @@ export default function ShopView({ slug }: { slug: string }) {
         )}
       </section>
 
-      <footer>
-        <p className="fine">
-          <Link href={`/trips/${trip.slug}`}>← Back to the plan</Link>
-        </p>
-      </footer>
+      <BackLink slug={trip.slug} />
     </div>
   );
 }
