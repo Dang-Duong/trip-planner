@@ -21,6 +21,11 @@ to a person's name (`.pc h3:has(i)`).
 It lives on `/trips/[slug]/shop`, not the trip page — the split is 60-odd lines and made the plan
 too long to scroll. The trip page links out to it with the floating `ShopLink` button.
 
+The grid is two cards at most (one below 880px), because fourteen narrow columns of
+short items read as a stack of gaps. Past 1180px a card is wide enough that the person
+moves *beside* their list rather than above it — that is grid placement on the existing
+three children, so the markup is identical at every width.
+
 `shopNotes` are the caveats the split depends on (the car fridge, bread shelf life, the settle-up)
 and render as a `.flags` list under the cards.
 
