@@ -14,7 +14,7 @@ export default function ShopList({
   boughtLabel: string;
   resetLabel: string;
 }) {
-  const { done, toggle, clear } = useChecklist(`shop:${slug}:v1`);
+  const { done, toggle, clear } = useChecklist(`shop:${slug}:v2`);
 
   const total = people.reduce((n, p) => n + p.items.length, 0);
   const bought = people.reduce(

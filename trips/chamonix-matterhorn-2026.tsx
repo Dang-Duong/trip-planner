@@ -935,18 +935,18 @@ export const chamonixMatterhorn2026: Trip = {
           job: "Mornings and sauces",
           note: (
             <>
-              Coffee for four or five of us, not fourteen — <b>250 g is plenty</b>, and the instant
-              covers whoever else wants one. No fridge, so UHT milk and no yoghurt. The jam and the
-              Nutella are breakfast too, so they live on this list.
+              Coffee for four or five of us, not fourteen, and <b>no pot to brew it in</b> — so it is
+              turek. Breakfast is bread and spreads, which is why there is no milk, sugar or oats on
+              here.
             </>
           ),
           items: [
-            { label: "Ground coffee", sub: "Four or five coffee drinkers, not the whole group", qty: "250 g" },
-            { label: "Moka pot, if nobody already owns one, + a small jar of instant" },
+            {
+              label: "Ground coffee",
+              sub: "No pot, so it is turek — grounds in the mug, hot water on top",
+              qty: "250 g",
+            },
             { label: "Tea, black + fruit", qty: "2 boxes" },
-            { label: <b>UHT milk</b>, qty: "2 L" },
-            { label: "Sugar", qty: "1 kg" },
-            { label: "Oats / muesli", qty: "2 kg" },
             { label: "Gochujang", sub: "Asian shop or a big Albert", qty: "500 g" },
             { label: "Soy sauce", qty: "1 L" },
             { label: "Butter, jam, Nutella, Májka" },
@@ -1226,18 +1226,17 @@ export const chamonixMatterhorn2026: Trip = {
           job: "Rána a omáčky",
           note: (
             <>
-              Kafe pro čtyři pět lidí, ne pro čtrnáct — <b>250 g bohatě stačí</b> a instantní pokryje
-              zbytek. Bez lednice, takže trvanlivé mléko a žádné jogurty. Džem a Nutella jsou taky
-              snídaně, takže patří sem.
+              Kafe pro čtyři pět lidí, ne pro čtrnáct, a <b>není v čem ho dělat</b> — takže turek.
+              Snídaně je chleba a pomazánky, proto tu není mléko, cukr ani vločky.
             </>
           ),
           items: [
-            { label: "Mletá káva", sub: "Kafe pije čtyři pět lidí, ne celá parta", qty: "250 g" },
-            { label: "Moka konvice, pokud ji nikdo nemá, + malá sklenice instantní" },
+            {
+              label: "Mletá káva",
+              sub: "Konvice žádná, takže turek — mletá do hrnku a zalít",
+              qty: "250 g",
+            },
             { label: "Čaj, černý + ovocný", qty: "2 krabičky" },
-            { label: <b>Trvanlivé mléko</b>, qty: "2 L" },
-            { label: "Cukr", qty: "1 kg" },
-            { label: "Vločky / müsli", qty: "2 kg" },
             { label: "Gochujang", sub: "Asijský obchod nebo větší Albert", qty: "500 g" },
             { label: "Sójová omáčka", qty: "1 L" },
             { label: "Máslo, džem, Nutella, Májka" },
