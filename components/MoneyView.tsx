@@ -9,10 +9,9 @@ import { getTrip } from "@/trips";
 const CURRENCIES = Object.keys(RATES) as Currency[];
 const NO_EXPENSES: Expense[] = [];
 
-/** Minor units in, "1 240 Kč" out. cs-CZ groups with a non-breaking space, which is
- *  what we want — an amount should never wrap across two lines. */
-const fmt = (minor: number) =>
-  (minor / 100).toLocaleString("cs-CZ", { maximumFractionDigits: 0 });
+/** Whole crowns in, "1 240" out. cs-CZ groups with a non-breaking space, which is what
+ *  we want — an amount should never wrap across two lines. */
+const fmt = (czk: number) => czk.toLocaleString("cs-CZ");
 
 export default function MoneyView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
