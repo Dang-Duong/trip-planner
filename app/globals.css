@@ -600,3 +600,8 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 @media(max-width:560px){
   .money-paid{margin-left:0;width:100%}
 }
+/* A count on a packing line, for the few where the number is the point. */
+.pc label:has(.pc-qty){grid-template-columns:1rem 1fr auto}
+.pc-qty{font-family:var(--mono);font-size:.68rem;font-weight:400;color:var(--stone);
+  font-variant-numeric:tabular-nums;padding-top:.08rem}
+.pc .tick:checked~.pc-qty{opacity:.4}

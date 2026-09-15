@@ -5,7 +5,7 @@ import { useChecklist } from "@/lib/local-state";
 import type { PackGroup } from "@/lib/types";
 
 export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: string }) {
-  const { done, toggle, clear } = useChecklist(`pack:${slug}:v1`);
+  const { done, toggle, clear } = useChecklist(`pack:${slug}:v2`);
 
   const ids = useMemo(
     () => groups.flatMap((g, gi) => g.items.map((_, ii) => `${gi}.${ii}`)),
@@ -55,6 +55,7 @@ export default function PackList({ groups, slug }: { groups: PackGroup[]; slug: 
                         {item.label}
                         {item.sub && <s>{item.sub}</s>}
                       </span>
+                      {item.qty && <b className="pc-qty">{item.qty}</b>}
                     </label>
                   </li>
                 );

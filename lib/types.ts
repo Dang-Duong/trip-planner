@@ -60,7 +60,12 @@ export type Day = {
   mapId?: string;
 };
 
-export type PackItem = { label: ReactNode; sub?: string };
+export type PackItem = {
+  label: ReactNode;
+  sub?: string;
+  /** How many. Only worth stating where it isn't obvious — socks, not a tent. */
+  qty?: string;
+};
 export type PackGroup = { title: string; items: PackItem[] };
 
 export type ShopItem = {
