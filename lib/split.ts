@@ -77,7 +77,10 @@ export function balances(expenses: Expense[], people: string[]): Map<string, num
   let pot = 0;
 
   for (const e of expenses) {
-    const who = e.shares.filter((p) => owed.has(p));
+    // Deduplicate: a name listed twice would be charged twice while the books still
+    // balanced, so the error is silent. The checkboxes can't produce it, but this data
+    // comes out of localStorage.
+    const who = [...new Set(e.shares)].filter((p) => owed.has(p));
     // Skip rather than half-apply: crediting nobody while still debiting the sharers
     // would invent money, and the balances would stop summing to zero.
     if (!who.length || !paid.has(e.payer)) continue;

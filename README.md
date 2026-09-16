@@ -72,6 +72,15 @@ Two things it exists to protect:
   money they cannot send.
 - **`settle()` is greedy, not optimal.** Largest debtor against largest creditor, at most
   n−1 transfers. Genuinely minimal is NP-hard and nobody cares.
+- **A name listed twice in `shares` is one sharer.** Without deduplicating, the books
+  still balanced while quietly charging that person double — the worst kind of wrong,
+  because nothing looks off. The checkboxes can't produce it; localStorage can.
+
+`npm run check` ends with 2 000 fuzzed scenarios — random crew sizes, amounts,
+currencies, share subsets, outsiders, duplicates, zeros, refunds and settlements —
+asserting only what must hold of any of them: balances are whole and sum to zero, no
+self-transfers, no zero or fractional transfers, at most n−1 of them, and everyone sits
+at zero once they're applied. Seeded, so a failure reproduces.
 
 **Marking a transfer paid records a payment, it doesn't set a flag.** The transfer list
 is derived from the receipts, so it reshuffles whenever one is added — a "paid" tick

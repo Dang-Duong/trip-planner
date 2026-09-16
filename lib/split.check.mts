@@ -155,7 +155,118 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
   }
 }
 
+// A name listed twice is one sharer, not two. The books balance either way, so this
+// error is silent — it just quietly charges somebody double.
+{
+  const three = ["A", "B", "C"];
+  const net = balances(
+    [{ id: "1", what: "x", amount: 30000, currency: "CZK", payer: "A", shares: ["A", "B", "B"] }],
+    three,
+  );
+  assert.equal(net.get("A"), 150, "A paid 300 and shares it with B: owed 150 back");
+  assert.equal(net.get("B"), -150, "B is one sharer however many times they are listed");
+  assert.equal(net.get("C"), 0, "not on the expense");
+}
+
+// Paying for something only you consumed changes nothing.
+{
+  const net = balances(
+    [{ id: "1", what: "x", amount: 30000, currency: "CZK", payer: "A", shares: ["A"] }],
+    ["A", "B"],
+  );
+  assert.equal(net.get("A"), 0);
+  assert.equal(net.get("B"), 0);
+}
+
+// A refund is a negative expense and inverts cleanly.
+{
+  const net = balances(
+    [{ id: "1", what: "refund", amount: -30000, currency: "CZK", payer: "A", shares: ["A", "B"] }],
+    ["A", "B"],
+  );
+  assert.equal(net.get("A"), -150);
+  assert.equal(net.get("B"), 150);
+  assert.equal(sum([...net.values()]), 0);
+}
+
+// Overpaying a settlement flips who is owed, rather than clamping at zero.
+{
+  const net = balances(
+    [
+      { id: "1", what: "x", amount: 30000, currency: "CZK", payer: "A", shares: ["A", "B"] },
+      { id: "2", what: "B → A", amount: 50000, currency: "CZK", payer: "B", shares: ["A"], settlement: true },
+    ],
+    ["A", "B"],
+  );
+  assert.equal(net.get("B"), 350, "B owed 150 and paid 500, so is owed 350");
+  assert.equal(sum([...net.values()]), 0);
+}
+
 // Nobody owes anybody when nothing has been bought.
 assert.deepEqual(settle(balances([], people)), []);
 
-console.log("split: all checks passed");
+// --- fuzz ---
+// The cases above are the ones someone thought of. This is the rest: randomised people,
+// amounts, currencies, share subsets, outsiders, duplicates, zeros, refunds and
+// settlements, asserting only what must be true of any of them.
+{
+  // Deterministic, so a failure reproduces from its seed.
+  const rng = (seed: number) => () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+  const CURR = ["CZK", "EUR", "CHF"] as const;
+  const outsiders = ["Ghost", "Typo", ""];
+
+  for (let seed = 1; seed <= 2000; seed++) {
+    const r = rng(seed);
+    const pick = <T,>(xs: readonly T[]) => xs[Math.floor(r() * xs.length)];
+    const n = 1 + Math.floor(r() * 20);
+    const crew = Array.from({ length: n }, (_, i) => `P${i}`);
+
+    const xs: Expense[] = [];
+    for (let i = 0; i < Math.floor(r() * 30); i++) {
+      const who: string[] = [];
+      for (const p of crew) if (r() < 0.6) who.push(p);
+      if (r() < 0.1) who.push(pick(outsiders));
+      if (r() < 0.08 && who.length) who.push(who[0]);
+
+      let amount = Math.floor(r() * 200000);
+      if (r() < 0.05) amount = 0;
+      if (r() < 0.04) amount = -Math.floor(r() * 50000);
+
+      xs.push({
+        id: `e${i}`,
+        what: "x",
+        amount,
+        currency: pick(CURR),
+        payer: r() < 0.08 ? pick(outsiders) : pick(crew),
+        shares: who,
+        ...(r() < 0.12 ? { settlement: true } : {}),
+      });
+    }
+
+    const net = balances(xs, crew);
+    const vals = [...net.values()];
+    assert.equal(net.size, n, `seed ${seed}: everyone needs a balance`);
+    for (const v of vals) assert.ok(Number.isInteger(v), `seed ${seed}: non-integer balance ${v}`);
+    assert.equal(sum(vals), 0, `seed ${seed}: balances do not sum to zero`);
+
+    const moves = settle(net);
+    assert.ok(moves.length <= Math.max(n - 1, 0), `seed ${seed}: ${moves.length} transfers for ${n}`);
+
+    const after = new Map(net);
+    for (const t of moves) {
+      assert.ok(t.from !== t.to, `seed ${seed}: self-transfer`);
+      assert.ok(t.amount > 0 && Number.isInteger(t.amount), `seed ${seed}: ${t.amount} Kč transfer`);
+      after.set(t.from, after.get(t.from)! + t.amount);
+      after.set(t.to, after.get(t.to)! - t.amount);
+    }
+    for (const [p, v] of after) assert.equal(v, 0, `seed ${seed}: ${p} left at ${v}`);
+  }
+}
+
+console.log("split: all checks passed, including 2 000 fuzzed scenarios");
