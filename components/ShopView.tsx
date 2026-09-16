@@ -9,8 +9,8 @@ import { getTrip } from "@/trips";
 
 const COPY = {
   en: {
-    title: "Who buys what",
-    people: "People",
+    title: "What to buy",
+    people: "Shops",
     items: "Items",
     meat: "Meat",
     water: "Water",
@@ -24,8 +24,8 @@ const COPY = {
     switchTo: "Přepnout do češtiny",
   },
   cs: {
-    title: "Kdo co kupuje",
-    people: "Lidí",
+    title: "Co koupit",
+    people: "Obchodů",
     items: "Položek",
     meat: "Maso",
     water: "Voda",
@@ -66,7 +66,7 @@ export default function ShopView({ slug }: { slug: string }) {
 
   const t = COPY[lang];
   const content = trip.shop[lang];
-  const items = content.people.reduce((n, p) => n + p.items.length, 0);
+  const items = content.groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <div className="shop">
@@ -101,7 +101,7 @@ export default function ShopView({ slug }: { slug: string }) {
         <dl className="shop-vitals">
           <div>
             <dt>{t.people}</dt>
-            <dd>{content.people.length}</dd>
+            <dd>{content.groups.length}</dd>
           </div>
           <div>
             <dt>{t.items}</dt>
@@ -122,7 +122,7 @@ export default function ShopView({ slug }: { slug: string }) {
           different sets of strings into the same nodes. */}
       <ShopList
         key={lang}
-        people={content.people}
+        groups={content.groups}
         slug={trip.slug}
         boughtLabel={t.bought}
         resetLabel={t.reset}

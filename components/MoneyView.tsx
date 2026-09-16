@@ -17,7 +17,7 @@ const fmt = (czk: number) => czk.toLocaleString("cs-CZ");
 
 export default function MoneyView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
-  const people = useMemo(() => trip?.shop.en.people.map((p) => p.name) ?? [], [trip]);
+  const people = useMemo(() => trip?.people ?? [], [trip]);
 
   const [expenses, write] = useStoredJson<Expense[]>(`money:${slug}:v1`, NO_EXPENSES);
   const [what, setWhat] = useState("");
@@ -55,8 +55,7 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   if (!trip) return null;
 
-  // Anyone on a list that includes alcohol; the three youngest are the ones this exists for.
-  const drinkers = people.filter((p) => !["Chipi", "Tuty", "Meloun"].includes(p));
+  const drinkers = people.filter((p) => !trip.noAlcohol.includes(p));
 
   const valid = Number(amount) > 0 && payer && shares.length > 0;
 
@@ -311,8 +310,8 @@ export default function MoneyView({ slug }: { slug: string }) {
       <Fab
         variant="back"
         href={`/trips/${trip.slug}/shop`}
-        label="Back to the lists"
-        sub="Who buys what"
+        label="Back to the list"
+        sub="What to buy"
         icon={ARROW}
       />
     </div>

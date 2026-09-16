@@ -75,21 +75,21 @@ export type ShopItem = {
   qty?: string;
 };
 
-/** One person's share of the shopping. */
-export type ShopPerson = {
-  name: string;
-  /** What they are covering, e.g. "KBBQ meat". Shown under the name. */
-  job: string;
+/** A block of the shopping, grouped by where you buy it rather than by who buys it. */
+export type ShopGroup = {
+  title: string;
+  /** Short hint under the title — where, or when. */
+  hint?: string;
   note?: ReactNode;
   items: ShopItem[];
 };
 
 export type Lang = "en" | "cs";
 
-/** The whole split in one language. Names stay as they are — nobody translates a nickname. */
+/** The whole list in one language. */
 export type ShopContent = {
   lede: ReactNode;
-  people: ShopPerson[];
+  groups: ShopGroup[];
   /** Caveats the split depends on — the fridge, the bread, the settle-up. */
   notes: ReactNode[];
 };
@@ -131,6 +131,10 @@ export type Trip = {
   /** Index-card line. Omits the dates — the card already shows them. */
   blurb: string;
   stats: Stat[];
+  /** Everyone on the trip. The settle-up splits between these names. */
+  people: string[];
+  /** Who doesn't share an alcohol bill — the one-click preset on the settle-up page. */
+  noAlcohol: string[];
   waypoints: Waypoint[];
   maps: MapView[];
   pins: Pin[];

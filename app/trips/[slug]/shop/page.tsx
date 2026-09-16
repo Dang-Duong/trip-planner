@@ -13,8 +13,8 @@ export async function generateMetadata({
   const trip = getTrip((await params).slug);
   if (!trip) return {};
   return {
-    title: `Who buys what · ${trip.title} ${trip.titleTail ?? ""}`.replace(/\s+/g, " ").trim(),
-    description: `The shopping split for ${trip.dates} — one category each, so nobody buys the same thing twice.`,
+    title: `What to buy · ${trip.title} ${trip.titleTail ?? ""}`.replace(/\s+/g, " ").trim(),
+    description: `The whole shopping list for ${trip.dates}, grouped by where you buy it.`,
   };
 }
 

@@ -1,24 +1,24 @@
 "use client";
 
 import { useChecklist } from "@/lib/local-state";
-import type { ShopPerson } from "@/lib/types";
+import type { ShopGroup } from "@/lib/types";
 
 export default function ShopList({
-  people,
+  groups,
   slug,
   boughtLabel,
   resetLabel,
 }: {
-  people: ShopPerson[];
+  groups: ShopGroup[];
   slug: string;
   boughtLabel: string;
   resetLabel: string;
 }) {
-  const { done, toggle, clear } = useChecklist(`shop:${slug}:v2`);
+  const { done, toggle, clear } = useChecklist(`shop:${slug}:v3`);
 
-  const total = people.reduce((n, p) => n + p.items.length, 0);
-  const bought = people.reduce(
-    (n, p, pi) => n + p.items.filter((_, ii) => done.has(`${pi}.${ii}`)).length,
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
+  const bought = groups.reduce(
+    (n, g, gi) => n + g.items.filter((_, ii) => done.has(`${gi}.${ii}`)).length,
     0,
   );
 
@@ -46,31 +46,31 @@ export default function ShopList({
         </button>
       </div>
 
-      {/* Multi-column rather than grid: the lists run from one item to eight, and a grid
+      {/* Multi-column rather than grid: the blocks run from three items to ten, and a grid
           row sizes every card to the tallest in it, which left half of them as voids. */}
       <div className="shop-cols">
-        {people.map((person, pi) => {
-          const mine = person.items.filter((_, ii) => done.has(`${pi}.${ii}`)).length;
-          const complete = mine === person.items.length;
+        {groups.map((group, gi) => {
+          const got = group.items.filter((_, ii) => done.has(`${gi}.${ii}`)).length;
+          const complete = got === group.items.length;
 
           return (
-            <article className="sc" key={person.name} data-complete={complete}>
+            <article className="sc" key={group.title} data-complete={complete}>
               <header className="sc-head">
                 <div>
-                  <h3>{person.name}</h3>
-                  <span className="sc-job">{person.job}</span>
+                  <h3>{group.title}</h3>
+                  {group.hint && <span className="sc-job">{group.hint}</span>}
                 </div>
-                <span className="sc-n" aria-label={`${mine} / ${person.items.length} ${boughtLabel}`}>
-                  {mine}
-                  <i>/{person.items.length}</i>
+                <span className="sc-n" aria-label={`${got} / ${group.items.length} ${boughtLabel}`}>
+                  {got}
+                  <i>/{group.items.length}</i>
                 </span>
               </header>
 
-              {person.note && <p className="sc-note">{person.note}</p>}
+              {group.note && <p className="sc-note">{group.note}</p>}
 
               <ul className="sc-items">
-                {person.items.map((item, ii) => {
-                  const id = `${pi}.${ii}`;
+                {group.items.map((item, ii) => {
+                  const id = `${gi}.${ii}`;
                   return (
                     <li key={id}>
                       <label>

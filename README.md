@@ -10,40 +10,42 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
-## Who buys what
+## What to buy
 
-`shop` on a trip is the grocery split — one `ShopPerson` per person, with `job` naming
-what they cover and `qty` on each item. It lives at `/trips/[slug]/shop`, not on the trip
-page; at sixty-odd items it made the plan too long to scroll. The trip page links out to
-it with the floating `ShopLink` button, and `BackLink` comes back.
+`shop` is one list grouped by **where you buy it** — Asian shop, butcher, greengrocer,
+supermarket, drinks, grill & fuel, table & clean-up, and a "bring, don't buy" block for
+things out of someone's kitchen. Nobody is assigned anything: whoever is going to that
+shop picks up whatever isn't ticked.
 
-`ShopList` and `PackList` are deliberately **separate components** with separate looks.
-They share only `useChecklist` in `lib/checklist.ts` — the localStorage store — under
-different keys, so the two lists never share ticks. An earlier version reused `PackList`
-for both; the packing grid welds its cards together with a `gap: 1px` rule background,
-which is right for a dense category list and wrong for fourteen separate assignments.
+It used to be one list per person, which existed to stop double-buying *and* to keep the
+cost fair. The settle-up page does the fairness half properly now, so per-person
+assignment was only earning its keep for "don't buy the meat twice" — which a shared
+ticked list does just as well, without pinning anyone to a shop they aren't near.
+
+It lives at `/trips/[slug]/shop`, with `ShopList` rendering the groups. Both languages
+are separate arrays and **their order is load-bearing**: a tick is stored as
+`<group index>.<item index>`, so `shop.en.groups` and `shop.cs.groups` must hold the same
+groups in the same order with the same items in the same order, or ticks shift onto the
+wrong lines when you switch language. Add, remove or move an item in both, or not at all.
 
 Two things in `ShopList` are load-bearing:
 
-- **Multi-column, not grid.** The lists run from one item to eight. A grid row sizes
+- **Multi-column, not grid.** The blocks run from three items to ten. A grid row sizes
   every card to the tallest card in it, so half of them ended as voids. `columns: 2`
   packs them; `display: inline-block` on the card is what makes `break-inside: avoid`
   hold up across browsers.
 - **Colour encodes state, not category.** The left rail is the blaze accent until a
-  person's list is complete, then it goes to `--stone` and the card stands down. That is
-  the only colour the card spends.
+  block is fully ticked, then it goes to `--stone` and the card stands down. That is the
+  only colour the card spends.
 
-`notes` are the caveats the split depends on (the car fridge, bread shelf life, the
-settle-up) and render under the cards.
+`notes` are the caveats the list depends on (the car fridge, bread shelf life, entering
+receipts) and render under the cards.
 
-**Both languages are one array each, and their order is load-bearing.** A tick is stored
-as `<person index>.<item index>`, so a person keeps their ticks across a language switch
-only while `shop.en.people` and `shop.cs.people` hold the same people in the same order,
-each with the same items in the same order. Reorder one and everyone's ticks silently
-shift to the wrong lines. Add, remove or move an item in both, or not at all.
+The roster itself is `people` on the trip, not on the shopping — the settle-up splits
+between those names, and `noAlcohol` drives the one-click preset there.
 
 The switcher writes the choice to localStorage and reads it back through
-`useStoredChoice` in `lib/checklist.ts` — same `useSyncExternalStore` shape as the
+`useStoredChoice` in `lib/local-state.ts` — same `useSyncExternalStore` shape as the
 checklists, so the server snapshot ("en") and the first client render agree and the
 stored value lands on the pass after hydration. Reading localStorage into `useState`
 from an effect would hydrate English and then flip, which is both a flash and a lint

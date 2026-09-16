@@ -219,8 +219,8 @@ export default function TripView({ slug }: { slug: string }) {
       <Fab
         variant="launch"
         href={`/trips/${trip.slug}/shop`}
-        label="Who buys what"
-        sub={`${trip.shop.en.people.length} lists`}
+        label="What to buy"
+        sub={`${trip.shop.en.groups.reduce((n, g) => n + g.items.length, 0)} items`}
         icon={ROCKET}
       />
     </div>
