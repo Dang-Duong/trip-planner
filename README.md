@@ -76,6 +76,22 @@ Two things it exists to protect:
   still balanced while quietly charging that person double — the worst kind of wrong,
   because nothing looks off. The checkboxes can't produce it; localStorage can.
 
+Two layers sit in front of the maths, and they're where real bugs actually were:
+
+- **`parseAmount`** reads what somebody typed. It takes the ways a receipt total gets
+  typed — `1 240` (how Czech receipts print it, often with a non-breaking space),
+  `1240,50`, `1.240,50`, `1,240.50`, with or without `Kč`/`€` — and is deliberately strict
+  about the rest, because `Number()` alone accepts `Infinity`, `1e400` and `0x10`. It does
+  the arithmetic on digits rather than floats: `1.005 * 100` is `100.4999…` in binary.
+  A lone separator is a decimal point, so `1.240` reads as 1,24 Kč — which is why the Add
+  button shows the *parsed* amount rather than echoing the input.
+- **`sanitizeExpenses`** reads what comes back out of storage. localStorage is a trust
+  boundary: a stored `null` or `{}` used to crash the page outright, and a receipt with
+  `amount: "abc"` was accepted and turned every balance into NaN.
+
+`detectCurrency` makes a currency typed into the amount win over the dropdown — otherwise
+`€46,50` with the dropdown on CZK is recorded as 46,50 Kč for a 1 163 Kč receipt.
+
 `npm run check` ends with 2 000 fuzzed scenarios — random crew sizes, amounts,
 currencies, share subsets, outsiders, duplicates, zeros, refunds and settlements —
 asserting only what must hold of any of them: balances are whole and sum to zero, no

@@ -125,3 +125,94 @@ export function settle(net: Map<string, number>): Transfer[] {
   }
   return out;
 }
+
+/**
+ * What somebody typed -> minor units, or null if it isn't a usable amount.
+ *
+ * Takes the ways a receipt total really gets typed: "1240", "1 240" (Czech receipts group
+ * thousands with a space, often a non-breaking one), "1240,50" (Czech decimal comma),
+ * "1240.50", "1.240,50", "1,240.50", with or without "Kč", "€" and friends.
+ *
+ * Deliberately strict about the rest. `Number()` alone accepts "Infinity", "1e400" and
+ * "0x10"; the first two poison every balance with NaN, and the last is 16 Kč.
+ */
+export function parseAmount(text: string): number | null {
+  let s = text
+    .replace(/[\s  ]/g, "")
+    .replace(/kč|czk|eur|chf|€|fr\.?/gi, "");
+  if (!/^[0-9.,]+$/.test(s)) return null;
+
+  const commas = s.split(",").length - 1;
+  const dots = s.split(".").length - 1;
+
+  if (commas && dots) {
+    // Both appear: whichever comes last is the decimal point, the other groups thousands.
+    const decimal = s.lastIndexOf(",") > s.lastIndexOf(".") ? "," : ".";
+    s = s.split(decimal === "," ? "." : ",").join("").replace(decimal, ".");
+  } else if (commas > 1 || dots > 1) {
+    // One kind of separator, repeated: it can only be grouping.
+    s = s.replace(/[.,]/g, "");
+  } else {
+    // At most one separator: a decimal point. "1.240" reads as 1,24 Kč, which is why the
+    // Add button shows the parsed amount rather than echoing what was typed.
+    s = s.replace(",", ".");
+  }
+
+  if (!/^\d+(\.\d+)?$/.test(s)) return null;
+
+  // Digits, not floats: 1.005 * 100 is 100.4999… in binary, so Math.round would give 1,00
+  // for what is 1,01. The string is already clean, so round half-up on the third decimal.
+  const [whole, frac = ""] = s.split(".");
+  const cents = Number(`${frac}00`.slice(0, 2));
+  const up = frac.length > 2 && Number(frac[2]) >= 5 ? 1 : 0;
+  const minor = Number(whole) * 100 + cents + up;
+  if (!Number.isFinite(minor) || minor <= 0) return null;
+  // A million crowns is not a camping receipt, it's a slipped finger.
+  if (minor > 1_000_000_00) return null;
+  return minor;
+}
+
+const CURRENCIES = Object.keys(RATES);
+
+/**
+ * Whatever came out of storage -> only well-formed expenses.
+ *
+ * localStorage is a trust boundary: hand-edited, left over from an older shape, or
+ * corrupt. Without this a stored `null` or `{}` crashed the page outright, and a receipt
+ * with `amount: "abc"` was accepted and turned every balance into NaN.
+ */
+export function sanitizeExpenses(raw: unknown): Expense[] {
+  if (!Array.isArray(raw)) return [];
+  const out: Expense[] = [];
+  for (const e of raw) {
+    if (!e || typeof e !== "object") continue;
+    const x = e as Record<string, unknown>;
+    if (typeof x.id !== "string") continue;
+    if (typeof x.amount !== "number" || !Number.isFinite(x.amount)) continue;
+    if (typeof x.currency !== "string" || !CURRENCIES.includes(x.currency)) continue;
+    if (typeof x.payer !== "string") continue;
+    if (!Array.isArray(x.shares) || !x.shares.every((p) => typeof p === "string")) continue;
+    out.push({
+      id: x.id,
+      what: typeof x.what === "string" ? x.what : "Receipt",
+      amount: x.amount,
+      currency: x.currency as Currency,
+      payer: x.payer,
+      shares: x.shares as string[],
+      ...(x.settlement === true ? { settlement: true } : {}),
+    });
+  }
+  return out;
+}
+
+/**
+ * The currency named in what somebody typed, if any. Typing "€46,50" with the dropdown
+ * still on CZK would otherwise record 46,50 Kč for a 1 163 Kč receipt — the parser strips
+ * the symbol, so the page has to act on it before it goes.
+ */
+export function detectCurrency(text: string): Currency | null {
+  if (/€|eur/i.test(text)) return "EUR";
+  if (/chf|fr\.?\s*\d|\d\s*fr\.?/i.test(text)) return "CHF";
+  if (/kč|czk/i.test(text)) return "CZK";
+  return null;
+}

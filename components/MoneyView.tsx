@@ -3,13 +3,30 @@
 import { useMemo, useState } from "react";
 import Fab, { ARROW } from "@/components/Fab";
 import { useStoredJson } from "@/lib/local-state";
-import { balances, RATES, settle, toCzk, type Currency, type Expense } from "@/lib/split";
+import {
+  balances,
+  detectCurrency,
+  parseAmount,
+  RATES,
+  sanitizeExpenses,
+  settle,
+  toCzk,
+  type Currency,
+  type Expense,
+} from "@/lib/split";
 import { getTrip } from "@/trips";
 
 const CURRENCIES = Object.keys(RATES) as Currency[];
 
 const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-const NO_EXPENSES: Expense[] = [];
+const NOTHING: unknown = [];
+
+/** Minor units in the entered currency -> "1 240" or "46,50". */
+const fmtAmount = (minor: number) =>
+  (minor / 100).toLocaleString("cs-CZ", {
+    minimumFractionDigits: minor % 100 ? 2 : 0,
+    maximumFractionDigits: 2,
+  });
 
 /** Whole crowns in, "1 240" out. cs-CZ groups with a non-breaking space, which is what
  *  we want — an amount should never wrap across two lines. */
@@ -19,7 +36,11 @@ export default function MoneyView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const people = useMemo(() => trip?.people ?? [], [trip]);
 
-  const [expenses, write] = useStoredJson<Expense[]>(`money:${slug}:v1`, NO_EXPENSES);
+  const [stored, writeRaw] = useStoredJson<unknown>(`money:${slug}:v1`, NOTHING);
+  const expenses = useMemo(() => sanitizeExpenses(stored), [stored]);
+  // Every write goes through the sanitiser too, so an updater never builds on junk.
+  const write = (next: (prev: Expense[]) => Expense[]) =>
+    writeRaw((prev: unknown) => next(sanitizeExpenses(prev)));
   const [what, setWhat] = useState("");
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<Currency>("CZK");
@@ -57,16 +78,18 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   const drinkers = people.filter((p) => !trip.noAlcohol.includes(p));
 
-  const valid = Number(amount) > 0 && payer && shares.length > 0;
+  const parsed = parseAmount(amount);
+  const unreadable = amount.trim() !== "" && parsed === null;
+  const valid = parsed !== null && payer !== "" && shares.length > 0;
 
   const add = () => {
-    if (!valid) return;
+    if (!valid || parsed === null) return;
     write((prev) => [
       ...prev,
       {
         id: newId(),
         what: what.trim() || "Shopping",
-        amount: Math.round(Number(amount) * 100),
+        amount: parsed,
         currency,
         payer,
         shares,
@@ -130,9 +153,20 @@ export default function MoneyView({ slug }: { slug: string }) {
               id="money-amount"
               inputMode="decimal"
               value={amount}
-              onChange={(e) => setAmount(e.target.value.replace(",", "."))}
-              placeholder="1240"
+              onChange={(e) => {
+                setAmount(e.target.value);
+                const named = detectCurrency(e.target.value);
+                if (named) setCurrency(named);
+              }}
+              aria-invalid={unreadable}
+              aria-describedby={unreadable ? "money-amount-hint" : undefined}
+              placeholder="1 240,50"
             />
+            {unreadable && (
+              <i id="money-amount-hint" className="money-hint">
+                Can’t read that — try 1 240 or 1240,50
+              </i>
+            )}
           </label>
           <label className="money-f">
             <span>Currency</span>
@@ -198,7 +232,9 @@ export default function MoneyView({ slug }: { slug: string }) {
         </div>
 
         <button type="button" className="money-add-btn" disabled={!valid} onClick={add}>
-          Add {Number(amount) > 0 ? `${amount} ${currency}` : "receipt"}
+          {/* The parsed amount, not the typed text: "1.240" reads as 1,24, and this is
+              where that shows up before anyone commits it. */}
+          Add {parsed !== null ? `${fmtAmount(parsed)} ${currency}` : "receipt"}
           {shares.length > 0 && ` · split ${shares.length} ways`}
         </button>
       </section>

@@ -1,6 +1,14 @@
 // Run: npm run check
 import assert from "node:assert/strict";
-import { balances, settle, toCzk, type Expense } from "./split.ts";
+import {
+  balances,
+  detectCurrency,
+  parseAmount,
+  sanitizeExpenses,
+  settle,
+  toCzk,
+  type Expense,
+} from "./split.ts";
 
 const sum = (ns: number[]) => ns.reduce((a, b) => a + b, 0);
 const spread = (ns: number[]) => Math.max(...ns) - Math.min(...ns);
@@ -204,6 +212,95 @@ const people = ["Bobr", "BM", "Chipi", "Tuty"];
 
 // Nobody owes anybody when nothing has been bought.
 assert.deepEqual(settle(balances([], people)), []);
+
+// --- typing an amount ---
+// Every way a real receipt total gets typed, and the inputs Number() wrongly accepts.
+{
+  const reads: [string, number | null][] = [
+    ["1240", 124000],
+    ["1240,50", 124050],
+    ["1240.50", 124050],
+    ["1 240", 124000], // how Czech receipts print it
+    ["1\u00a0240", 124000], // ...with a non-breaking space, copied off a screen
+    ["1\u202f240,50", 124050], // ...or a narrow one
+    ["1 240,50", 124050],
+    ["1.240,50", 124050],
+    ["1,240.50", 124050],
+    ["1.000.000", 100000000],
+    ["1240 Kč", 124000],
+    ["1240Kč", 124000],
+    ["€46,50", 4650],
+    ["46.50 EUR", 4650],
+    ["  1240  ", 124000],
+    ["0,29", 29],
+    ["0.1", 10],
+    ["1.005", 101],
+    ["0", null],
+    ["0,00", null],
+    ["-500", null],
+    ["abc", null],
+    ["", null],
+    ["   ", null],
+    [",", null],
+    ["1,", null], // mid-typing
+    ["Infinity", null],
+    ["1e400", null],
+    ["12e3", null],
+    ["0x10", null],
+    ["NaN", null],
+    ["1 240 000 000", null], // over the cap
+  ];
+  for (const [typed, want] of reads) {
+    assert.equal(parseAmount(typed), want, `parseAmount(${JSON.stringify(typed)})`);
+  }
+}
+
+// A currency typed into the amount must win over the dropdown, or it's a 25x error.
+{
+  const cases: [string, string | null][] = [
+    ["€46,50", "EUR"],
+    ["46,50 EUR", "EUR"],
+    ["46.50eur", "EUR"],
+    ["CHF 30", "CHF"],
+    ["30 Fr.", "CHF"],
+    ["Fr. 30", "CHF"],
+    ["1 240 Kč", "CZK"],
+    ["1240 CZK", "CZK"],
+    ["1 240", null],
+    ["1240,50", null],
+  ];
+  for (const [typed, want] of cases) {
+    assert.equal(detectCurrency(typed), want, `detectCurrency(${JSON.stringify(typed)})`);
+  }
+}
+
+// --- reading back from storage ---
+{
+  for (const junk of [null, undefined, {}, "x", 42, true]) {
+    assert.deepEqual(sanitizeExpenses(junk), [], `${JSON.stringify(junk)} must not crash`);
+  }
+  const good = { id: "1", what: "Meat", amount: 124000, currency: "CZK", payer: "A", shares: ["A", "B"] };
+  const kept = sanitizeExpenses([
+    good,
+    { ...good, id: "2", amount: "abc" },
+    { ...good, id: "3", amount: Infinity },
+    { ...good, id: "4", currency: "USD" },
+    { ...good, id: "5", shares: "A" },
+    { ...good, id: "6", shares: ["A", 7] },
+    { ...good, id: "7", payer: null },
+    { id: "8" },
+    null,
+    "nope",
+    { ...good, id: "9", what: undefined },
+    { ...good, id: "10", settlement: "yes" },
+    { ...good, id: "11", settlement: true },
+  ]);
+  assert.deepEqual(kept.map((e) => e.id), ["1", "9", "10", "11"], "only well-formed receipts survive");
+  assert.equal(kept[1].what, "Receipt", "a missing label is filled, not grounds to lose money data");
+  assert.equal(kept[2].settlement, undefined, "only a real `true` marks a payment");
+  assert.equal(kept[3].settlement, true);
+  assert.equal(sum([...balances(kept, ["A", "B"]).values()]), 0, "what survives still balances");
+}
 
 // --- fuzz ---
 // The cases above are the ones someone thought of. This is the rest: randomised people,
