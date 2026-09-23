@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import Fab, { ARROW } from "@/components/Fab";
-import { useStoredJson } from "@/lib/local-state";
+import SyncBadge from "@/components/SyncBadge";
+import { useSharedEntries } from "@/lib/shared-state";
 import {
   balances,
   detectCurrency,
@@ -19,7 +20,6 @@ import { getTrip } from "@/trips";
 const CURRENCIES = Object.keys(RATES) as Currency[];
 
 const newId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-const NOTHING: unknown = [];
 
 /** Minor units in the entered currency -> "1 240" or "46,50". */
 const fmtAmount = (minor: number) =>
@@ -36,7 +36,7 @@ export default function MoneyView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const people = useMemo(() => trip?.people ?? [], [trip]);
 
-  const [stored, writeRaw] = useStoredJson<unknown>(`money:${slug}:v1`, NOTHING);
+  const [stored, writeRaw, sync, pending] = useSharedEntries(slug);
   const expenses = useMemo(() => sanitizeExpenses(stored), [stored]);
   // Every write goes through the sanitiser too, so an updater never builds on junk.
   const write = (next: (prev: Expense[]) => Expense[]) =>
@@ -130,8 +130,9 @@ export default function MoneyView({ slug }: { slug: string }) {
           the fewest payments.
         </p>
         <p className="money-warn">
-          This is kept on <b>this device only</b>, like the tick boxes — so one person keeps the
-          book and shares the summary. Say the word and I will make it shared.
+          Receipts are <b>shared with everyone</b> on this page, like the shopping ticks. Add one
+          with no signal and it is kept on your phone until you have bars again — the badge says so
+          while it waits. <SyncBadge sync={sync} pending={pending} />
         </p>
       </header>
 

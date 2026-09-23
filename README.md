@@ -110,9 +110,47 @@ spending.
 Foreign currency converts at a fixed rate in `RATES` — rates don't move enough over four
 days to be worth fetching, and a live rate would make yesterday's totals drift.
 
-**It is per-device, like the tick boxes.** One person keeps the book and shares the
-summary; the page says so. Making it shared needs a real store — that is the only part of
-this that breaks "no backend, no database".
+**It is shared, like the tick boxes** — see below.
+
+## Shared state
+
+The shopping ticks and the receipts are shared by everyone on the page; the packing list
+and the language toggle stay per-device, because those are your bag and your preference.
+
+`lib/shared-state.ts` has the two hooks — `useSharedChecklist` and `useSharedEntries`,
+shaped like the localStorage ones in `lib/local-state.ts` so the views barely changed —
+and `app/api/trip/[slug]/route.ts` is the whole backend, over Upstash Redis.
+
+Three things carry the design:
+
+- **Ops, not documents.** Fourteen people tick at once, so a client that PUTs its own
+  copy of the list would clobber whoever wrote last. Each change is one op (`tick`,
+  `clear`, `put`, `drop`) and lands as one Redis command — `SADD`/`SREM` on a set for
+  ticks, `HSET`/`HDEL` on a hash for receipts. They commute, and every one is
+  idempotent, so replaying an op after a timeout can only be a no-op. `MoneyView` still
+  hands over a whole array; `diffEntries` turns it into per-receipt ops.
+- **An outbox, because the Mattertal has no signal.** A write goes into
+  `trip:<slug>:outbox` in localStorage first, renders immediately on top of the last
+  known server state, and is sent on the next flush. It survives a reload, retries on
+  the 6-second poll and when the tab wakes or the connection returns, and `SyncBadge`
+  says how many are waiting. Nothing is dropped because a tunnel ate the request.
+- **No store means no breakage.** If neither env var is set, the API answers 503 and the
+  client folds its ops into local state and keeps going exactly as it did before — which
+  is what `npm run dev` does out of the box.
+
+Writes poll rather than stream: a websocket for fourteen people ticking a list would be
+more moving parts than it's worth, and a tick shows up for everyone else within about
+six seconds.
+
+**Setup.** Add an Upstash Redis database in Vercel's marketplace and attach it to the
+project. It injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`, which is all the route
+reads (`UPSTASH_REDIS_REST_URL` / `_TOKEN` work too, for a database made outside Vercel).
+Redeploy, and the page is shared. See `.env.example`.
+
+**There is no login,** exactly like the rest of the page — anyone with the URL can tick
+and add receipts. The route validates every op, caps a batch at 200 and a receipt at
+2 kB, and only accepts slugs matching `^[a-z0-9-]{1,64}$`, so the blast radius is one
+trip's list.
 
 ## Adding a trip
 

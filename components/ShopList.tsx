@@ -1,6 +1,7 @@
 "use client";
 
-import { useChecklist } from "@/lib/local-state";
+import SyncBadge from "@/components/SyncBadge";
+import { useSharedChecklist } from "@/lib/shared-state";
 import type { ShopGroup } from "@/lib/types";
 
 export default function ShopList({
@@ -14,7 +15,7 @@ export default function ShopList({
   boughtLabel: string;
   resetLabel: string;
 }) {
-  const { done, toggle, clear } = useChecklist(`shop:${slug}:v3`);
+  const { done, toggle, clear, sync, pending } = useSharedChecklist(slug);
 
   const total = groups.reduce((n, g) => n + g.items.length, 0);
   const bought = groups.reduce(
@@ -41,6 +42,7 @@ export default function ShopList({
         >
           <i style={{ width: `${total ? (bought / total) * 100 : 0}%` }} />
         </span>
+        <SyncBadge sync={sync} pending={pending} />
         <button type="button" onClick={clear}>
           {resetLabel}
         </button>

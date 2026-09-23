@@ -7,7 +7,7 @@
     "build": "node scripts/copy-map-worker.mjs && next build",
     "start": "next start",
     "lint": "eslint",
-    "check": "node --experimental-strip-types --no-warnings lib/split.check.mts",
+    "check": "node --experimental-strip-types --no-warnings lib/split.check.mts && node --experimental-strip-types --no-warnings lib/sync.check.mts",
     "predev": "node scripts/copy-map-worker.mjs"
   },
   "dependencies": {

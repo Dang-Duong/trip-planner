@@ -404,6 +404,9 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
   color:var(--stone);margin-left:.45rem}
 .shop-pr{flex:1 1 160px;min-width:120px;height:2px;background:var(--rule)}
 .shop-pr i{display:block;height:100%;background:var(--blaze);width:0;transition:width .25s}
+.sync{font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--stone);white-space:nowrap}
+.sync[data-state="offline"]{color:var(--blaze)}
 .shop-bar button{font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;
   text-transform:uppercase;background:none;color:var(--stone);border:1px solid var(--rule);
   padding:.4rem .7rem;cursor:pointer;transition:color .15s,border-color .15s}
