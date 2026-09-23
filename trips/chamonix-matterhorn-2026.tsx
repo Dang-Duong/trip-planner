@@ -1,56 +1,10 @@
 import type { LngLat, Trip } from "@/lib/types";
 
-// Trail geometry for the hike options, drawn on the map on hover. Routed once on the
+// Trail geometry for the two hiking days, drawn on each day's map. Routed once on the
 // public BRouter server (free, no key) and pasted in, then simplified to ~12 m.
 // To regenerate a route:
 //   curl "https://brouter.de/brouter?lonlats=<lon,lat>|<lon,lat>&profile=hiking-beta&format=geojson"
 // one leg at a time — its watchdog kills long multi-leg requests.
-
-const lacblancTrail: LngLat[] = [
-  [6.92918, 45.99561], [6.92814, 45.99614], [6.92792, 45.99648], [6.92678, 45.99665],
-  [6.92641, 45.99696], [6.92612, 45.99635], [6.92643, 45.99575], [6.92593, 45.9949],
-  [6.92542, 45.99457], [6.92498, 45.99451], [6.92457, 45.99468], [6.9241, 45.99427],
-  [6.92346, 45.99408], [6.92275, 45.99338], [6.92233, 45.99244], [6.92138, 45.99196],
-  [6.92148, 45.99158], [6.92072, 45.9909], [6.92082, 45.99058], [6.92034, 45.98965],
-  [6.91865, 45.98827], [6.91821, 45.98767], [6.91722, 45.98782], [6.91721, 45.98834],
-  [6.91649, 45.98833], [6.91587, 45.98772], [6.91458, 45.98699], [6.91374, 45.98588],
-  [6.91367, 45.98599], [6.91307, 45.98569], [6.912, 45.98482], [6.91181, 45.98432],
-  [6.91067, 45.9839], [6.90993, 45.98324], [6.90897, 45.98275], [6.90866, 45.98294],
-  [6.90856, 45.98233], [6.90818, 45.98254], [6.90798, 45.9824], [6.9076, 45.98255],
-  [6.90728, 45.98241], [6.9072, 45.98257], [6.90687, 45.9824], [6.90663, 45.98251],
-  [6.9055, 45.98235], [6.90501, 45.98295], [6.90452, 45.98313], [6.90454, 45.98336],
-  [6.90427, 45.98341], [6.9032, 45.98292], [6.90234, 45.98278], [6.90037, 45.98263],
-  [6.89991, 45.98275], [6.89984, 45.98296], [6.89876, 45.9829], [6.89825, 45.98259],
-  [6.89773, 45.98189], [6.89695, 45.98161], [6.8964, 45.98168], [6.8958, 45.98212],
-  [6.89442, 45.98218], [6.89343, 45.98197], [6.89363, 45.98169], [6.89284, 45.98123],
-  [6.8926, 45.98146], [6.89238, 45.98134], [6.89224, 45.98151], [6.89188, 45.98145],
-  [6.89103, 45.98192], [6.89093, 45.98232], [6.89064, 45.98249], [6.89077, 45.98266],
-  [6.89047, 45.98288], [6.89086, 45.98356], [6.89112, 45.98369], [6.89065, 45.98338],
-  [6.89047, 45.98288], [6.89077, 45.98266], [6.89064, 45.98249], [6.89093, 45.98232],
-  [6.89103, 45.98192], [6.8915, 45.98166], [6.89158, 45.98128], [6.89124, 45.98065],
-  [6.89128, 45.98007], [6.89091, 45.98], [6.89162, 45.97977], [6.8914, 45.97966],
-  [6.89155, 45.97869], [6.89204, 45.97821], [6.89198, 45.97797], [6.89263, 45.97788],
-  [6.89244, 45.9775], [6.89268, 45.97751], [6.89271, 45.97677], [6.89316, 45.97619],
-  [6.89293, 45.9753], [6.89337, 45.97459], [6.89301, 45.97384], [6.89322, 45.97382],
-  [6.89198, 45.97186], [6.89149, 45.97178], [6.89062, 45.97122], [6.88927, 45.96979],
-  [6.88816, 45.96982], [6.88746, 45.96932], [6.88742, 45.96834], [6.88715, 45.96805],
-  [6.88728, 45.96764], [6.88687, 45.9668], [6.88734, 45.96567], [6.88648, 45.96523],
-  [6.88571, 45.96418], [6.88781, 45.96404], [6.88688, 45.96285], [6.88701, 45.96234],
-  [6.88744, 45.96199], [6.88777, 45.96225], [6.88779, 45.96283], [6.88938, 45.96359],
-  [6.88975, 45.96397], [6.89339, 45.96442], [6.89703, 45.96632], [6.89737, 45.96623],
-  [6.89738, 45.96553], [6.89766, 45.96559], [6.8977, 45.96545], [6.89821, 45.96587],
-  [6.89844, 45.9657], [6.90036, 45.96643], [6.90038, 45.96626], [6.9013, 45.96644],
-  [6.90132, 45.96615], [6.90167, 45.96643], [6.90199, 45.9661], [6.90211, 45.96642],
-  [6.90238, 45.96647], [6.90278, 45.96614], [6.90283, 45.96667], [6.90304, 45.96668],
-  [6.9033, 45.96636], [6.90482, 45.96719], [6.90489, 45.96693], [6.90544, 45.96719],
-  [6.90547, 45.96707], [6.90607, 45.96726], [6.90659, 45.96722], [6.90768, 45.96829],
-  [6.90817, 45.96807], [6.90883, 45.96849], [6.90872, 45.96808], [6.90895, 45.9676],
-  [6.90979, 45.96842], [6.90999, 45.9692], [6.91052, 45.9696], [6.91193, 45.96952],
-  [6.91174, 45.96932], [6.9123, 45.96908], [6.91263, 45.96915], [6.91336, 45.96982],
-  [6.91418, 45.97189], [6.91558, 45.97329], [6.91732, 45.97434], [6.9198, 45.97508],
-  [6.92074, 45.97601], [6.92187, 45.97556], [6.9222, 45.97518], [6.92302, 45.9748],
-  [6.92419, 45.97478],
-];
 
 const montbuetTrail: LngLat[] = [
   [6.92037, 46.01908], [6.92015, 46.01925], [6.91976, 46.01922], [6.91988, 46.01861],
@@ -77,42 +31,6 @@ const montbuetTrail: LngLat[] = [
   [6.85185, 46.01781], [6.8522, 46.01812], [6.85193, 46.01835], [6.85196, 46.01883],
   [6.85132, 46.01949], [6.85157, 46.01981], [6.85, 46.02008], [6.85007, 46.02064],
   [6.84948, 46.02144], [6.85052, 46.0233], [6.85251, 46.02482],
-];
-
-const hornlihutteTrail: LngLat[] = [
-  [7.74939, 46.02115], [7.7491, 46.02069], [7.74856, 46.02062], [7.74668, 46.01964],
-  [7.74617, 46.01971], [7.74596, 46.01929], [7.74551, 46.01917], [7.74502, 46.01781],
-  [7.74126, 46.01507], [7.73995, 46.01378], [7.7397, 46.01294], [7.73879, 46.01213],
-  [7.73801, 46.01196], [7.73715, 46.01142], [7.7357, 46.01102], [7.73439, 46.01007],
-  [7.73302, 46.00953], [7.7315, 46.00974], [7.73125, 46.00938], [7.73031, 46.00874],
-  [7.7296, 46.00856], [7.72929, 46.00812], [7.72784, 46.00717], [7.72645, 46.00682],
-  [7.72527, 46.00604], [7.72401, 46.00558], [7.72289, 46.00547], [7.72232, 46.00561],
-  [7.72312, 46.00567], [7.72271, 46.00627], [7.7222, 46.00647], [7.7207, 46.00632],
-  [7.71972, 46.00671], [7.71779, 46.00682], [7.71584, 46.00626], [7.71435, 46.00657],
-  [7.71404, 46.00634], [7.71352, 46.00641], [7.71418, 46.00547], [7.71384, 46.00512],
-  [7.71409, 46.00484], [7.71201, 46.00521], [7.71136, 46.00559], [7.71033, 46.00572],
-  [7.70758, 46.00583], [7.70441, 46.00622], [7.70227, 46.00616], [7.70156, 46.00665],
-  [7.69951, 46.00637], [7.69932, 46.00597], [7.70065, 46.00512], [7.69877, 46.00491],
-  [7.70058, 46.00414], [7.70038, 46.00416], [7.6998, 46.00365], [7.69982, 46.00266],
-  [7.70029, 46.00251], [7.70179, 46.00254], [7.70206, 46.00238], [7.70179, 46.00233],
-  [7.70167, 46.00195], [7.69893, 46.0012], [7.69655, 46.0003], [7.69784, 45.99899],
-  [7.69902, 45.99829], [7.69911, 45.99783], [7.69875, 45.99728], [7.70281, 45.9962],
-  [7.70379, 45.99578], [7.70338, 45.99429], [7.70396, 45.99367], [7.70533, 45.99352],
-  [7.70571, 45.99321], [7.70633, 45.99216], [7.70621, 45.99098], [7.70642, 45.99072],
-  [7.70628, 45.99119], [7.70543, 45.99174], [7.70543, 45.99153], [7.70521, 45.99156],
-  [7.70484, 45.99118], [7.70438, 45.99121], [7.70378, 45.99053], [7.70403, 45.99046],
-  [7.70359, 45.9901], [7.70375, 45.98999], [7.70359, 45.98965], [7.70295, 45.98916],
-  [7.70205, 45.98923], [7.70168, 45.98908], [7.70183, 45.98925], [7.70164, 45.99005],
-  [7.70122, 45.98966], [7.70098, 45.9901], [7.7009, 45.98978], [7.70046, 45.99001],
-  [7.70032, 45.98946], [7.69813, 45.98967], [7.6969, 45.98933], [7.69503, 45.98838],
-  [7.69424, 45.98824], [7.69281, 45.98817], [7.69381, 45.98836], [7.69257, 45.98873],
-  [7.69282, 45.98851], [7.69041, 45.98844], [7.68869, 45.98789], [7.68745, 45.98706],
-  [7.68532, 45.98632], [7.68374, 45.98454], [7.68283, 45.98462], [7.68236, 45.98436],
-  [7.68276, 45.98434], [7.68235, 45.98415], [7.68239, 45.9838], [7.68191, 45.98379],
-  [7.68203, 45.98368], [7.68032, 45.98305], [7.6798, 45.98304], [7.68006, 45.98293],
-  [7.67951, 45.98285], [7.67954, 45.98241], [7.6793, 45.98233], [7.67928, 45.9825],
-  [7.67894, 45.98225], [7.67891, 45.98253], [7.67847, 45.98226], [7.67851, 45.98253],
-  [7.67773, 45.98208], [7.67764, 45.98234], [7.67712, 45.98213],
 ];
 
 const fuenfseenTrail: LngLat[] = [
@@ -153,14 +71,13 @@ export const chamonixMatterhorn2026: Trip = {
     "25–28 Sept 2026 · 13 people · Praha out and back · everything on foot, zero lifts",
   blurb: "13 people · Praha out and back · everything on foot, zero lifts",
 
-  // Both hiking days are still a choice, so these span the four combinations rather
-  // than quoting one. They collapse to single numbers once the routes are picked.
+  // Mont Buet on Saturday and the 5 lakes on foot on Sunday.
   stats: [
     { value: "13", label: "people" },
     { value: "1 980", label: "km driving" },
-    { value: "2 150–3 370", label: "m ascent" },
-    { value: "2 600–3 260", label: "m high point" },
-    { value: "7½–12 h", label: "longest day" },
+    { value: "2 700", label: "m ascent" },
+    { value: "3 096", label: "m high point" },
+    { value: "10–11 h", label: "longest day" },
   ],
 
   people: [
@@ -203,21 +120,15 @@ export const chamonixMatterhorn2026: Trip = {
       note: "camp 1 · Fri, Sat",
       labelSide: "below",
     },
-    { id: "trelechamp", name: "Tré-le-Champ", at: [6.9292, 45.9956], kind: "stop", note: "1 417 m · ladders" },
-    { id: "coldesmontets", name: "Col des Montets", at: [6.9236, 46.0039], kind: "stop", note: "overflow parking" },
-    { id: "lacblanc", name: "Lac Blanc", at: [6.8911, 45.9837], kind: "goal", note: "2 352 m · Sat high point" },
     { id: "montblanc", name: "Mont Blanc", at: [6.865, 45.833], kind: "peak", note: "4 806 m" },
-    // Mont Buet alternative — up the Bérard valley. Coordinates from OSM.
+    // Saturday: Mont Buet, up the Bérard valley. Coordinates from OSM.
     { id: "lebuet", name: "Le Buet", at: [6.9204, 46.0192], kind: "start", note: "1 330 m · by train" },
     { id: "cascadeberard", name: "Cascade de Bérard", at: [6.9118, 46.02], kind: "stop", labelSide: "below" },
-    { id: "refugeberard", name: "Refuge de la Pierre à Bérard", at: [6.8687, 46.003], kind: "hut", note: "1 924 m · shut by late Sept" },
+    { id: "refugeberard", name: "Refuge de la Pierre à Bérard", at: [6.8687, 46.003], kind: "hut", note: "1 924 m · likely shut — no water" },
     { id: "montbuet", name: "Mont Buet", at: [6.8525, 46.0248], kind: "goal", note: "3 096 m · turn back by 13:00" },
     { id: "tasch", name: "Täsch", at: [7.777, 46.0677], kind: "stop", note: "terminal · CHF 16/car" },
     { id: "randa", name: "Randa", at: [7.7823, 46.0857], kind: "camp", note: "camp 2 · Sun", labelSide: "above" },
     { id: "zermatt", name: "Zermatt", at: [7.7493, 46.0212], kind: "stop", note: "1 620 m · on foot 07:30" },
-    { id: "zmutt", name: "Zmutt", at: [7.7171, 46.0065], kind: "stop", note: "1 936 m · ~09:00" },
-    { id: "schwarzsee", name: "Schwarzsee", at: [7.7068, 45.9908], kind: "stop", note: "2 583 m · turn back 13:00" },
-    { id: "hornlihutte", name: "Hörnlihütte", at: [7.677, 45.9822], kind: "hut", note: "3 260 m · Sun high point" },
     { id: "matterhorn", name: "Matterhorn", at: [7.6586, 45.9766], kind: "peak", note: "4 478 m" },
     // 5-Seenweg, east side of the valley. Coordinates from OSM.
     { id: "blauherd", name: "Blauherd", at: [7.7874, 46.0169], kind: "stop", note: "2 571 m" },
@@ -270,24 +181,20 @@ export const chamonixMatterhorn2026: Trip = {
       note: "Praha → Argentière 984 km · Argentière → Randa 132 km · real road geometry",
     },
     {
-      // Both Saturday candidates on one sheet, so the choice is visible at a glance.
       id: "sat",
-      title: "Sat · Lac Blanc or Mont Buet",
-      waypoints: [
-        "argentiere", "chamonix", "trelechamp", "coldesmontets", "lacblanc",
-        "lebuet", "refugeberard", "montbuet",
-      ],
-      note: "Two options. Lac Blanc south-west from Tré-le-Champ up the ladders, down via Remuaz into Argentière; or Mont Buet, north-west up the Bérard valley from Le Buet and back the same way. Both start on the Mont-Blanc Express with the campsite guest card.",
+      title: "Sat · Mont Buet",
+      waypoints: ["argentiere", "lebuet", "refugeberard", "montbuet"],
+      routeLine: montbuetTrail,
+      note: "Mont-Blanc Express from Argentière to Le Buet, free with the campsite guest card, then north-west up the Bérard valley past the refuge to the summit, and back the same way.",
     },
     {
-      // Both Sunday candidates: Hörnlihütte up the west side, the lakes on the east.
       id: "sun",
-      title: "Sun · Hörnlihütte or 5 Lakes",
-      waypoints: [
-        "randa", "tasch", "zermatt", "zmutt", "schwarzsee", "hornlihutte", "matterhorn",
-        "blauherd", "stellisee", "grindjisee", "grunsee", "leisee",
-      ],
-      note: "Two options from the same Zermatt start. Hörnlihütte south-west up the Zmutt valley past Schwarzsee; or the 5-Seenweg east above Sunnegga, Stellisee to Leisee.",
+      title: "Sun · 5 Lakes",
+      // Framed on the hike: with Randa and the Matterhorn in view the five lakes shrink to
+      // one knot of overlapping labels. The drive to Täsch is on the overview map.
+      waypoints: ["zermatt", "blauherd", "stellisee", "grindjisee", "grunsee", "leisee"],
+      routeLine: fuenfseenTrail,
+      note: "Shuttle from Täsch, on foot from Zermatt up to Blauherd, then the 5-Seenweg: Stellisee, Grindjisee, Grünsee, Moosjisee, Leisee, and down to Zermatt. The line starts at Blauherd — the climb to it isn't drawn.",
     },
   ],
 
@@ -308,25 +215,11 @@ export const chamonixMatterhorn2026: Trip = {
       linkLabel: "Pin ↗",
     },
     {
-      when: "Sat run",
-      what: "Centre Sportif Richard Bozon, Chamonix",
-      cost: "Free",
-      href: maps("Centre Sportif Richard Bozon Chamonix"),
-      linkLabel: "Pin ↗",
-    },
-    {
       when: "Sat hike",
-      what: <b>Parking de Tré-le-Champ</b>,
-      sub: "Roadside lay-by — will not hold 4 cars. Take the bus.",
+      what: <b>Gare du Buet</b>,
+      sub: "Mont-Blanc Express from Argentière, ~10 min. Free with the guest card — no cars.",
       cost: "Free",
-      href: maps("Tre-le-Champ Chamonix parking"),
-      linkLabel: "Pin ↗",
-    },
-    {
-      when: "↳ full?",
-      what: "Parking du Col des Montets · +10 min walk",
-      cost: "Free",
-      href: maps("Col des Montets parking"),
+      href: maps("Gare du Buet Vallorcine"),
       linkLabel: "Pin ↗",
     },
     {
@@ -360,8 +253,8 @@ export const chamonixMatterhorn2026: Trip = {
 
   pinsNote: (
     <>
-      Trail maps: <a href="https://map.geo.admin.ch/">SwissTopo</a> (Hörnlihütte) ·{" "}
-      <a href="https://www.geoportail.gouv.fr/carte">IGN</a> (Lac Blanc).
+      Trail maps: <a href="https://map.geo.admin.ch/">SwissTopo</a> (the 5 lakes) ·{" "}
+      <a href="https://www.geoportail.gouv.fr/carte">IGN</a> (Mont Buet).
     </>
   ),
 
@@ -377,9 +270,9 @@ export const chamonixMatterhorn2026: Trip = {
       group chat.
     </>,
     <>
-      <b>Saturday, leave the cars at camp.</b> Tré-le-Champ is a roadside lay-by that fills early —
-      four cars won’t fit and the loop ends back at the campsite anyway. The Chamonix Bus and
-      Mont-Blanc Express are free with the guest card you get at check-in.
+      <b>Saturday, leave the cars at camp.</b> The Mont-Blanc Express runs from Argentière to Le
+      Buet in about ten minutes, free with the guest card you get at check-in, and the hike
+      starts at the station.
     </>,
     <>
       <b>Sunday, Täsch is CHF 16 per car</b> per day. Split the cars across both garages if the main
@@ -422,40 +315,36 @@ export const chamonixMatterhorn2026: Trip = {
     },
     {
       date: "26",
-      title: "Sat · Chamonix — pick one",
-      meta: "two options",
+      title: "Sat · Vallorcine — Mont Buet",
+      meta: "19.8 km · +1 730 m · 3 096 m",
       mapId: "sat",
-      legs: [],
-      options: [
+      legs: [
         {
-          name: "Lac Blanc + the 5 km track",
-          href: "https://www.komoot.com/smarttour/e934061622/von-flegere-zum-col-des-montets-ueber-den-lac-blanc-chamonix-mont-blanc-schleife",
-          meta: "16.6 km · +1 180 m · 2 352 m",
-          line: lacblancTrail,
-          legs: [
-        {
-          time: "07:00",
+          time: "06:00",
           text: (
             <>
-              <b>5 km easy at the Chamonix track</b> — 12½ laps, 25–30 min. At 1 040 m the first km
-              lies to you.
+              <b>Breakfast, packed, out</b> — this day needs the daylight. Mont-Blanc Express from
+              Argentière to Le Buet, ~10 min, free on the guest card.
+            </>
+          ),
+        },
+        { time: "07:00", text: <>Walking from Le Buet, 1 330 m, up the Bérard valley.</> },
+        { time: "~07:40", text: <>Cascade de Bérard. Forest, then the valley opens out.</> },
+        {
+          time: "~09:15",
+          text: (
+            <>
+              <b>Refuge de la Pierre à Bérard, 1 924 m.</b> Likely shut for the season — carry all
+              your water from camp, 2½–3 L each.
             </>
           ),
         },
         {
-          time: "08:15",
+          time: "~11:00",
           text: (
             <>
-              <b>Free Chamonix Bus or Mont-Blanc Express</b> to Tré-le-Champ / Montroc — free with
-              the campsite guest card, and it beats squeezing four cars into a lay-by.
-            </>
-          ),
-        },
-        {
-          time: "08:30",
-          text: (
-            <>
-              Forest, then <b>the ladders</b> — climb them, don’t downclimb.
+              <b>The boulder field</b>, marked with white poles, then very short, steep zigzags up
+              to the ridge. Spread out, poles in hand, nobody standing below someone on the blocks.
             </>
           ),
         },
@@ -463,194 +352,81 @@ export const chamonixMatterhorn2026: Trip = {
           time: "~12:30",
           text: (
             <>
-              <b>Lac Blanc, 2 352 m.</b> Refuge shut — carry everything.
+              <b>Mont Buet, 3 096 m.</b> Mont Blanc massif front to back. Old hard snow can sit
+              just below the top — walk round it on rock, or use microspikes if you have them.
             </>
           ),
         },
-        { time: "~13:45", text: <>Down via Remuaz straight into Argentière. 1 100 m; poles.</> },
         {
-          time: "~17:00",
+          time: "13:00",
           text: (
-            <>
-              Camp. Shop, <b>pack everything but sleeping gear.</b>
-            </>
+            <b>
+              <em>Hard turn-back, on the summit or not.</em>
+            </b>
           ),
         },
-            { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
-          ],
-          note: (
-            <>
-              <b>The ladders are single-file.</b> Thirteen people plus other parties means 30–45 min
-              of queuing — start early and the trail is yours.{" "}
-              <b>Anyone who dislikes heights should walk the loop backwards:</b> up via Remuaz, meet
-              everyone at Lac Blanc, no ladders at all. Track gated? Run from camp toward Le
-              Lavancher. Rain? Petit Balcon Sud, ~3 h under trees.
-            </>
-          ),
-        },
-        {
-          name: "Mont Buet",
-          href: "https://www.komoot.com/smarttour/e924134691/mont-buet-via-vallorcine-chamonix-mont-blanc",
-          meta: "19.8 km · +1 730 m · 3 096 m",
-          line: montbuetTrail,
-          legs: [
-            {
-              time: "06:00",
-              text: (
-                <>
-                  <b>No morning run</b> — this day needs the daylight. Breakfast, then the
-                  Mont-Blanc Express from Argentière to Le Buet, ~10 min, free on the guest card.
-                </>
-              ),
-            },
-            { time: "07:00", text: <>Walking from Le Buet, 1 330 m, up the Bérard valley.</> },
-            { time: "~07:40", text: <>Cascade de Bérard. Forest, then the valley opens out.</> },
-            {
-              time: "~09:15",
-              text: (
-                <>
-                  <b>Refuge de la Pierre à Bérard, 1 924 m.</b> Shut by late Sept — carry
-                  everything. Last water.
-                </>
-              ),
-            },
-            {
-              time: "~12:30",
-              text: (
-                <>
-                  <b>Mont Buet, 3 096 m.</b> Mont Blanc massif front to back.
-                </>
-              ),
-            },
-            {
-              time: "13:00",
-              text: (
-                <b>
-                  <em>Hard turn-back, on the summit or not.</em>
-                </b>
-              ),
-            },
-            { time: "~15:00", text: <>Back past the refuge. 1 766 m of descent; poles.</> },
-            { time: "~17:30", text: <>Le Buet. Train back to Argentière, shop, camp.</> },
-            { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
-          ],
-          note: (
-            <>
-              <b>10–11 h for thirteen</b> against komoot’s 8 h 07 for one fit hiker, so the
-              13:00 turn-back is the whole plan — sunset is 19:25 and there is no hut to wait in.{" "}
-              <b>The summit is above 3 000 m and exposed:</b> snow is likely by late Sept, so
-              microspikes, and it is a genuine cold-and-wind day, not a valley walk. It also costs
-              +580 m more than Lac Blanc the day before Zermatt.
-            </>
-          ),
-        },
+        { time: "~15:00", text: <>Back past the refuge. 1 766 m of descent; poles.</> },
+        { time: "~17:30", text: <>Le Buet. Train back to Argentière, shop, camp.</> },
+        { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
       ],
+      note: (
+        <>
+          <b>10–11 h for thirteen</b> against{" "}
+          <a href="https://www.komoot.com/smarttour/e924134691/mont-buet-via-vallorcine-chamonix-mont-blanc" target="_blank" rel="noreferrer">
+            komoot’s 8 h 07
+          </a>{" "}
+          for one fit hiker, so the 13:00 turn-back is the whole plan — sunset is 19:22 and there
+          is no hut to wait in. <b>It is out and back, and that is the safety valve:</b> anyone
+          slower can turn round at any point and walk down to Le Buet, in pairs agreed at the
+          station, never alone. Picked on the 23 Sept forecast: clear and dry, gusts around 25 km/h
+          on top, 1–9 °C and feeling like −3 early, and no snowfall at 3 096 m in 45 days.
+        </>
+      ),
     },
     {
       date: "27",
-      title: "Sun · Zermatt — pick one",
-      meta: "two options",
+      title: "Sun · Zermatt — the 5 lakes",
+      meta: "on foot · +970 m · 2 600 m",
       mapId: "sun",
-      legs: [],
-      options: [
+      legs: [
+        { time: "05:30", text: <>Depart → Täsch.</> },
+        { time: "08:12", text: <>Shuttle to Zermatt, on foot from 1 620 m.</> },
         {
-          name: "Hörnlihütte",
-          href: "https://www.komoot.com/smarttour/7904022",
-          meta: "23 km · ±1 640 m · 3 260 m",
-          line: hornlihutteTrail,
-          legs: [
-            { time: "04:30", text: <>Depart in convoy → Martigny → Sion → Visp → Täsch. 2 h 20.</> },
-            {
-              time: "07:12",
-              text: (
-                <>
-                  Shuttle to Zermatt. Every 20 min from 05:55 — 13 people won’t fit one departure,
-                  so agree a meeting point <b>in Zermatt</b>, not on the platform.
-                </>
-              ),
-            },
-            { time: "07:30", text: <>All 13 on foot from 1 620 m, up the Zmutt valley.</> },
-            {
-              time: "~09:00",
-              text: (
-                <>
-                  <b>Zmutt</b>, 1 936 m — larch hamlet, north face overhead.
-                </>
-              ),
-            },
-            { time: "~11:30", text: <>Schwarzsee, 2 583 m. Regroup, eat, refill.</> },
-            {
-              time: "13:00",
-              text: (
-                <b>
-                  <em>Hard turn-back at Schwarzsee.</em> Past this and the descent finishes in the
-                  dark.
-                </b>
-              ),
-            },
-            {
-              time: "~14:00",
-              text: (
-                <>
-                  <b>Hörnlihütte, 3 260 m.</b> Kitchen shut for the season — carry everything.
-                </>
-              ),
-            },
-            { time: "~18:30", text: <>Back in Zermatt via Furi. Sunset 19:15.</> },
-            { time: "~19:30", text: <>Randa. Tents up in the dark; head torches out before you start.</> },
-          ],
-          note: (
+          time: "~10:30",
+          text: (
             <>
-              <b>The honest number: 11–12 h for thirteen.</b> 9½ h is a fit-pair figure and a group
-              this size adds 20–30% in regrouping, eating and queueing — so the tail of the
-              1 640 m descent is by head torch, and everyone needs a working one. Around freezing at
-              3 260 m with cables and metal steps: <b>microspikes, and turn back if it is iced.</b>
+              <b>Blauherd, 2 571 m</b> on foot — the climb the lift usually does.
             </>
           ),
         },
         {
-          name: "5-Seenweg — Stellisee & the lakes",
-          href: "https://www.komoot.com/smarttour/1713407",
-          meta: "14 km · +580 m · 2 600 m",
-          line: fuenfseenTrail,
-          legs: [
-            { time: "05:30", text: <>Depart → Täsch. An hour more sleep than the Hörnli day.</> },
-            { time: "08:12", text: <>Shuttle to Zermatt, on foot from 1 620 m.</> },
-            {
-              time: "~10:30",
-              text: (
-                <>
-                  <b>Blauherd, 2 571 m</b> on foot — the climb the lift usually does.
-                </>
-              ),
-            },
-            {
-              time: "~11:00",
-              text: (
-                <>
-                  <b>Stellisee, 2 537 m.</b> The reflection shot. Wind flat by mid-morning or not at
-                  all.
-                </>
-              ),
-            },
-            { time: "~12:00", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
-            { time: "~13:00", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
-            { time: "~14:00", text: <>Leisee, 2 232 m, above Sunnegga.</> },
-            { time: "~15:30", text: <>Zermatt. Shuttle to Täsch.</> },
-            { time: "~16:30", text: <>Randa in daylight. Tents up, then RandaBoulder at 19:45.</> },
-          ],
-          note: (
+          time: "~11:00",
+          text: (
             <>
-              <b>Komoot’s 5 h 08 and +580 m assume the Sunnegga funicular and Blauherd gondola
-              for the climb.</b>{" "}
-              Walking it from Zermatt is nearer <b>+970 m and ~7½ h</b>, which is the version timed
-              above and the one that keeps this trip lift-free. Take the lifts and it is a half day —
-              but check they are running, and that is a cost per head for thirteen. Either way the
-              whole group stays together and reaches Randa in daylight.
+              <b>Stellisee, 2 537 m.</b> The reflection shot. Wind flat by mid-morning or not at
+              all.
             </>
           ),
         },
+        { time: "~12:00", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
+        { time: "~13:00", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
+        { time: "~14:00", text: <>Leisee, 2 232 m, above Sunnegga.</> },
+        { time: "~15:30", text: <>Zermatt. Shuttle to Täsch.</> },
+        { time: "~16:30", text: <>Randa in daylight. Tents up, then RandaBoulder at 19:45.</> },
       ],
+      note: (
+        <>
+          On foot from Zermatt it is <b>+970 m and ~7½ h</b> —{" "}
+          <a href="https://www.komoot.com/smarttour/1713407" target="_blank" rel="noreferrer">
+            komoot’s 5 h 08 and +580 m
+          </a>{" "}
+          assume the Sunnegga funicular and Blauherd gondola for the climb.{" "}
+          <b>Those lifts are plan B after Mont Buet:</b> Sunnegga runs until 11 Oct and Blauherd
+          until 4 Oct, so both are open on the 27th. Ride up and it becomes a half day, at a cost
+          per head for thirteen. Either way the whole group stays together and reaches Randa in
+          daylight.
+        </>
+      ),
     },
     {
       date: "28",
@@ -678,7 +454,7 @@ export const chamonixMatterhorn2026: Trip = {
       grade: "Hard",
       note: (
         <>
-          The Chésérys ladders. <b>This is the planned Saturday.</b>
+          The Chésérys ladders. Not this time — Saturday is Mont Buet.
         </>
       ),
     },
@@ -693,9 +469,8 @@ export const chamonixMatterhorn2026: Trip = {
       grade: "Hard",
       note: (
         <>
-          Out and back from the Vallorcine bus stop, so the cars still stay at camp.{" "}
-          <b>10–11 h for thirteen</b> — it does not combine with the morning run, and it is
-          +1 730 m the day before Zermatt.
+          <b>Saturday’s route.</b> Out and back from Le Buet on the train, so the cars stay at
+          camp. <b>10–11 h for thirteen.</b>
         </>
       ),
     },
@@ -708,7 +483,7 @@ export const chamonixMatterhorn2026: Trip = {
       time: "5 h 51",
       high: "3 210 m",
       grade: "Hard",
-      note: <>From Schwarzsee only — add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
+      note: <>Not this time — Sunday is the 5 lakes. From Schwarzsee only; add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
     },
     {
       name: "5-Seenweg — Stellisee & the lakes",
@@ -721,7 +496,7 @@ export const chamonixMatterhorn2026: Trip = {
       grade: "Hard",
       note: (
         <>
-          East side of the valley. <b>Those figures assume the Sunnegga and Blauherd lifts</b> —
+          <b>Sunday’s route,</b> on the east side of the valley. <b>Those figures assume the Sunnegga and Blauherd lifts</b> —
           on foot from Zermatt it is nearer +970 m and 7½ h, which is how it is timed on Sunday.
         </>
       ),
@@ -742,9 +517,10 @@ export const chamonixMatterhorn2026: Trip = {
   hikesNote: (
     <>
       <b>Komoot times are for one fit hiker.</b> Thirteen people regrouping, eating and queueing
-      adds 20–30% — that is what turns a 9½ h Sunday into 11–12 h. Snow fell to{" "}
-      <b>1 900–2 200 m</b> in each of Sept 2024 and 2025, so anything above 3 000 m should be
-      assumed white. Pick the routes a week out, once there is a real forecast.
+      adds 20–30% — that is what turns Mont Buet’s 8 h into 10–11 h. <b>Routes picked on 23
+      Sept</b> from the forecast: a dry weekend with the freezing level around 4 000 m. Mont Buet
+      takes the clearest, calmest day, and the 5 lakes follow on legs that have just done 1 766 m
+      of descent.
     </>
   ),
 
@@ -753,9 +529,9 @@ export const chamonixMatterhorn2026: Trip = {
       title: "Hiking",
       items: [
         { label: "Boots, broken in" },
-        { label: <b>Microspikes</b>, sub: "Snow fell to 1 900–2 200 m in Sept 2024 and 2025" },
+        { label: "Microspikes, if you own them", sub: "Old hard snow can sit just below the Buet summit" },
         { label: "Trekking poles", sub: "2 740 m of descent in two days" },
-        { label: <b>3 L water for Sunday</b>, sub: "No open hut on the route" },
+        { label: <b>2½–3 L water for Saturday</b>, sub: "The Bérard refuge is likely shut — nothing to refill above 1 924 m" },
         { label: "Headtorch + spares" },
         { label: "Cat-3 sunglasses, SPF 50" },
         { label: "First aid, blisters, tape" },
@@ -808,10 +584,8 @@ export const chamonixMatterhorn2026: Trip = {
       ],
     },
     {
-      title: "Run & boulder",
+      title: "Boulder",
       items: [
-        { label: "Road shoes" },
-        { label: "Shorts + long sleeve", sub: "5–8 °C at 07:00" },
         { label: "Climbing shoes, chalk, brush" },
         { label: "Finger tape" },
         { label: <b>RandaBoulder app + entry</b>, sub: "Buy from home" },
@@ -1284,7 +1058,6 @@ export const chamonixMatterhorn2026: Trip = {
       ),
       when: "Now",
     },
-    { what: "Confirm the track is open", when: "20 Sept" },
     { what: "Name a route leader and a sweep — the group stays together", when: "Before you go" },
     {
       what: (
