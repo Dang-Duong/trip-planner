@@ -150,13 +150,13 @@ export const chamonixMatterhorn2026: Trip = {
   titleTail: "Matterhorn",
   dates: "25–28 Sept 2026",
   subtitle:
-    "25–28 Sept 2026 · 14 people · Praha out and back · everything on foot, zero lifts",
-  blurb: "14 people · Praha out and back · everything on foot, zero lifts",
+    "25–28 Sept 2026 · 13 people · Praha out and back · everything on foot, zero lifts",
+  blurb: "13 people · Praha out and back · everything on foot, zero lifts",
 
   // Both hiking days are still a choice, so these span the four combinations rather
   // than quoting one. They collapse to single numbers once the routes are picked.
   stats: [
-    { value: "14", label: "people" },
+    { value: "13", label: "people" },
     { value: "1 980", label: "km driving" },
     { value: "2 150–3 370", label: "m ascent" },
     { value: "2 600–3 260", label: "m high point" },
@@ -175,11 +175,10 @@ export const chamonixMatterhorn2026: Trip = {
     "Filipino",
     "Crispy Pork Davinki",
     "FemboiTommy",
-    "Chipi",
     "Tuty",
     "Meloun",
   ],
-  noAlcohol: ["Chipi", "Tuty", "Meloun"],
+  noAlcohol: ["Tuty", "Meloun"],
 
   waypoints: [
     // Easternmost point on the drive map — label below, or it runs off the edge.
@@ -303,7 +302,7 @@ export const chamonixMatterhorn2026: Trip = {
     {
       when: "Camp 1",
       what: "Camping Glacier d'Argentière",
-      sub: "€311 + €14 electricity · €23 each",
+      sub: "€311 + €14 electricity · €25 each",
       cost: "€325",
       href: maps("Camping Glacier Argentiere Chamonix"),
       linkLabel: "Pin ↗",
@@ -345,7 +344,7 @@ export const chamonixMatterhorn2026: Trip = {
     {
       when: "Camp 2",
       what: "Camping Attermenzen, Randa",
-      sub: "CHF 22 each",
+      sub: "CHF 24 each",
       cost: "CHF 305",
       href: maps("Camping Attermenzen Randa"),
       linkLabel: "Pin ↗",
@@ -366,7 +365,7 @@ export const chamonixMatterhorn2026: Trip = {
     </>
   ),
 
-  flagsTitle: "Convoy · 14 people, 3–4 cars",
+  flagsTitle: "Convoy · 13 people, 3–4 cars",
   flags: [
     <>
       <b>Swiss vignette is CHF 40 per car</b>, not per group. Every car needs its own before the
@@ -387,7 +386,7 @@ export const chamonixMatterhorn2026: Trip = {
       one is full — the one over the road is CHF 11.
     </>,
     <>
-      <b>Email RandaBoulder before you book 14 entries.</b> It’s 250 m² across two floors and
+      <b>Email RandaBoulder before you book 13 entries.</b> It’s 250 m² across two floors and
       unstaffed; a group that size needs warning, and possibly a slot.
     </>,
   ],
@@ -481,7 +480,7 @@ export const chamonixMatterhorn2026: Trip = {
           ],
           note: (
             <>
-              <b>The ladders are single-file.</b> Fourteen people plus other parties means 30–45 min
+              <b>The ladders are single-file.</b> Thirteen people plus other parties means 30–45 min
               of queuing — start early and the trail is yours.{" "}
               <b>Anyone who dislikes heights should walk the loop backwards:</b> up via Remuaz, meet
               everyone at Lac Blanc, no ladders at all. Track gated? Run from camp toward Le
@@ -537,7 +536,7 @@ export const chamonixMatterhorn2026: Trip = {
           ],
           note: (
             <>
-              <b>10–11 h for fourteen</b> against komoot’s 8 h 07 for one fit hiker, so the
+              <b>10–11 h for thirteen</b> against komoot’s 8 h 07 for one fit hiker, so the
               13:00 turn-back is the whole plan — sunset is 19:25 and there is no hut to wait in.{" "}
               <b>The summit is above 3 000 m and exposed:</b> snow is likely by late Sept, so
               microspikes, and it is a genuine cold-and-wind day, not a valley walk. It also costs
@@ -565,12 +564,12 @@ export const chamonixMatterhorn2026: Trip = {
               time: "07:12",
               text: (
                 <>
-                  Shuttle to Zermatt. Every 20 min from 05:55 — 14 people won’t fit one departure,
+                  Shuttle to Zermatt. Every 20 min from 05:55 — 13 people won’t fit one departure,
                   so agree a meeting point <b>in Zermatt</b>, not on the platform.
                 </>
               ),
             },
-            { time: "07:30", text: <>All 14 on foot from 1 620 m, up the Zmutt valley.</> },
+            { time: "07:30", text: <>All 13 on foot from 1 620 m, up the Zmutt valley.</> },
             {
               time: "~09:00",
               text: (
@@ -602,7 +601,7 @@ export const chamonixMatterhorn2026: Trip = {
           ],
           note: (
             <>
-              <b>The honest number: 11–12 h for fourteen.</b> 9½ h is a fit-pair figure and a group
+              <b>The honest number: 11–12 h for thirteen.</b> 9½ h is a fit-pair figure and a group
               this size adds 20–30% in regrouping, eating and queueing — so the tail of the
               1 640 m descent is by head torch, and everyone needs a working one. Around freezing at
               3 260 m with cables and metal steps: <b>microspikes, and turn back if it is iced.</b>
@@ -646,7 +645,7 @@ export const chamonixMatterhorn2026: Trip = {
               for the climb.</b>{" "}
               Walking it from Zermatt is nearer <b>+970 m and ~7½ h</b>, which is the version timed
               above and the one that keeps this trip lift-free. Take the lifts and it is a half day —
-              but check they are running, and that is a cost per head for fourteen. Either way the
+              but check they are running, and that is a cost per head for thirteen. Either way the
               whole group stays together and reaches Randa in daylight.
             </>
           ),
@@ -695,7 +694,7 @@ export const chamonixMatterhorn2026: Trip = {
       note: (
         <>
           Out and back from the Vallorcine bus stop, so the cars still stay at camp.{" "}
-          <b>10–11 h for fourteen</b> — it does not combine with the morning run, and it is
+          <b>10–11 h for thirteen</b> — it does not combine with the morning run, and it is
           +1 730 m the day before Zermatt.
         </>
       ),
@@ -742,7 +741,7 @@ export const chamonixMatterhorn2026: Trip = {
 
   hikesNote: (
     <>
-      <b>Komoot times are for one fit hiker.</b> Fourteen people regrouping, eating and queueing
+      <b>Komoot times are for one fit hiker.</b> Thirteen people regrouping, eating and queueing
       adds 20–30% — that is what turns a 9½ h Sunday into 11–12 h. Snow fell to{" "}
       <b>1 900–2 200 m</b> in each of Sept 2024 and 2025, so anything above 3 000 m should be
       assumed white. Pick the routes a week out, once there is a real forecast.
@@ -802,7 +801,7 @@ export const chamonixMatterhorn2026: Trip = {
         { label: <b>Personal medication</b>, sub: "Tell one other person where you keep it" },
         { label: "Painkillers, antihistamine, plasters" },
         { label: "Lip balm with SPF", sub: "The sun at 2 500 m gets your lips before your face" },
-        { label: "Earplugs", sub: "Fourteen of us, two campsites" },
+        { label: "Earplugs", sub: "Thirteen of us, two campsites" },
         { label: "Hand sanitiser + wet wipes" },
         { label: "Dry bag or two bin liners", sub: "For wet kit. There will be wet kit." },
         { label: "Spare glasses or lenses" },
@@ -1007,7 +1006,7 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Grill station + flat top for the KBBQ" },
             { label: <b>Cool box + ice packs</b>, sub: "The car fridge only runs while the engine does" },
             { label: "Camping stove" },
-            { label: <b>Big pot</b>, sub: "Nothing else we own holds 14 portions", qty: "5 L+" },
+            { label: <b>Big pot</b>, sub: "Nothing else we own holds 13 portions", qty: "5 L+" },
             { label: "Second pot + kettle" },
             { label: "Tongs + kitchen scissors", qty: "2 sets" },
             { label: "Sharp knife + board", sub: "KBBQ is non-stop cutting — the most forgotten item here" },
@@ -1039,7 +1038,7 @@ export const chamonixMatterhorn2026: Trip = {
         </>,
         <>
           <b>Trail snacks are everyone’s own.</b> Bring what you will actually eat, carry it
-          yourself, it is yours. Nobody is buying 14 people’s müsli bars.
+          yourself, it is yours. Nobody is buying 13 people’s müsli bars.
         </>,
         <>
           <b>Buy in Czechia, top up in France, buy nothing in Switzerland</b> — Swiss groceries run
@@ -1049,7 +1048,7 @@ export const chamonixMatterhorn2026: Trip = {
         <>
           <b>Photograph every receipt and put it straight into the settle-up page.</b> Nobody is
           assigned anything, so whoever grabs a shop pays for it that day and it evens out at the
-          end — but only if the receipt is entered. Tick alcohol as not shared by Chipi, Tuty and
+          end — but only if the receipt is entered. Tick alcohol as not shared by Tuty and
           Meloun.
         </>,
       ],
@@ -1212,7 +1211,7 @@ export const chamonixMatterhorn2026: Trip = {
             { label: "Grilovací stanice + plotna na korejský gril" },
             { label: <b>Chladicí box + vložky</b>, sub: "Lednice v autě jede jen za chodu motoru" },
             { label: "Vařič" },
-            { label: <b>Velký hrnec</b>, sub: "Nic jiného, co máme, nepojme 14 porcí", qty: "5 L+" },
+            { label: <b>Velký hrnec</b>, sub: "Nic jiného, co máme, nepojme 13 porcí", qty: "5 L+" },
             { label: "Druhý hrnec + konvice" },
             { label: "Kleště + kuchyňské nůžky", qty: "2 sady" },
             { label: "Ostrý nůž + prkénko", sub: "U korejského grilu se krájí pořád — nejčastěji zapomenutá věc" },
@@ -1253,7 +1252,7 @@ export const chamonixMatterhorn2026: Trip = {
         <>
           <b>Vyfoť každou účtenku a rovnou ji zadej do vyrovnání.</b> Nikdo nemá nic přiřazené,
           takže kdo zrovna vezme nákup, ten ho ten den zaplatí a na konci se to srovná — ale jen
-          když je účtenka zadaná. U alkoholu odškrtni, že ho Chipi, Tuty a Meloun nesdílí.
+          když je účtenka zadaná. U alkoholu odškrtni, že ho Tuty a Meloun nesdílí.
         </>,
       ],
     },
@@ -1280,7 +1279,7 @@ export const chamonixMatterhorn2026: Trip = {
     {
       what: (
         <>
-          Email RandaBoulder <span className="fine">— 14 entries, unstaffed hall</span>
+          Email RandaBoulder <span className="fine">— 13 entries, unstaffed hall</span>
         </>
       ),
       when: "Now",

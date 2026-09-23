@@ -125,7 +125,7 @@ export default function MoneyView({ slug }: { slug: string }) {
           {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates}
         </p>
         <p className="shop-lede">
-          Put in what a receipt came to and tick who it was for. Untick the three youngest on
+          Put in what a receipt came to and tick who it was for. Untick the youngest two on
           anything alcoholic and they stop paying for it. Everything nets off at the bottom into
           the fewest payments.
         </p>
