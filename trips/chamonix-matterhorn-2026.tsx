@@ -157,9 +157,11 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "matterhorn", name: "Matterhorn", at: [7.6586, 45.9766], kind: "peak", note: "4 478 m" },
     // 5-Seenweg, east side of the valley. Coordinates from OSM.
     { id: "blauherd", name: "Blauherd", at: [7.7874, 46.0169], kind: "stop", note: "2 571 m" },
-    { id: "stellisee", name: "Stellisee", at: [7.8004, 46.0134], kind: "goal", note: "2 537 m · the reflection" },
-    { id: "grindjisee", name: "Grindjisee", at: [7.7916, 46.0115], kind: "stop", note: "2 334 m" },
-    { id: "leisee", name: "Leisee", at: [7.7727, 46.015], kind: "stop", note: "2 232 m · Sunnegga" },
+    { id: "stellisee", name: "Stellisee", at: [7.8004, 46.0134], kind: "goal", note: "2 537 m" },
+    { id: "grindjisee", name: "Grindjisee", at: [7.7916, 46.0115], kind: "stop", note: "2 334 m", labelSide: "below" },
+    { id: "grunsee", name: "Grünsee", at: [7.78567, 46.00559], kind: "stop", note: "2 300 m · ~1 h detour" },
+    { id: "moosjisee", name: "Moosjisee", at: [7.7796, 46.01038], kind: "stop", note: "2 140 m", labelSide: "left" },
+    { id: "leisee", name: "Leisee", at: [7.7727, 46.015], kind: "stop", note: "2 232 m" },
   ],
 
   maps: [
@@ -216,7 +218,9 @@ export const chamonixMatterhorn2026: Trip = {
       title: "Sun · 5 Lakes",
       // Framed on the hike: with Randa and the Matterhorn in view the five lakes shrink to
       // one knot of overlapping labels. The drive to Täsch is on the overview map.
-      waypoints: ["zermatt", "blauherd", "stellisee", "grindjisee", "leisee"],
+      // Lakes first: when labels collide on a phone, the list order decides who keeps one,
+      // and on a 5 lakes day the lift station should be the one that gives way.
+      waypoints: ["zermatt", "stellisee", "grindjisee", "moosjisee", "leisee", "grunsee", "blauherd"],
       routeLine: fuenfseenTrail,
       note: "Shuttle from Täsch, then komoot's loop on foot from the Sunnegga valley station: up to Blauherd, Stellisee, above Grindjisee, past Moosjisee and Leisee, and down through Findeln to Zermatt.",
     },
