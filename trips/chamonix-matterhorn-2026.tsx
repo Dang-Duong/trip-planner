@@ -128,7 +128,7 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "montbuet", name: "Mont Buet", at: [6.8525, 46.0248], kind: "goal", note: "3 096 m · turn back by 13:00" },
     { id: "tasch", name: "Täsch", at: [7.777, 46.0677], kind: "stop", note: "terminal · CHF 16/car" },
     { id: "randa", name: "Randa", at: [7.7823, 46.0857], kind: "camp", note: "camp 2 · Sun", labelSide: "above" },
-    { id: "zermatt", name: "Zermatt", at: [7.7493, 46.0212], kind: "stop", note: "1 620 m · on foot 07:30" },
+    { id: "zermatt", name: "Zermatt", at: [7.7493, 46.0212], kind: "stop", note: "1 620 m · on foot ~08:30" },
     { id: "matterhorn", name: "Matterhorn", at: [7.6586, 45.9766], kind: "peak", note: "4 478 m" },
     // 5-Seenweg, east side of the valley. Coordinates from OSM.
     { id: "blauherd", name: "Blauherd", at: [7.7874, 46.0169], kind: "stop", note: "2 571 m" },
@@ -241,7 +241,7 @@ export const chamonixMatterhorn2026: Trip = {
     {
       when: "Camp 2",
       what: "Camping Attermenzen, Randa",
-      sub: "CHF 24 each",
+      sub: "CHF 24 each · cash only, CHF or EUR · no reservations · check-in 08:00–19:00",
       cost: "CHF 305",
       href: maps("Camping Attermenzen Randa"),
       linkLabel: "Pin ↗",
@@ -399,7 +399,7 @@ export const chamonixMatterhorn2026: Trip = {
         { time: "05:30", text: <>Depart → Täsch.</> },
         { time: "08:12", text: <>Shuttle to Zermatt, on foot from 1 620 m.</> },
         {
-          time: "~10:30",
+          time: "~11:00",
           text: (
             <>
               <b>Blauherd, 2 571 m</b> on foot — the climb the lift usually does.
@@ -407,7 +407,7 @@ export const chamonixMatterhorn2026: Trip = {
           ),
         },
         {
-          time: "~11:00",
+          time: "~11:30",
           text: (
             <>
               <b>Stellisee, 2 537 m.</b> The reflection shot. Wind flat by mid-morning or not at
@@ -415,11 +415,11 @@ export const chamonixMatterhorn2026: Trip = {
             </>
           ),
         },
-        { time: "~12:00", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
-        { time: "~13:00", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
-        { time: "~14:00", text: <>Leisee, 2 232 m, above Sunnegga.</> },
-        { time: "~15:30", text: <>Zermatt. Shuttle to Täsch.</> },
-        { time: "~16:30", text: <>Randa in daylight. Tents up, then RandaBoulder at 19:45.</> },
+        { time: "~12:30", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
+        { time: "~13:30", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
+        { time: "~14:45", text: <>Leisee, 2 232 m, above Sunnegga.</> },
+        { time: "~16:15", text: <>Zermatt. Shuttle to Täsch — every 20 min — then 4 min to camp.</> },
+        { time: "~17:00", text: <>Camp. Check in before the office shuts at 19:00, tents up, then RandaBoulder at 19:45.</> },
       ],
       note: (
         <>
