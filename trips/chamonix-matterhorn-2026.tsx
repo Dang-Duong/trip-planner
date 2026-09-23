@@ -4,7 +4,8 @@ import type { LngLat, Trip } from "@/lib/types";
 // public BRouter server (free, no key) and pasted in, then simplified to ~12 m.
 // To regenerate a route:
 //   curl "https://brouter.de/brouter?lonlats=<lon,lat>|<lon,lat>&profile=hiking-beta&format=geojson"
-// one leg at a time — its watchdog kills long multi-leg requests.
+// one leg at a time — its watchdog kills long multi-leg requests. The 5 lakes line is
+// komoot's own track for smart tour 43215776, the loop Sunday follows.
 
 const montbuetTrail: LngLat[] = [
   [6.92037, 46.01908], [6.92015, 46.01925], [6.91976, 46.01922], [6.91988, 46.01861],
@@ -34,24 +35,48 @@ const montbuetTrail: LngLat[] = [
 ];
 
 const fuenfseenTrail: LngLat[] = [
-  [7.78735, 46.01681], [7.78738, 46.0165], [7.78841, 46.01594], [7.79272, 46.01467],
+  [7.75173, 46.02251], [7.75317, 46.02208], [7.75392, 46.02211], [7.75402, 46.02187],
+  [7.7557, 46.02239], [7.75516, 46.02203], [7.75609, 46.02201], [7.75526, 46.02156],
+  [7.7551, 46.02039], [7.75575, 46.02077], [7.75649, 46.02086], [7.75695, 46.02112],
+  [7.75691, 46.02084], [7.75763, 46.02103], [7.75859, 46.02221], [7.75862, 46.02252],
+  [7.75942, 46.02292], [7.75994, 46.02351], [7.76073, 46.02346], [7.76098, 46.02403],
+  [7.76347, 46.02435], [7.764, 46.02556], [7.76457, 46.02504], [7.76506, 46.02546],
+  [7.7664, 46.02526], [7.7677, 46.02479], [7.76783, 46.025], [7.76855, 46.02524],
+  [7.76911, 46.02519], [7.77016, 46.02548], [7.77126, 46.02524], [7.77172, 46.02548],
+  [7.77231, 46.02552], [7.77255, 46.02627], [7.77364, 46.02744], [7.77362, 46.02952],
+  [7.77436, 46.02954], [7.77599, 46.03039], [7.77658, 46.03093], [7.77685, 46.0306],
+  [7.77709, 46.02886], [7.77813, 46.02751], [7.77938, 46.02665], [7.77961, 46.02669],
+  [7.77958, 46.0264], [7.7801, 46.0261], [7.78061, 46.02638], [7.78051, 46.0262],
+  [7.78095, 46.02632], [7.78093, 46.02602], [7.78145, 46.02603], [7.78131, 46.02562],
+  [7.78167, 46.02536], [7.78162, 46.02495], [7.78185, 46.02482], [7.78206, 46.0239],
+  [7.78247, 46.02361], [7.78247, 46.02333], [7.7828, 46.0234], [7.78277, 46.02296],
+  [7.78323, 46.02217], [7.78412, 46.02169], [7.78424, 46.02143], [7.7851, 46.02138],
+  [7.78533, 46.02104], [7.7856, 46.02115], [7.78595, 46.02016], [7.78644, 46.02006],
+  [7.78688, 46.01917], [7.78678, 46.01839], [7.78703, 46.01779], [7.78681, 46.01696],
+  [7.78724, 46.01684], [7.78738, 46.0165], [7.78841, 46.01594], [7.79272, 46.01467],
   [7.79516, 46.01368], [7.79658, 46.01371], [7.79848, 46.01323], [7.79958, 46.01375],
-  [7.80028, 46.01375], [7.79916, 46.01358], [7.79867, 46.01325], [7.7989, 46.01294],
-  [7.79834, 46.01294], [7.79706, 46.01339], [7.79634, 46.01337], [7.79695, 46.01306],
-  [7.79694, 46.01262], [7.79773, 46.01253], [7.80018, 46.01154], [7.80085, 46.01089],
-  [7.79947, 46.01017], [7.79931, 46.00968], [7.7989, 46.00948], [7.79774, 46.00963],
-  [7.79465, 46.01051], [7.79473, 46.01074], [7.7931, 46.01137], [7.79226, 46.01132],
-  [7.79206, 46.01157], [7.79013, 46.01184], [7.79072, 46.01143], [7.79038, 46.01112],
-  [7.79057, 46.01088], [7.79355, 46.00957], [7.7939, 46.00912], [7.79306, 46.00863],
-  [7.79221, 46.00772], [7.79141, 46.00744], [7.79148, 46.00713], [7.79115, 46.00686],
-  [7.79137, 46.00677], [7.78984, 46.00688], [7.78686, 46.00557], [7.78582, 46.00588],
-  [7.7852, 46.00581], [7.78449, 46.00599], [7.78439, 46.00654], [7.78409, 46.00668],
-  [7.78163, 46.00657], [7.78084, 46.00693], [7.78126, 46.00771], [7.78323, 46.00835],
-  [7.78358, 46.0087], [7.78456, 46.009], [7.78379, 46.00919], [7.78394, 46.00931],
-  [7.78344, 46.00934], [7.78364, 46.00953], [7.78325, 46.00957], [7.78426, 46.01],
-  [7.78482, 46.00991], [7.78488, 46.01024], [7.78334, 46.01069], [7.77949, 46.01098],
-  [7.77877, 46.01029], [7.77602, 46.01168], [7.77565, 46.01199], [7.7755, 46.01275],
-  [7.77505, 46.01327], [7.77352, 46.01422], [7.77333, 46.01481], [7.7729, 46.01517],
+  [7.80126, 46.01391], [7.80212, 46.01374], [7.80206, 46.0135], [7.80119, 46.01306],
+  [7.79851, 46.01292], [7.79706, 46.01339], [7.79634, 46.01337], [7.79461, 46.01379],
+  [7.79192, 46.01368], [7.79167, 46.0135], [7.78968, 46.01365], [7.78975, 46.01342],
+  [7.78864, 46.01361], [7.78897, 46.01333], [7.78829, 46.01342], [7.78859, 46.0132],
+  [7.78817, 46.01322], [7.78869, 46.01297], [7.78681, 46.01284], [7.78682, 46.01268],
+  [7.78763, 46.0125], [7.78692, 46.01236], [7.78442, 46.01264], [7.7848, 46.01233],
+  [7.78442, 46.01264], [7.78265, 46.01277], [7.78121, 46.01333], [7.78033, 46.01323],
+  [7.77921, 46.01341], [7.77821, 46.01318], [7.77663, 46.01248], [7.7759, 46.01313],
+  [7.77535, 46.01326], [7.77505, 46.01327], [7.77519, 46.01311], [7.77496, 46.01329],
+  [7.77081, 46.01317], [7.77068, 46.01303], [7.77123, 46.01283], [7.77062, 46.0125],
+  [7.76903, 46.01251], [7.76801, 46.01219], [7.76703, 46.01143], [7.76643, 46.01158],
+  [7.76486, 46.01092], [7.76319, 46.01072], [7.76101, 46.01078], [7.75745, 46.01057],
+  [7.75683, 46.01057], [7.7562, 46.01091], [7.75527, 46.01107], [7.75479, 46.01096],
+  [7.75306, 46.01118], [7.75245, 46.01149], [7.75237, 46.01253], [7.75159, 46.01146],
+  [7.75145, 46.01217], [7.75079, 46.01128], [7.7506, 46.01213], [7.75101, 46.01273],
+  [7.75097, 46.01316], [7.7507, 46.0134], [7.75034, 46.01287], [7.75013, 46.01342],
+  [7.74959, 46.01227], [7.7489, 46.01213], [7.74842, 46.01158], [7.74597, 46.01301],
+  [7.74526, 46.01324], [7.74507, 46.01306], [7.74423, 46.0137], [7.74356, 46.01389],
+  [7.74333, 46.01483], [7.74264, 46.01508], [7.7428, 46.01558], [7.74253, 46.01597],
+  [7.74502, 46.01781], [7.74548, 46.01912], [7.74592, 46.01926], [7.74617, 46.01971],
+  [7.74668, 46.01964], [7.74856, 46.02062], [7.74935, 46.02068], [7.74981, 46.02123],
+  [7.75151, 46.0218], [7.75173, 46.02251],
 ];
 
 const maps = (q: string) =>
@@ -134,7 +159,6 @@ export const chamonixMatterhorn2026: Trip = {
     { id: "blauherd", name: "Blauherd", at: [7.7874, 46.0169], kind: "stop", note: "2 571 m" },
     { id: "stellisee", name: "Stellisee", at: [7.8004, 46.0134], kind: "goal", note: "2 537 m · the reflection" },
     { id: "grindjisee", name: "Grindjisee", at: [7.7916, 46.0115], kind: "stop", note: "2 334 m" },
-    { id: "grunsee", name: "Grünsee", at: [7.7857, 46.0056], kind: "stop", note: "2 300 m" },
     { id: "leisee", name: "Leisee", at: [7.7727, 46.015], kind: "stop", note: "2 232 m · Sunnegga" },
   ],
 
@@ -192,9 +216,9 @@ export const chamonixMatterhorn2026: Trip = {
       title: "Sun · 5 Lakes",
       // Framed on the hike: with Randa and the Matterhorn in view the five lakes shrink to
       // one knot of overlapping labels. The drive to Täsch is on the overview map.
-      waypoints: ["zermatt", "blauherd", "stellisee", "grindjisee", "grunsee", "leisee"],
+      waypoints: ["zermatt", "blauherd", "stellisee", "grindjisee", "leisee"],
       routeLine: fuenfseenTrail,
-      note: "Shuttle from Täsch, on foot from Zermatt up to Blauherd, then the 5-Seenweg: Stellisee, Grindjisee, Grünsee, Moosjisee, Leisee, and down to Zermatt. The line starts at Blauherd — the climb to it isn't drawn.",
+      note: "Shuttle from Täsch, then komoot's loop on foot from the Sunnegga valley station: up to Blauherd, Stellisee, above Grindjisee, past Moosjisee and Leisee, and down through Findeln to Zermatt.",
     },
   ],
 
@@ -393,45 +417,46 @@ export const chamonixMatterhorn2026: Trip = {
     {
       date: "27",
       title: "Sun · Zermatt — the 5 lakes",
-      meta: "on foot · +970 m · 2 600 m",
+      meta: "15.1 km · +970 m · 2 560 m",
       mapId: "sun",
       legs: [
         { time: "05:30", text: <>Depart → Täsch.</> },
-        { time: "08:12", text: <>Shuttle to Zermatt, on foot from 1 620 m.</> },
+        { time: "08:12", text: <>Shuttle to Zermatt. On foot from the Sunnegga valley station, 1 610 m.</> },
         {
-          time: "~11:00",
+          time: "~12:30",
           text: (
             <>
-              <b>Blauherd, 2 571 m</b> on foot — the climb the lift usually does.
+              <b>Blauherd, 2 571 m.</b> The top of a long climb — ~950 m, most of the day’s work.
             </>
           ),
         },
         {
-          time: "~11:30",
+          time: "~13:00",
           text: (
             <>
-              <b>Stellisee, 2 537 m.</b> The reflection shot. Wind flat by mid-morning or not at
-              all.
+              <b>Stellisee, 2 537 m.</b> The reflection shot — at lunchtime rather than
+              mid-morning, so it needs a calm day.
             </>
           ),
         },
-        { time: "~12:30", text: <>Grindjisee, 2 334 m — larches, the quiet one.</> },
-        { time: "~13:30", text: <>Grünsee, 2 300 m. Then Moosjisee and down.</> },
-        { time: "~14:45", text: <>Leisee, 2 232 m, above Sunnegga.</> },
+        { time: "~13:15", text: <>Grindjisee below the path — larches, the quiet one.</> },
+        { time: "~14:15", text: <>Moosjisee and Leisee, above Sunnegga.</> },
+        { time: "~14:45", text: <>Findeln, the hamlet. Then down through the larch forest.</> },
         { time: "~16:15", text: <>Zermatt. Shuttle to Täsch — every 20 min — then 4 min to camp.</> },
         { time: "~17:00", text: <>Camp. Check in before the office shuts at 19:00, tents up, then RandaBoulder at 19:45.</> },
       ],
       note: (
         <>
-          On foot from Zermatt it is <b>+970 m and ~7½ h</b> —{" "}
-          <a href="https://www.komoot.com/smarttour/1713407" target="_blank" rel="noreferrer">
-            komoot’s 5 h 08 and +580 m
+          <b>Komoot’s 6 h 24 is for one fit hiker</b> — about 7½–8 h for thirteen, which is what
+          the times above assume. It is{" "}
+          <a href="https://www.komoot.com/smarttour/43215776" target="_blank" rel="noreferrer">
+            komoot’s own loop
           </a>{" "}
-          assume the Sunnegga funicular and Blauherd gondola for the climb.{" "}
-          <b>Those lifts are plan B after Mont Buet:</b> Sunnegga runs until 11 Oct and Blauherd
-          until 4 Oct, so both are open on the 27th. Ride up and it becomes a half day, at a cost
-          per head for thirteen. Either way the whole group stays together and reaches Randa in
-          daylight.
+          from the Sunnegga valley station, all on foot, and it skips Grünsee, the one lake of the
+          five that is off this line. <b>The lifts are plan B after Mont Buet:</b> the loop runs
+          right past the Blauherd gondola, and Blauherd runs until 4 Oct and Sunnegga until 11 Oct,
+          so both are open on the 27th. Ride up and it becomes a half day, at a cost per head for
+          thirteen.
         </>
       ),
     },
@@ -493,18 +518,18 @@ export const chamonixMatterhorn2026: Trip = {
       note: <>Not this time — Sunday is the 5 lakes. From Schwarzsee only; add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
     },
     {
-      name: "5-Seenweg — Stellisee & the lakes",
-      href: "https://www.komoot.com/smarttour/1713407",
+      name: "5 Lakes Trail — loop from Zermatt",
+      href: "https://www.komoot.com/smarttour/43215776",
       when: "Zermatt · Sun",
-      km: "14.0 km",
-      ascent: "+580 m",
-      time: "5 h 08",
-      high: "2 600 m",
+      km: "15.1 km",
+      ascent: "+970 m",
+      time: "6 h 24",
+      high: "2 560 m",
       grade: "Hard",
       note: (
         <>
-          <b>Sunday’s route,</b> on the east side of the valley. <b>Those figures assume the Sunnegga and Blauherd lifts</b> —
-          on foot from Zermatt it is nearer +970 m and 7½ h, which is how it is timed on Sunday.
+          <b>Sunday’s route.</b> All on foot from the Sunnegga valley station, back down through
+          Findeln. Skips Grünsee.
         </>
       ),
     },
