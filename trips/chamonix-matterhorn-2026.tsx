@@ -235,6 +235,14 @@ export const chamonixMatterhorn2026: Trip = {
       linkLabel: "Route ↗",
     },
     {
+      when: "Fri shop",
+      what: <b>Migros Quartz Center, Martigny</b>,
+      sub: "Food for Friday night and Saturday, and where the cars regroup before the pass. Off the A9 at Martigny-Fully, 300+ spaces, open until 20:00.",
+      cost: "—",
+      href: maps("Migros Quartz Center Martigny"),
+      linkLabel: "Pin ↗",
+    },
+    {
       when: "Camp 1",
       what: "Camping Glacier d'Argentière",
       sub: "€311 + €14 electricity · €25 each",
@@ -255,7 +263,23 @@ export const chamonixMatterhorn2026: Trip = {
       linkLabel: "Pin ↗",
     },
     {
+      when: "Sat shop",
+      what: <b>Marché U, Argentière</b>,
+      sub: "On the way back from Le Buet, open until 19:30. Buy for Sunday too — Swiss shops are shut on Sundays.",
+      cost: "—",
+      href: maps("Marché U Argentière Chamonix"),
+      linkLabel: "Pin ↗",
+    },
+    {
       when: "Sun",
+      what: "Argentière → Täsch · 136 km",
+      sub: "About 2 h. Leave at 05:30 for the 08:12 shuttle.",
+      cost: "—",
+      href: dir("Camping Glacier Argentiere Chamonix", "Matterhorn Terminal Tasch"),
+      linkLabel: "Route ↗",
+    },
+    {
+      when: "Sun hike",
       what: <b>Matterhorn Terminal Täsch</b>,
       sub: "CHF 11 in the garage over the road",
       cost: (
@@ -298,7 +322,7 @@ export const chamonixMatterhorn2026: Trip = {
     </>,
     <>
       <b>Don’t drive in convoy.</b> Over 980 km you will separate at the first services.
-      Agree fuel stops and a Martigny meeting point instead, and put one person from each car in a
+      Agree fuel stops and regroup at the Migros in Martigny instead, and put one person from each car in a
       group chat.
     </>,
     <>
@@ -344,7 +368,7 @@ export const chamonixMatterhorn2026: Trip = {
         { time: "~15:30", text: <>Bern → Vevey → Martigny. Driver swap.</> },
         { time: "~19:00", text: <>Arrive. Sunset 19:25 — pitch fast.</> },
       ],
-      note: <>Buy food in Germany or Martigny; you pass Chamonix after closing.</>,
+      note: <>Buy food at the Migros in Martigny — open until 20:00, right off the motorway.</>,
     },
     {
       date: "26",
@@ -400,7 +424,7 @@ export const chamonixMatterhorn2026: Trip = {
           ),
         },
         { time: "~15:00", text: <>Back past the refuge. 1 766 m of descent; poles.</> },
-        { time: "~17:30", text: <>Le Buet. Drive back by way of the supermarket — the cars carry the Saturday shop — then camp.</> },
+        { time: "~17:30", text: <>Le Buet. Drive back by way of Marché U in Argentière — open until 19:30, and buy for Sunday too — then camp.</> },
         { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
       ],
       note: (
@@ -480,21 +504,6 @@ export const chamonixMatterhorn2026: Trip = {
   // if you add one, open it first: komoot retires smart tours and returns 410.
   hikes: [
     {
-      name: "Lac Blanc & Lacs des Chéserys loop",
-      href: "https://www.komoot.com/smarttour/e934061622/von-flegere-zum-col-des-montets-ueber-den-lac-blanc-chamonix-mont-blanc-schleife",
-      when: "Chamonix · Sat",
-      km: "16.6 km",
-      ascent: "+1 180 m",
-      time: "7 h 54",
-      high: "2 350 m",
-      grade: "Hard",
-      note: (
-        <>
-          The Chésérys ladders. Not this time — Saturday is Mont Buet.
-        </>
-      ),
-    },
-    {
       name: "Mont Buet via Vallorcine",
       href: "https://www.komoot.com/smarttour/e924134691/mont-buet-via-vallorcine-chamonix-mont-blanc",
       when: "Chamonix · Sat",
@@ -511,17 +520,6 @@ export const chamonixMatterhorn2026: Trip = {
       ),
     },
     {
-      name: "Hörnligrat – Schwarzsee loop",
-      href: "https://www.komoot.com/smarttour/7904022",
-      when: "Zermatt · Sun",
-      km: "11.0 km",
-      ascent: "+840 m",
-      time: "5 h 51",
-      high: "3 210 m",
-      grade: "Hard",
-      note: <>Not this time — Sunday is the 5 lakes. From Schwarzsee only; add the Zermatt → Zmutt → Schwarzsee approach for the full day.</>,
-    },
-    {
       name: "5 Lakes Trail — loop from Zermatt",
       href: "https://www.komoot.com/smarttour/43215776",
       when: "Zermatt · Sun",
@@ -536,17 +534,6 @@ export const chamonixMatterhorn2026: Trip = {
           Findeln. Skips Grünsee.
         </>
       ),
-    },
-    {
-      name: "Zermatt – Zmutt – Furi loop",
-      href: "https://www.komoot.com/tour/32054192",
-      when: "Zermatt · Sun",
-      km: "11.2 km",
-      ascent: "+630 m",
-      time: "4 h 53",
-      high: "2 070 m",
-      grade: "Moderate",
-      note: <>Shortest Sunday. No Hörnlihütte, no lift question, back in Zermatt early.</>,
     },
   ],
 
@@ -1117,10 +1104,8 @@ export const chamonixMatterhorn2026: Trip = {
   ],
 
   sources: [
-    { label: "Chamonix lifts", href: "https://www.chamonix.net/english/lift-systems/dates-times" },
     { label: "Argentière camp", href: "https://www.campingchamonix.com/en/home/" },
     { label: "Zermatt", href: "https://www.matterhornparadise.ch/en/information/lifts-and-pistes" },
-    { label: "Hörnlihütte", href: "https://hoernlihuette.ch/" },
     { label: "RandaBoulder", href: "https://www.randaboulder.ch/" },
     { label: "Attermenzen", href: "https://www.campingranda.ch/" },
   ],

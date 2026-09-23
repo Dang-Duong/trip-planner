@@ -138,7 +138,7 @@ export default function TripView({ slug }: { slug: string }) {
         <section data-map="overview">
           <div className="hd">
             <b>01</b>
-            <h2>Hike options</h2>
+            <h2>Hikes</h2>
           </div>
           <HikeTable hikes={trip.hikes} />
           {trip.hikesNote && (
