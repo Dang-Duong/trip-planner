@@ -122,7 +122,7 @@ export const chamonixMatterhorn2026: Trip = {
     },
     { id: "montblanc", name: "Mont Blanc", at: [6.865, 45.833], kind: "peak", note: "4 806 m" },
     // Saturday: Mont Buet, up the Bérard valley. Coordinates from OSM.
-    { id: "lebuet", name: "Le Buet", at: [6.9204, 46.0192], kind: "start", note: "1 330 m · by train" },
+    { id: "lebuet", name: "Le Buet", at: [6.9204, 46.0192], kind: "start", note: "1 330 m · car park" },
     { id: "cascadeberard", name: "Cascade de Bérard", at: [6.9118, 46.02], kind: "stop", labelSide: "below" },
     { id: "refugeberard", name: "Refuge de la Pierre à Bérard", at: [6.8687, 46.003], kind: "hut", note: "1 924 m · likely shut — no water" },
     { id: "montbuet", name: "Mont Buet", at: [6.8525, 46.0248], kind: "goal", note: "3 096 m · turn back by 13:00" },
@@ -185,7 +185,7 @@ export const chamonixMatterhorn2026: Trip = {
       title: "Sat · Mont Buet",
       waypoints: ["argentiere", "lebuet", "refugeberard", "montbuet"],
       routeLine: montbuetTrail,
-      note: "Mont-Blanc Express from Argentière to Le Buet, free with the campsite guest card, then north-west up the Bérard valley past the refuge to the summit, and back the same way.",
+      note: "Drive from Argentière to the car park at Le Buet, about ten minutes, then north-west up the Bérard valley past the refuge to the summit, and back the same way.",
     },
     {
       id: "sun",
@@ -216,10 +216,14 @@ export const chamonixMatterhorn2026: Trip = {
     },
     {
       when: "Sat hike",
-      what: <b>Gare du Buet</b>,
-      sub: "Mont-Blanc Express from Argentière, ~10 min. Free with the guest card — no cars.",
-      cost: "Free",
-      href: maps("Gare du Buet Vallorcine"),
+      what: <b>Parking du Buet</b>,
+      sub: "10 min from camp. First 2 h free, then €5 a car for the day. Fills by mid-morning in summer — be parked by 06:45.",
+      cost: (
+        <>
+          €5<span className="fine">/car</span>
+        </>
+      ),
+      href: maps("Parking du Buet Vallorcine"),
       linkLabel: "Pin ↗",
     },
     {
@@ -270,9 +274,10 @@ export const chamonixMatterhorn2026: Trip = {
       group chat.
     </>,
     <>
-      <b>Saturday, leave the cars at camp.</b> The Mont-Blanc Express runs from Argentière to Le
-      Buet in about ten minutes, free with the guest card you get at check-in, and the hike
-      starts at the station.
+      <b>Saturday, drive to Le Buet.</b> It is 6.5 km and about ten minutes from camp, and the car
+      park is a few minutes’ walk from the path — €5 a car for the day. It fills by mid-morning in
+      summer, so be parked by 06:45. There may be temporary traffic lights for roadworks on the
+      RD1506; allow a few extra minutes.
     </>,
     <>
       <b>Sunday, Täsch is CHF 16 per car</b> per day. Split the cars across both garages if the main
@@ -319,12 +324,13 @@ export const chamonixMatterhorn2026: Trip = {
       meta: "19.8 km · +1 730 m · 3 096 m",
       mapId: "sat",
       legs: [
+        { time: "06:00", text: <><b>Breakfast, packed</b> — this day needs the daylight.</> },
         {
-          time: "06:00",
+          time: "06:30",
           text: (
             <>
-              <b>Breakfast, packed, out</b> — this day needs the daylight. Mont-Blanc Express from
-              Argentière to Le Buet, ~10 min, free on the guest card.
+              <b>Drive to Le Buet</b>, 6.5 km, ~10 min. Parking du Buet, €5 a car for the day — the
+              path starts a few minutes’ walk away.
             </>
           ),
         },
@@ -366,7 +372,7 @@ export const chamonixMatterhorn2026: Trip = {
           ),
         },
         { time: "~15:00", text: <>Back past the refuge. 1 766 m of descent; poles.</> },
-        { time: "~17:30", text: <>Le Buet. Train back to Argentière, shop, camp.</> },
+        { time: "~17:30", text: <>Le Buet. Drive back by way of the supermarket — the cars carry the Saturday shop — then camp.</> },
         { time: "21:00", text: <>Sleep. Alarm 04:00.</> },
       ],
       note: (
@@ -378,7 +384,8 @@ export const chamonixMatterhorn2026: Trip = {
           for one fit hiker, so the 13:00 turn-back is the whole plan — sunset is 19:22 and there
           is no hut to wait in. <b>It is out and back, and that is the safety valve:</b> anyone
           slower can turn round at any point and walk down to Le Buet, in pairs agreed at the
-          station, never alone. Picked on the 23 Sept forecast: clear and dry, gusts around 25 km/h
+          car park, never alone. <b>Send a driver down with the first pair back,</b> so their car
+          can leave and nobody sits for hours waiting on a key. Picked on the 23 Sept forecast: clear and dry, gusts around 25 km/h
           on top, 1–9 °C and feeling like −3 early, and no snowfall at 3 096 m in 45 days.
         </>
       ),
@@ -469,8 +476,8 @@ export const chamonixMatterhorn2026: Trip = {
       grade: "Hard",
       note: (
         <>
-          <b>Saturday’s route.</b> Out and back from Le Buet on the train, so the cars stay at
-          camp. <b>10–11 h for thirteen.</b>
+          <b>Saturday’s route.</b> Out and back from the car park at Le Buet, ten minutes’ drive
+          from camp. <b>10–11 h for thirteen.</b>
         </>
       ),
     },
