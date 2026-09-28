@@ -272,7 +272,7 @@ export default function MoneyView({ slug }: { slug: string }) {
               <option value="">Everyone</option>
               {people.map((p) => (
                 <option key={p} value={p}>
-                  Only {p}
+                  {p}
                 </option>
               ))}
             </select>
