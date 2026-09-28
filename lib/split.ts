@@ -99,6 +99,21 @@ export function balances(expenses: Expense[], people: string[]): Map<string, num
   return new Map(people.map((p) => [p, (paid.get(p) ?? 0) - (share.get(p) ?? 0)]));
 }
 
+export type Line = { e: Expense; czk: number; ways?: number };
+
+/** One person's side of `balances`, receipt by receipt: what they paid (+) and their share (−). */
+export function breakdown(expenses: Expense[], people: string[], person: string): Line[] {
+  const lines: Line[] = [];
+  for (const e of expenses) {
+    const who = [...new Set(e.shares)].filter((p) => people.includes(p));
+    if (!who.length || !people.includes(e.payer)) continue;
+    const total = toCzk(e);
+    if (e.payer === person) lines.push({ e, czk: total });
+    if (who.includes(person)) lines.push({ e, czk: -total / who.length, ways: who.length });
+  }
+  return lines;
+}
+
 export type Transfer = { from: string; to: string; amount: number };
 
 /**
@@ -202,7 +217,8 @@ export function sanitizeExpenses(raw: unknown): Expense[] {
       ...(x.settlement === true ? { settlement: true } : {}),
     });
   }
-  return out;
+  // Redis hands hash values back in no guaranteed order; ids start with a timestamp.
+  return out.sort((a, b) => a.id.localeCompare(b.id, "en", { numeric: true }));
 }
 
 /**

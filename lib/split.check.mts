@@ -2,6 +2,7 @@
 import assert from "node:assert/strict";
 import {
   balances,
+  breakdown,
   detectCurrency,
   parseAmount,
   sanitizeExpenses,
@@ -298,6 +299,11 @@ assert.deepEqual(settle(balances([], people)), []);
   assert.deepEqual(kept.map((e) => e.id), ["1", "9", "10", "11"], "only well-formed receipts survive");
   assert.equal(kept[1].what, "Receipt", "a missing label is filled, not grounds to lose money data");
   assert.equal(kept[2].settlement, undefined, "only a real `true` marks a payment");
+
+  const ids = ["1790542606934-gls7g", "1790151692317-6jlnr", "1790514624296-ew3rf"];
+  const order = (list: string[]) => sanitizeExpenses(list.map((id) => ({ ...good, id }))).map((e) => e.id);
+  assert.deepEqual(order(ids), order([...ids].reverse()), "the store's order never shows through");
+  assert.deepEqual(order(ids)[0], "1790151692317-6jlnr", "oldest receipt first");
   assert.equal(kept[3].settlement, true);
   assert.equal(sum([...balances(kept, ["A", "B"]).values()]), 0, "what survives still balances");
 }
@@ -363,6 +369,11 @@ assert.deepEqual(settle(balances([], people)), []);
       after.set(t.to, after.get(t.to)! - t.amount);
     }
     for (const [p, v] of after) assert.equal(v, 0, `seed ${seed}: ${p} left at ${v}`);
+
+    for (const p of crew) {
+      const shown = sum(breakdown(xs, crew, p).map((l) => l.czk));
+      assert.ok(Math.abs(shown - net.get(p)!) < 1, `seed ${seed}: ${p}'s breakdown ${shown} vs ${net.get(p)}`);
+    }
   }
 }
 

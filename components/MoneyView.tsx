@@ -6,12 +6,15 @@ import SyncBadge from "@/components/SyncBadge";
 import { useSharedEntries } from "@/lib/shared-state";
 import {
   balances,
+  breakdown,
   detectCurrency,
   parseAmount,
   RATES,
   sanitizeExpenses,
   settle,
   toCzk,
+  type Line,
+  type Transfer,
   type Currency,
   type Expense,
 } from "@/lib/split";
@@ -46,6 +49,8 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [currency, setCurrency] = useState<Currency>("CZK");
   const [payer, setPayer] = useState("");
   const [shares, setShares] = useState<string[]>([]);
+  const [armed, setArmed] = useState<string | null>(null);
+  const [why, setWhy] = useState<string | null>(null);
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
   const transfers = useMemo(() => settle(net), [net]);
@@ -125,14 +130,15 @@ export default function MoneyView({ slug }: { slug: string }) {
           {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates}
         </p>
         <p className="shop-lede">
-          Put in what a receipt came to and tick who it was for. Untick the youngest two on
-          anything alcoholic and they stop paying for it. Everything nets off at the bottom into
-          the fewest payments.
+          Put in what a receipt came to and tick who it was for. Untick the
+          youngest two on anything alcoholic and they stop paying for it.
+          Everything nets off at the bottom into the fewest payments.
         </p>
         <p className="money-warn">
-          Receipts are <b>shared with everyone</b> on this page, like the shopping ticks. Add one
-          with no signal and it is kept on your phone until you have bars again — the badge says so
-          while it waits. <SyncBadge sync={sync} pending={pending} />
+          Receipts are <b>shared with everyone</b> on this page, like the
+          shopping ticks. Add one with no signal and it is kept on your phone
+          until you have bars again — the badge says so while it waits.{" "}
+          <SyncBadge sync={sync} pending={pending} />
         </p>
       </header>
 
@@ -185,7 +191,11 @@ export default function MoneyView({ slug }: { slug: string }) {
           </label>
           <label className="money-f">
             <span>Who paid</span>
-            <select id="money-payer" value={payer} onChange={(e) => setPayer(e.target.value)}>
+            <select
+              id="money-payer"
+              value={payer}
+              onChange={(e) => setPayer(e.target.value)}
+            >
               <option value="">Pick…</option>
               {people.map((p) => (
                 <option key={p} value={p}>
@@ -221,7 +231,9 @@ export default function MoneyView({ slug }: { slug: string }) {
                     checked={shares.includes(p)}
                     onChange={() =>
                       setShares(
-                        shares.includes(p) ? shares.filter((x) => x !== p) : [...shares, p],
+                        shares.includes(p)
+                          ? shares.filter((x) => x !== p)
+                          : [...shares, p],
                       )
                     }
                   />
@@ -232,7 +244,12 @@ export default function MoneyView({ slug }: { slug: string }) {
           </ul>
         </div>
 
-        <button type="button" className="money-add-btn" disabled={!valid} onClick={add}>
+        <button
+          type="button"
+          className="money-add-btn"
+          disabled={!valid}
+          onClick={add}
+        >
           {/* The parsed amount, not the typed text: "1.240" reads as 1,24, and this is
               where that shows up before anyone commits it. */}
           Add {parsed !== null ? `${fmtAmount(parsed)} ${currency}` : "receipt"}
@@ -257,12 +274,18 @@ export default function MoneyView({ slug }: { slug: string }) {
                   </span>
                   <span className="money-amt">
                     {fmt(toCzk(e))} Kč
-                    {e.currency !== "CZK" && <i>{(e.amount / 100).toFixed(2)} {e.currency}</i>}
+                    {e.currency !== "CZK" && (
+                      <i>
+                        {(e.amount / 100).toFixed(2)} {e.currency}
+                      </i>
+                    )}
                   </span>
                   <button
                     type="button"
                     aria-label={`Remove ${e.what}`}
-                    onClick={() => write((prev) => prev.filter((x) => x.id !== e.id))}
+                    onClick={() =>
+                      write((prev) => prev.filter((x) => x.id !== e.id))
+                    }
                   >
                     ×
                   </button>
@@ -277,7 +300,10 @@ export default function MoneyView({ slug }: { slug: string }) {
               {people.map((p) => {
                 const v = net.get(p) ?? 0;
                 return (
-                  <li key={p} data-state={v > 0 ? "up" : v < 0 ? "down" : "flat"}>
+                  <li
+                    key={p}
+                    data-state={v > 0 ? "up" : v < 0 ? "down" : "flat"}
+                  >
                     <span>{p}</span>
                     <b>
                       {v > 0 ? "+" : ""}
@@ -303,11 +329,51 @@ export default function MoneyView({ slug }: { slug: string }) {
                     <i>{fmt(t.amount)} Kč</i>
                     <button
                       type="button"
-                      className="money-paid"
-                      onClick={() => markPaid(t.from, t.to, t.amount)}
+                      className="money-why-btn"
+                      aria-expanded={why === `${t.from}>${t.to}`}
+                      onClick={() =>
+                        setWhy(
+                          why === `${t.from}>${t.to}`
+                            ? null
+                            : `${t.from}>${t.to}`,
+                        )
+                      }
                     >
-                      Mark paid
+                      Why?
                     </button>
+                    <button
+                      type="button"
+                      className="money-paid"
+                      data-armed={armed === `${t.from}>${t.to}`}
+                      onBlur={() => setArmed(null)}
+                      onClick={() => {
+                        const key = `${t.from}>${t.to}`;
+                        if (armed !== key) return setArmed(key);
+                        setArmed(null);
+                        markPaid(t.from, t.to, t.amount);
+                      }}
+                    >
+                      {armed === `${t.from}>${t.to}`
+                        ? `Confirm ${fmt(t.amount)} Kč?`
+                        : "Mark paid"}
+                    </button>
+                    {why === `${t.from}>${t.to}` && (
+                      <div className="money-why">
+                        <Side
+                          who={t.from}
+                          lines={breakdown(expenses, people, t.from)}
+                          net={net.get(t.from) ?? 0}
+                        />
+                        <Side
+                          who={t.to}
+                          lines={breakdown(expenses, people, t.to)}
+                          net={net.get(t.to) ?? 0}
+                        />
+                        <p>
+                          <b>Why to {t.to}?</b> {explain(t, transfers)}
+                        </p>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ol>
@@ -323,7 +389,9 @@ export default function MoneyView({ slug }: { slug: string }) {
                       <button
                         type="button"
                         aria-label={`Undo ${e.what}`}
-                        onClick={() => write((prev) => prev.filter((x) => x.id !== e.id))}
+                        onClick={() =>
+                          write((prev) => prev.filter((x) => x.id !== e.id))
+                        }
                       >
                         ×
                       </button>
@@ -352,5 +420,54 @@ export default function MoneyView({ slug }: { slug: string }) {
         icon={ARROW}
       />
     </div>
+  );
+}
+
+function Side({
+  who,
+  lines,
+  net,
+}: {
+  who: string;
+  lines: Line[];
+  net: number;
+}) {
+  return (
+    <div>
+      <h4>
+        {who} {net < 0 ? "owes" : "gets back"} <i>{fmt(Math.abs(net))} Kč</i>
+      </h4>
+      <ul>
+        {lines.map(({ e, czk, ways }) => (
+          <li key={`${e.id}${ways ? "s" : "p"}`}>
+            <span>
+              {e.settlement
+                ? ways
+                  ? `Got it from ${e.payer}`
+                  : `Already sent to ${e.shares[0]}`
+                : ways
+                  ? `${e.what} · ${fmt(toCzk(e))} Kč ÷ ${ways}`
+                  : `Paid for ${e.what}`}
+            </span>
+            <i>
+              {czk > 0 ? "+" : "−"}
+              {fmt(Math.round(Math.abs(czk)))}
+            </i>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function explain(t: Transfer, all: Transfer[]) {
+  const rest = all.filter((x) => x.from === t.from && x !== t);
+  const also = rest.length
+    ? ` The rest goes to ${rest.map((x) => `${x.to} (${fmt(x.amount)} Kč)`).join(" and ")}.`
+    : "";
+  return (
+    `${t.from} only ever pays their own total, never someone else's receipt. ` +
+    `Who gets it is just matched up so there are as few transfers as possible, ` +
+    `and everyone still ends up with exactly what they're owed.${also}`
   );
 }

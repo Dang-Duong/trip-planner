@@ -585,7 +585,23 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
   letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;
   transition:color .15s,border-color .15s}
 .money-paid:hover{color:var(--done,#6FB587);border-color:var(--done,#6FB587)}
+.money-paid[data-armed="true"]{color:var(--bg);background:var(--done,#6FB587);border-color:var(--done,#6FB587)}
 .money-settle>ol>li i{margin-left:auto}
+.money-why-btn{background:none;border:none;color:var(--glacier);cursor:pointer;
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:underline;text-underline-offset:3px;padding:.32rem 0}
+.money-why{flex-basis:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));
+  gap:.9rem 1.4rem;margin-top:.5rem;padding-top:.8rem;border-top:1px dashed var(--rule)}
+.money-why h4{margin:0 0 .4rem;font-size:.82rem;font-weight:600}
+.money-why h4 i{font-family:var(--mono);font-style:normal;margin:0}
+.money-why ul{list-style:none;margin:0;padding:0}
+.money-why li{display:flex;gap:.8rem;justify-content:space-between;padding:.22rem 0;
+  font-size:.78rem;color:var(--stone);border-bottom:1px solid var(--rule-2)}
+.money-settle .money-why li i{font-family:var(--mono);font-style:normal;font-variant-numeric:tabular-nums;
+  margin:0;width:auto;color:var(--ink);white-space:nowrap}
+.money-why p{grid-column:1/-1;margin:0;font-size:.8rem;line-height:1.5;color:var(--stone)}
+.money-why p b{color:var(--ink);font-family:inherit;font-stretch:normal;text-transform:none}
+.money-settle>ol>li .money-why span{color:var(--stone);font-size:inherit;flex:1}
 
 .money-paid-list{margin-top:1.2rem;border-top:1px solid var(--rule);padding-top:.9rem}
 .money-paid-list h3{margin:0 0 .6rem;font-family:var(--mono);font-size:.55rem;
