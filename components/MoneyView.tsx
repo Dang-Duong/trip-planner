@@ -266,18 +266,6 @@ export default function MoneyView({ slug }: { slug: string }) {
 
       {receipts.length > 0 && (
         <>
-          <label className="money-f money-filter">
-            <span>Show</span>
-            <select value={me} onChange={(e) => setMe(e.target.value)}>
-              <option value="">Everyone</option>
-              {people.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          </label>
-
           <section className="money-list">
             <h2>
               Receipts <i>{fmt(total)} Kč</i>
@@ -312,6 +300,18 @@ export default function MoneyView({ slug }: { slug: string }) {
               ))}
             </ul>
           </section>
+
+          <label className="money-f money-filter">
+            <span>Show</span>
+            <select value={me} onChange={(e) => setMe(e.target.value)}>
+              <option value="">Everyone</option>
+              {people.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </label>
 
           <section className="money-bal">
             <h2>Where everyone stands</h2>
