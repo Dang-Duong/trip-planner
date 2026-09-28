@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Fab, { ARROW } from "@/components/Fab";
 import SyncBadge from "@/components/SyncBadge";
+import { useStoredChoice } from "@/lib/local-state";
 import { useSharedEntries } from "@/lib/shared-state";
 import {
   balances,
@@ -51,9 +52,15 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [shares, setShares] = useState<string[]>([]);
   const [armed, setArmed] = useState<string | null>(null);
   const [why, setWhy] = useState<string | null>(null);
+  const everyone = useMemo(() => ["", ...people], [people]);
+  const [me, setMe] = useStoredChoice(`money-me:${slug}`, everyone, "");
+  const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
   const transfers = useMemo(() => settle(net), [net]);
+  const shown = me
+    ? transfers.filter((t) => t.from === me || t.to === me)
+    : transfers;
 
   // An expense can only name someone off the list if the trip data was renamed under it
   // (or storage was hand-edited). `balances` skips those rather than invent money — so
@@ -259,12 +266,24 @@ export default function MoneyView({ slug }: { slug: string }) {
 
       {receipts.length > 0 && (
         <>
+          <label className="money-f money-filter">
+            <span>Show</span>
+            <select value={me} onChange={(e) => setMe(e.target.value)}>
+              <option value="">Everyone</option>
+              {people.map((p) => (
+                <option key={p} value={p}>
+                  Only {p}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <section className="money-list">
             <h2>
               Receipts <i>{fmt(total)} Kč</i>
             </h2>
             <ul>
-              {receipts.map((e) => (
+              {receipts.filter(mine).map((e) => (
                 <li key={e.id} data-skipped={!counts(e)}>
                   <b>{e.what}</b>
                   <span className="money-meta">
@@ -297,7 +316,7 @@ export default function MoneyView({ slug }: { slug: string }) {
           <section className="money-bal">
             <h2>Where everyone stands</h2>
             <ul>
-              {people.map((p) => {
+              {(me ? [me] : people).map((p) => {
                 const v = net.get(p) ?? 0;
                 return (
                   <li
@@ -317,12 +336,14 @@ export default function MoneyView({ slug }: { slug: string }) {
 
           <section className="money-settle">
             <h2>Settle up</h2>
-            {transfers.length === 0 ? (
-              <p className="shop-lede">Everyone is square.</p>
+            {shown.length === 0 ? (
+              <p className="shop-lede">
+                {me ? `${me} is square.` : "Everyone is square."}
+              </p>
             ) : (
               <ol>
-                {transfers.map((t, i) => (
-                  <li key={i}>
+                {shown.map((t) => (
+                  <li key={`${t.from}>${t.to}`}>
                     <b>{t.from}</b>
                     <span aria-hidden="true">→</span>
                     <b>{t.to}</b>
@@ -378,11 +399,11 @@ export default function MoneyView({ slug }: { slug: string }) {
                 ))}
               </ol>
             )}
-            {payments.length > 0 && (
+            {payments.some(mine) && (
               <div className="money-paid-list">
                 <h3>Already paid</h3>
                 <ul>
-                  {payments.map((e) => (
+                  {payments.filter(mine).map((e) => (
                     <li key={e.id}>
                       <span>{e.what}</span>
                       <i>{fmt(toCzk(e))} Kč</i>
