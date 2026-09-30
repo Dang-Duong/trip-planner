@@ -120,12 +120,18 @@ export type Transfer = { from: string; to: string; amount: number };
  * Collapse balances into payments. Greedy largest-debtor against largest-creditor:
  * at most one transfer per person after the first, which is what a group actually
  * wants — not everyone paying everyone. (Truly minimal is NP-hard and not worth it.)
+ *
+ * `order` fixes who is matched with whom: pass the balances before any payments. Paying
+ * a listed transfer then just removes that line. Sorting by what is still owed would
+ * re-pair everyone after every payment, sending people to someone new mid-settle.
  */
-export function settle(net: Map<string, number>): Transfer[] {
+export function settle(net: Map<string, number>, order: Map<string, number> = net): Transfer[] {
+  const rank = (a: { p: string }, b: { p: string }) =>
+    Math.abs(order.get(b.p) ?? 0) - Math.abs(order.get(a.p) ?? 0) || a.p.localeCompare(b.p);
   const owed = [...net].filter(([, v]) => v > 0).map(([p, v]) => ({ p, v }));
   const owes = [...net].filter(([, v]) => v < 0).map(([p, v]) => ({ p, v: -v }));
-  owed.sort((a, b) => b.v - a.v);
-  owes.sort((a, b) => b.v - a.v);
+  owed.sort(rank);
+  owes.sort(rank);
 
   const out: Transfer[] = [];
   let i = 0;
@@ -152,9 +158,7 @@ export function settle(net: Map<string, number>): Transfer[] {
  * "0x10"; the first two poison every balance with NaN, and the last is 16 Kč.
  */
 export function parseAmount(text: string): number | null {
-  let s = text
-    .replace(/[\s  ]/g, "")
-    .replace(/kč|czk|eur|chf|€|fr\.?/gi, "");
+  let s = text.replace(/[\s  ]/g, "").replace(/kč|czk|eur|chf|€|fr\.?/gi, "");
   if (!/^[0-9.,]+$/.test(s)) return null;
 
   const commas = s.split(",").length - 1;
@@ -163,7 +167,10 @@ export function parseAmount(text: string): number | null {
   if (commas && dots) {
     // Both appear: whichever comes last is the decimal point, the other groups thousands.
     const decimal = s.lastIndexOf(",") > s.lastIndexOf(".") ? "," : ".";
-    s = s.split(decimal === "," ? "." : ",").join("").replace(decimal, ".");
+    s = s
+      .split(decimal === "," ? "." : ",")
+      .join("")
+      .replace(decimal, ".");
   } else if (commas > 1 || dots > 1) {
     // One kind of separator, repeated: it can only be grouping.
     s = s.replace(/[.,]/g, "");

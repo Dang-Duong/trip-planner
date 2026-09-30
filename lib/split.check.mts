@@ -370,6 +370,18 @@ assert.deepEqual(settle(balances([], people)), []);
     }
     for (const [p, v] of after) assert.equal(v, 0, `seed ${seed}: ${p} left at ${v}`);
 
+    if (moves.length) {
+      const paid = moves[Math.floor(r() * moves.length)];
+      const later = new Map(net);
+      later.set(paid.from, later.get(paid.from)! + paid.amount);
+      later.set(paid.to, later.get(paid.to)! - paid.amount);
+      assert.deepEqual(
+        settle(later, net),
+        moves.filter((t) => t !== paid),
+        `seed ${seed}: paying ${paid.from} → ${paid.to} re-paired everyone else`,
+      );
+    }
+
     for (const p of crew) {
       const shown = sum(breakdown(xs, crew, p).map((l) => l.czk));
       assert.ok(Math.abs(shown - net.get(p)!) < 1, `seed ${seed}: ${p}'s breakdown ${shown} vs ${net.get(p)}`);

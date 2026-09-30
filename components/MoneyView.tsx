@@ -57,7 +57,17 @@ export default function MoneyView({ slug }: { slug: string }) {
   const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
-  const transfers = useMemo(() => settle(net), [net]);
+  const transfers = useMemo(
+    () =>
+      settle(
+        net,
+        balances(
+          expenses.filter((e) => !e.settlement),
+          people,
+        ),
+      ),
+    [net, expenses, people],
+  );
   const shown = me
     ? transfers.filter((t) => t.from === me || t.to === me)
     : transfers;
