@@ -495,6 +495,25 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .money-f{display:grid;gap:.35rem;flex:1 1 130px;min-width:0}
 .money-f-wide{flex:2 1 220px}
 .money-filter{margin-top:2.2rem;max-width:22rem}
+/* Your own account, under the filter: what turns other people's rows into a QR. */
+.money-acct{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin-top:.9rem;max-width:34rem}
+.money-acct .money-f{flex:1 1 220px}
+.money-acct button{background:none;color:var(--ink);border:1px solid var(--rule);
+  padding:.6rem .85rem;cursor:pointer;font-family:var(--mono);font-size:.56rem;
+  letter-spacing:.13em;text-transform:uppercase;transition:color .15s,border-color .15s}
+.money-acct button:hover:not(:disabled){color:var(--glacier);border-color:var(--glacier)}
+.money-acct button:disabled{opacity:.4;cursor:default}
+.money-acct .money-hint{flex-basis:100%}
+/* Scanners need dark-on-light and a quiet zone, whatever the page theme is. */
+.money-qr{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:.9rem 1.2rem;
+  margin-top:.5rem;padding-top:.8rem;border-top:1px dashed var(--rule)}
+.money-qr-code{width:11rem;background:#fff;line-height:0}
+.money-qr-code svg{width:100%;height:auto;display:block}
+.money-settle>ol>li .money-qr p{margin:0;flex:1 1 12rem;font-size:.8rem;line-height:1.5;color:var(--stone)}
+.money-settle>ol>li .money-qr p b{display:block;font-family:var(--sans);font-stretch:normal;
+  text-transform:none;font-weight:600;color:var(--ink);letter-spacing:0}
+.money-settle>ol>li .money-qr p span{display:block;margin-top:.4rem;color:var(--ink);
+  font-family:var(--mono);font-size:.74rem;overflow-wrap:anywhere}
 .money-f>span{font-family:var(--mono);font-size:.53rem;letter-spacing:.14em;
   text-transform:uppercase;color:var(--stone)}
 .money-f input,.money-f select{width:100%;background:var(--sunken);color:var(--ink);

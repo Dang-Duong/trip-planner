@@ -1,9 +1,11 @@
 "use client";
 
+import qrcode from "qrcode-generator";
 import { useMemo, useState } from "react";
 import Fab, { ARROW } from "@/components/Fab";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
+import { showAccount, spayd, toIban } from "@/lib/payment";
 import { useSharedEntries } from "@/lib/shared-state";
 import {
   balances,
@@ -19,7 +21,10 @@ import {
   type Currency,
   type Expense,
 } from "@/lib/split";
+import type { Entry } from "@/lib/sync-ops";
 import { getTrip } from "@/trips";
+
+const ACCT = "acct:";
 
 const CURRENCIES = Object.keys(RATES) as Currency[];
 
@@ -43,8 +48,27 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [stored, writeRaw, sync, pending] = useSharedEntries(slug);
   const expenses = useMemo(() => sanitizeExpenses(stored), [stored]);
   // Every write goes through the sanitiser too, so an updater never builds on junk.
+  // Accounts share the store but aren't expenses: carry them over, or the diff deletes them.
   const write = (next: (prev: Expense[]) => Expense[]) =>
-    writeRaw((prev: unknown) => next(sanitizeExpenses(prev)));
+    writeRaw((prev: Entry[]) => [
+      ...prev.filter((e) => e.id.startsWith(ACCT)),
+      ...next(sanitizeExpenses(prev)),
+    ]);
+  const saveAccount = (person: string, iban: string | null) =>
+    writeRaw((prev: Entry[]) => [
+      ...prev.filter((e) => e.id !== ACCT + person),
+      ...(iban ? [{ id: ACCT + person, iban }] : []),
+    ]);
+  const accounts = useMemo(() => {
+    const out = new Map<string, string>();
+    for (const e of Array.isArray(stored) ? (stored as Entry[]) : []) {
+      const who = e.id.slice(ACCT.length);
+      const iban = typeof e.iban === "string" ? toIban(e.iban) : null;
+      if (e.id.startsWith(ACCT) && iban && people.includes(who))
+        out.set(who, iban);
+    }
+    return out;
+  }, [stored, people]);
   const [what, setWhat] = useState("");
   const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<Currency>("CZK");
@@ -52,6 +76,7 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [shares, setShares] = useState<string[]>([]);
   const [armed, setArmed] = useState<string | null>(null);
   const [why, setWhy] = useState<string | null>(null);
+  const [qr, setQr] = useState<string | null>(null);
   const everyone = useMemo(() => ["", ...people], [people]);
   const [me, setMe] = useStoredChoice(`money-me:${slug}`, everyone, "");
   const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
@@ -322,6 +347,13 @@ export default function MoneyView({ slug }: { slug: string }) {
               ))}
             </select>
           </label>
+          {me && (
+            <AccountField
+              key={`${me}:${accounts.get(me) ?? ""}`}
+              iban={accounts.get(me)}
+              save={(iban) => saveAccount(me, iban)}
+            />
+          )}
 
           <section className="money-bal">
             <h2>Where everyone stands</h2>
@@ -372,6 +404,22 @@ export default function MoneyView({ slug }: { slug: string }) {
                     >
                       Why?
                     </button>
+                    {accounts.has(t.to) && me !== t.from && (
+                      <button
+                        type="button"
+                        className="money-why-btn"
+                        aria-expanded={qr === `${t.from}>${t.to}`}
+                        onClick={() =>
+                          setQr(
+                            qr === `${t.from}>${t.to}`
+                              ? null
+                              : `${t.from}>${t.to}`,
+                          )
+                        }
+                      >
+                        QR
+                      </button>
+                    )}
                     <button
                       type="button"
                       className="money-paid"
@@ -388,6 +436,15 @@ export default function MoneyView({ slug }: { slug: string }) {
                         ? `Confirm ${fmt(t.amount)} Kč?`
                         : "Mark paid"}
                     </button>
+                    {accounts.has(t.to) &&
+                      (me === t.from || qr === `${t.from}>${t.to}`) && (
+                        <PayQr
+                          iban={accounts.get(t.to)!}
+                          to={t.to}
+                          amount={t.amount}
+                          message={`${trip.title} ${t.from} -> ${t.to}`}
+                        />
+                      )}
                     {why === `${t.from}>${t.to}` && (
                       <div className="money-why">
                         <Side
@@ -500,5 +557,87 @@ function explain(t: Transfer, all: Transfer[]) {
     `${t.from} only ever pays their own total, never someone else's receipt. ` +
     `Who gets it is just matched up so there are as few transfers as possible, ` +
     `and everyone still ends up with exactly what they're owed.${also}`
+  );
+}
+
+function PayQr({
+  iban,
+  to,
+  amount,
+  message,
+}: {
+  iban: string;
+  to: string;
+  amount: number;
+  message: string;
+}) {
+  const svg = useMemo(() => {
+    const code = qrcode(0, "M");
+    code.addData(spayd(iban, amount, message));
+    code.make();
+    return code.createSvgTag({ cellSize: 4, margin: 4, scalable: true });
+  }, [iban, amount, message]);
+
+  return (
+    <div className="money-qr">
+      <div
+        className="money-qr-code"
+        role="img"
+        aria-label={`QR payment of ${fmt(amount)} Kč to ${to}`}
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+      <p>
+        <b>Scan it in your bank app</b>
+        On this phone? Screenshot it and pick “QR from image”.
+        <span>
+          {to} · {showAccount(iban)} · {fmt(amount)} Kč
+        </span>
+      </p>
+    </div>
+  );
+}
+
+function AccountField({
+  iban,
+  save,
+}: {
+  iban: string | undefined;
+  save: (iban: string | null) => void;
+}) {
+  const [text, setText] = useState(iban ? showAccount(iban) : "");
+  const parsed = toIban(text);
+  const bad = text.trim() !== "" && !parsed;
+
+  return (
+    <div className="money-acct">
+      <label className="money-f">
+        <span>Your account — people scan a QR to pay you</span>
+        <input
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="19-2000145399/0800"
+          inputMode="text"
+          autoComplete="off"
+        />
+      </label>
+      <button
+        type="button"
+        disabled={!parsed || parsed === iban}
+        onClick={() => save(parsed)}
+      >
+        {iban ? "Update" : "Save"}
+      </button>
+      {iban && (
+        <button type="button" onClick={() => save(null)}>
+          Remove
+        </button>
+      )}
+      {bad && (
+        <i className="money-hint">
+          That isn&apos;t a valid account number — check the digits and the bank
+          code.
+        </i>
+      )}
+    </div>
   );
 }
