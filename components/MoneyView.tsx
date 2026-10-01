@@ -107,6 +107,25 @@ export default function MoneyView({ slug }: { slug: string }) {
   const payments = expenses.filter((e) => e.settlement);
   const total = receipts.filter(counts).reduce((n, e) => n + toCzk(e), 0);
 
+  const paidButton = (t: Transfer) => {
+    const key = `${t.from}>${t.to}`;
+    return (
+      <button
+        type="button"
+        className="money-paid"
+        data-armed={armed === key}
+        onBlur={() => setArmed(null)}
+        onClick={() => {
+          if (armed !== key) return setArmed(key);
+          setArmed(null);
+          markPaid(t.from, t.to, t.amount);
+        }}
+      >
+        {armed === key ? `Confirm ${fmt(t.amount)} Kč?` : "Mark paid"}
+      </button>
+    );
+  };
+
   const markPaid = (from: string, to: string, amount: number) =>
     write((prev) => [
       ...prev,
@@ -183,6 +202,70 @@ export default function MoneyView({ slug }: { slug: string }) {
           <SyncBadge sync={sync} pending={pending} />
         </p>
       </header>
+
+      {receipts.length > 0 && (
+        <section className="money-me">
+          <label className="money-f">
+            <span>Who are you?</span>
+            <select value={me} onChange={(e) => setMe(e.target.value)}>
+              <option value="">Pick your name…</option>
+              {people.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          {me && (
+            <>
+              <p className="money-me-sum">
+                {(net.get(me) ?? 0) < 0
+                  ? `You owe ${fmt(-(net.get(me) ?? 0))} Kč`
+                  : (net.get(me) ?? 0) > 0
+                    ? `You get back ${fmt(net.get(me) ?? 0)} Kč`
+                    : "You're square — nothing to pay"}
+              </p>
+              <ul className="money-me-list">
+                {transfers
+                  .filter((t) => t.from === me)
+                  .map((t) => (
+                    <li key={`${t.from}>${t.to}`}>
+                      <b>Pay {t.to}</b>
+                      <i>{fmt(t.amount)} Kč</i>
+                      {accounts.has(t.to) ? (
+                        <PayQr
+                          iban={accounts.get(t.to)!}
+                          to={t.to}
+                          amount={t.amount}
+                          message={`${trip.title} ${t.from} -> ${t.to}`}
+                        />
+                      ) : (
+                        <p className="money-me-note">
+                          {`${t.to} hasn't added an account yet — ask them for it, or pay the usual way.`}
+                        </p>
+                      )}
+                      {paidButton(t)}
+                    </li>
+                  ))}
+                {transfers
+                  .filter((t) => t.to === me)
+                  .map((t) => (
+                    <li key={`${t.from}>${t.to}`} data-incoming="true">
+                      <b>{t.from} pays you</b>
+                      <i>{fmt(t.amount)} Kč</i>
+                    </li>
+                  ))}
+              </ul>
+              <AccountField
+                key={`${me}:${accounts.get(me) ?? ""}`}
+                iban={accounts.get(me)}
+                save={(iban) => saveAccount(me, iban)}
+              />
+            </>
+          )}
+        </section>
+      )}
 
       <section className="money-add">
         <h2>Add a receipt</h2>
@@ -347,13 +430,6 @@ export default function MoneyView({ slug }: { slug: string }) {
               ))}
             </select>
           </label>
-          {me && (
-            <AccountField
-              key={`${me}:${accounts.get(me) ?? ""}`}
-              iban={accounts.get(me)}
-              save={(iban) => saveAccount(me, iban)}
-            />
-          )}
 
           <section className="money-bal">
             <h2>Where everyone stands</h2>
@@ -404,7 +480,7 @@ export default function MoneyView({ slug }: { slug: string }) {
                     >
                       Why?
                     </button>
-                    {accounts.has(t.to) && me !== t.from && (
+                    {accounts.has(t.to) && (
                       <button
                         type="button"
                         className="money-why-btn"
@@ -420,31 +496,15 @@ export default function MoneyView({ slug }: { slug: string }) {
                         QR
                       </button>
                     )}
-                    <button
-                      type="button"
-                      className="money-paid"
-                      data-armed={armed === `${t.from}>${t.to}`}
-                      onBlur={() => setArmed(null)}
-                      onClick={() => {
-                        const key = `${t.from}>${t.to}`;
-                        if (armed !== key) return setArmed(key);
-                        setArmed(null);
-                        markPaid(t.from, t.to, t.amount);
-                      }}
-                    >
-                      {armed === `${t.from}>${t.to}`
-                        ? `Confirm ${fmt(t.amount)} Kč?`
-                        : "Mark paid"}
-                    </button>
-                    {accounts.has(t.to) &&
-                      (me === t.from || qr === `${t.from}>${t.to}`) && (
-                        <PayQr
-                          iban={accounts.get(t.to)!}
-                          to={t.to}
-                          amount={t.amount}
-                          message={`${trip.title} ${t.from} -> ${t.to}`}
-                        />
-                      )}
+                    {paidButton(t)}
+                    {accounts.has(t.to) && qr === `${t.from}>${t.to}` && (
+                      <PayQr
+                        iban={accounts.get(t.to)!}
+                        to={t.to}
+                        amount={t.amount}
+                        message={`${trip.title} ${t.from} -> ${t.to}`}
+                      />
+                    )}
                     {why === `${t.from}>${t.to}` && (
                       <div className="money-why">
                         <Side

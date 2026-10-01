@@ -495,6 +495,27 @@ footer{margin-top:2.6rem;border-top:1px solid var(--rule);padding-top:1rem}
 .money-f{display:grid;gap:.35rem;flex:1 1 130px;min-width:0}
 .money-f-wide{flex:2 1 220px}
 .money-filter{margin-top:2.2rem;max-width:22rem}
+/* "Your turn": the first thing on the page, so nobody scrolls to find what they owe. */
+.shop .money-me{margin-top:2.2rem;border:1px solid var(--rule);border-top:3px solid var(--blaze);
+  background:var(--panel);padding:1rem 1.1rem 1.2rem}
+.money-me>.money-f{max-width:22rem}
+.money-me-sum{margin:1rem 0 .2rem;font-family:var(--display);font-stretch:84%;font-weight:800;
+  font-size:1.5rem;text-transform:uppercase;letter-spacing:.005em;color:var(--ink)}
+.money-me-list{list-style:none;margin:.6rem 0 0;padding:0}
+.money-me-list>li{display:flex;flex-wrap:wrap;align-items:baseline;gap:.4rem .8rem;
+  padding:.9rem 0;border-top:1px solid var(--rule)}
+.money-me-list>li>b{font-family:var(--display);font-stretch:84%;font-weight:800;
+  text-transform:uppercase;font-size:1rem}
+.money-me-list>li>i{margin-left:auto;font-style:normal;font-family:var(--mono);
+  font-variant-numeric:tabular-nums;color:var(--ink)}
+.money-me-list>li[data-incoming="true"]>b{font-family:var(--sans);font-stretch:normal;
+  text-transform:none;font-weight:500;color:var(--stone);font-size:.9rem}
+.money-me-list .money-paid{margin-left:0;width:100%;margin-top:.4rem;padding:.6rem}
+.money-me-note{flex-basis:100%;margin:0;font-size:.8rem;color:var(--stone)}
+.money-me .money-qr p{margin:0;flex:1 1 12rem;font-size:.8rem;line-height:1.5;color:var(--stone)}
+.money-me .money-qr p b{display:block;font-weight:600;color:var(--ink)}
+.money-me .money-qr p span{display:block;margin-top:.4rem;color:var(--ink);
+  font-family:var(--mono);font-size:.74rem;overflow-wrap:anywhere}
 /* Your own account, under the filter: what turns other people's rows into a QR. */
 .money-acct{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.6rem;margin-top:.9rem;max-width:34rem}
 .money-acct .money-f{flex:1 1 220px}
