@@ -12,9 +12,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const trip = getTrip((await params).slug);
   if (!trip) return {};
+  const title = `${trip.title} ${trip.titleAccent ?? ""} ${trip.titleTail ?? ""} · ${trip.dates}`.trim();
+  // A child's openGraph replaces the layout's wholesale, so the shared fields come along.
   return {
-    title: `${trip.title} ${trip.titleAccent ?? ""} ${trip.titleTail ?? ""} · ${trip.dates}`.trim(),
+    title,
     description: trip.subtitle,
+    openGraph: { title, description: trip.subtitle, siteName: "Čongus Trip Planner", type: "website" },
+    twitter: { card: "summary_large_image", title, description: trip.subtitle },
   };
 }
 

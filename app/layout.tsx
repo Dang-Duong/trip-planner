@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: "Čongus Trip Planner",
     description,
   },
-  twitter: { card: "summary", title: "Čongus Trip Planner", description },
+  twitter: { card: "summary_large_image", title: "Čongus Trip Planner", description },
 };
 
 // Phones are where this gets read, and the dark page looks wrong behind light
