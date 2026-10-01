@@ -9,11 +9,15 @@ type MLMap = import("maplibre-gl").Map;
 const BASEMAPS = {
   // Colour, labelled, roads and place names — the familiar street-map look, for when
   // a contour sheet is not what you want.
+  //
+  // Esri rather than CARTO: CARTO began serving an "API key required" tile to every
+  // keyless request in late Sept 2026. Esri's tiles still need no key.
   voyager: {
-    tiles: ["https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"],
-    maxzoom: 20,
-    attribution:
-      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    tiles: [
+      "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    ],
+    maxzoom: 18,
+    attribution: "© Esri, HERE, Garmin, © OpenStreetMap contributors",
     paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
   },
   // Left photographic on purpose — the whole reason to switch here is telling glacier
@@ -30,15 +34,14 @@ const BASEMAPS = {
     attribution: "© Esri, Maxar, Earthstar Geographics",
     paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
   },
-  // Place names over the imagery. CARTO's dark-basemap label sheet rather than Esri's
-  // reference layer: Esri draws dark type meant for a pale background, which on a
-  // photograph of rock and forest is close to unreadable. This one is light type with a
-  // dark halo, and it carries to z20 instead of stopping at z16.
+  // Place names over the imagery: Esri's boundaries-and-places sheet, light type with a
+  // dark halo, made to sit on its own World_Imagery.
   satlabels: {
-    tiles: ["https://basemaps.cartocdn.com/dark_only_labels/{z}/{x}/{y}.png"],
-    maxzoom: 20,
-    attribution:
-      '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    tiles: [
+      "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+    ],
+    maxzoom: 18,
+    attribution: "© Esri, HERE, Garmin",
     paint: { "raster-saturation": 0, "raster-contrast": 0, "raster-opacity": 1 },
   },
 } as const;

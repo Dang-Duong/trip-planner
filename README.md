@@ -236,7 +236,7 @@ Deploys to Vercel; both routes are prerendered as static HTML.
 ## Attribution
 
 Required by the tile licences and wired into the map, switching with the selected basemap:
-© OpenStreetMap contributors, © CARTO, © Esri, Maxar, Earthstar Geographics.
+© OpenStreetMap contributors, © Esri, HERE, Garmin, Maxar, Earthstar Geographics.
 
 The Esri imagery endpoint is unauthenticated and is what Leaflet/OSM tooling generally points at,
 but Esri's terms nominally expect an ArcGIS account for production use. If that ever matters,
