@@ -33,8 +33,8 @@ export const COINS = (
 );
 
 /**
- * The floating capsules. `launch` sits bottom-right and goes forward; `back` sits
- * top-left and returns. Every page in the chain uses the same two corners, so the
+ * The floating capsules. `launch` sits bottom-right and goes forward, `stack` sits on
+ * top of it as a second way forward, and `back` sits top-left and returns. Every page in the chain uses the same two corners, so the
  * way out is always in the same place.
  */
 export default function Fab({
@@ -48,11 +48,11 @@ export default function Fab({
   label: string;
   sub: string;
   icon: ReactNode;
-  variant: "launch" | "back";
+  variant: "launch" | "stack" | "back";
 }) {
   return (
-    <Link className={`fab ${variant}`} href={href}>
-      <span className={variant === "launch" ? "exhaust" : "trail"} aria-hidden="true">
+    <Link className={`fab ${variant === "stack" ? "launch stack" : variant}`} href={href}>
+      <span className={variant === "back" ? "trail" : "exhaust"} aria-hidden="true">
         {PARTICLES.map((i) => (
           <i key={i} style={{ "--i": i } as CSSProperties} />
         ))}
