@@ -106,15 +106,21 @@ function markerEl(wp: Waypoint) {
 
 const empty = (): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", features: [] });
 
-// Generous, and wider on the right: labels sit beside their dot and would clip otherwise.
-const PADDING = { top: 62, bottom: 72, left: 82, right: 108 };
+// Frames the route in the part of the map the plan doesn't cover: right of the card on a
+// desktop, above the sheet on a phone. Wider on the right, where labels hang off dots.
+function padding(m: MLMap) {
+  const { clientWidth: w, clientHeight: h } = m.getContainer();
+  return w >= 1024
+    ? { top: 70, bottom: 120, left: 486, right: 110 }
+    : { top: 50, bottom: h * 0.58 + 30, left: 50, right: 90 };
+}
 
 type Cam = { pitch: number; bearing: number };
 
 function fit(m: MLMap, lib: ML, pts: LngLat[], maxZoom: number, duration: number, cam: Cam) {
   if (!pts.length) return;
   const bounds = pts.reduce((b, p) => b.extend(p), new lib.LngLatBounds(pts[0], pts[0]));
-  m.fitBounds(bounds, { padding: PADDING, maxZoom, duration, ...cam });
+  m.fitBounds(bounds, { padding: padding(m), maxZoom, duration, ...cam });
 }
 
 // What survives when labels collide. A day's objective and the campsites outrank

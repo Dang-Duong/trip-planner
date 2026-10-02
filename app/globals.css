@@ -46,18 +46,38 @@ em{font-style:normal;color:var(--blaze);font-weight:700}
 h2{margin:0;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.16em;
   text-transform:uppercase;color:var(--stone)}
 
-/* ---------- app shell: 3D map stage + plan sheet ---------- */
-.app{height:100dvh;display:grid;grid-template-rows:40dvh minmax(0,1fr);overflow:hidden}
-@media(min-width:1024px){.app{grid-template-rows:none;grid-template-columns:minmax(0,1fr) 440px}}
-.stage{position:relative;min-height:0;min-width:0;background:var(--sunken)}
-.stage .mapbox{position:absolute;inset:0}
-.sheet{position:relative;z-index:3;display:flex;flex-direction:column;min-height:0;min-width:0;
-  background:var(--bg);margin-top:-16px;border-radius:16px 16px 0 0;
-  box-shadow:0 -12px 32px -10px rgba(0,0,0,.7)}
-@media(min-width:1024px){.sheet{margin:0;border-radius:0;border-left:1px solid var(--rule);box-shadow:none}}
+/* ---------- app shell: full-screen 3D map, the plan floating over it ---------- */
+/* Desktop: a glass card on the left. Phone: a sheet over the lower map that opens up. */
+.app{position:relative;height:100dvh;overflow:hidden;background:var(--sunken)}
+.stage,.stage .mapbox{position:absolute;inset:0}
+.sheet{position:absolute;z-index:3;left:0;right:0;top:42dvh;bottom:0;display:flex;flex-direction:column;
+  min-width:0;background:rgba(10,14,16,.84);
+  -webkit-backdrop-filter:blur(18px) saturate(1.4);backdrop-filter:blur(18px) saturate(1.4);
+  border:1px solid rgba(234,240,242,.08);border-bottom:0;border-radius:22px 22px 0 0;
+  box-shadow:0 -18px 40px -16px rgba(0,0,0,.75);transition:top .5s cubic-bezier(.2,.8,.2,1)}
+.sheet[data-open="true"]{top:9dvh}
+.grip{flex:none;width:100%;height:20px;padding:0;border:0;background:none;cursor:pointer}
+.grip::before{content:"";display:block;width:38px;height:4px;margin:9px auto 0;border-radius:4px;
+  background:var(--tick)}
+@media(min-width:1024px){
+  .sheet{left:16px;right:auto;top:16px;bottom:100px;width:400px;border-radius:22px;
+    border-bottom:1px solid rgba(234,240,242,.08);box-shadow:0 24px 60px -20px rgba(0,0,0,.8)}
+  .sheet[data-open="true"]{top:16px}
+  .grip{display:none}
+}
+
+/* Satellite / Streets, left of the zoom buttons. */
+.basemaps{position:absolute;z-index:2;top:10px;right:52px;display:flex;padding:3px;gap:2px;
+  border-radius:999px;background:rgba(18,24,27,.82);-webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);border:1px solid rgba(234,240,242,.09)}
+.basemaps button{border:0;border-radius:999px;background:none;color:var(--stone);font:inherit;
+  font-size:.7rem;padding:.3rem .7rem;cursor:pointer;transition:color .2s,background .2s}
+.basemaps button:hover{color:var(--ink)}
+.basemaps button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
 
 .sheet-top{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
-  padding:1.1rem 1.25rem .7rem}
+  padding:.5rem 1.25rem .7rem}
+@media(min-width:1024px){.sheet-top{padding-top:1.2rem}}
 .sheet-top h1{font-size:clamp(1.45rem,4vw,1.9rem)}
 .sheet-top p{font-family:var(--mono);font-size:.7rem;color:var(--stone);white-space:nowrap}
 
@@ -79,7 +99,8 @@ h2{margin:0;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spac
   transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
 
 .sheet-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
-  padding:.3rem 1.25rem calc(6rem + env(safe-area-inset-bottom));border-top:1px solid var(--rule)}
+  padding:.3rem 1.25rem calc(7rem + env(safe-area-inset-bottom));border-top:1px solid var(--rule)}
+@media(min-width:1024px){.sheet-body{padding-bottom:1.5rem}}
 /* Tab and day swaps run as view transitions: the sheet slides toward where you went. */
 .sheet-body{view-transition-name:sheet}
 ::view-transition-old(root),::view-transition-new(root){animation:none}
@@ -151,13 +172,15 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
 .sources{margin-top:1.6rem}
 
 /* ---------- dock ---------- */
-/* One dock for every trip page, mounted by the trip layout: full width on a phone, and
-   the foot of the plan sheet's column on a desktop. */
-.dock{position:fixed;z-index:6;left:0;right:0;bottom:0;display:flex;background:var(--panel);
-  border-top:1px solid var(--rule);padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
-@media(min-width:1024px){.dock{left:auto;width:440px;border-left:1px solid var(--rule)}}
-.dock a{flex:1;position:relative;display:grid;justify-items:center;gap:.2rem;padding:.4rem 0;
-  font-size:.66rem;color:var(--stone);text-decoration:none;transition:color .2s}
+/* One floating dock for every trip page, mounted by the trip layout so it never rebuilds
+   between pages. */
+.dock{position:fixed;z-index:6;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));translate:-50% 0;
+  width:min(420px,calc(100% - 24px));display:flex;padding:.35rem;border-radius:999px;
+  background:rgba(18,24,27,.82);-webkit-backdrop-filter:blur(18px) saturate(1.4);
+  backdrop-filter:blur(18px) saturate(1.4);border:1px solid rgba(234,240,242,.09);
+  box-shadow:0 18px 44px -14px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.05)}
+.dock a{flex:1 1 0;min-width:0;position:relative;z-index:1;display:grid;justify-items:center;gap:.15rem;
+  padding:.45rem 0 .4rem;font-size:.64rem;color:var(--stone);text-decoration:none;transition:color .2s}
 .dock svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;
   stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
 .dock .acc{stroke:var(--tick);transition:stroke .25s,fill .25s}
@@ -168,11 +191,13 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
 .dock a[aria-current] svg{transform:translateY(-2px)}
 .dock a[aria-current] .acc{stroke:var(--blaze)}.dock a[aria-current] .acc.fill{fill:var(--blaze);stroke:none}
 .dock a[aria-current]{color:var(--ink)}
-/* Same sliding marker as the pills; the dock stays mounted across pages, so it slides
-   there too. */
-.dock .mark{position:absolute;top:-1px;left:.4rem;height:2px;padding:0 calc(var(--w) * .28);
-  --w:calc((100% - .8rem) / var(--n));width:var(--w);background:var(--blaze) content-box;
+/* The current item sits in a soft red capsule that slides between items, and between
+   pages too, since the dock stays mounted. */
+.dock .mark{position:absolute;z-index:0;top:.35rem;bottom:.35rem;left:.35rem;border-radius:999px;
+  width:calc((100% - .7rem) / var(--n));background:rgba(255,90,69,.13);
+  box-shadow:inset 0 0 0 1px rgba(255,90,69,.32);
   transform:translateX(calc(var(--i) * 100%));transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
+
 /* ---------- cursor: an ice axe, pick tip on the pointer ---------- */
 .cur{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;display:none;
   width:32px;height:32px;margin:-10.5px 0 0 -3px;transform-origin:25px 29.5px;
@@ -308,7 +333,7 @@ label:hover>.tick{border-color:var(--glacier)}
    are fourteen separate cards with air between them rather than one welded slab. */
 .shop{max-width:1460px;margin:0 auto;padding:0 clamp(1.1rem,3.5vw,2.6rem) 8rem}
 
-.shop-head{padding:clamp(5.4rem,9vw,7rem) 0 2.2rem;display:grid;
+.shop-head{padding:clamp(2.2rem,5vw,3.6rem) 0 2.2rem;display:grid;
   grid-template-columns:minmax(0,1fr);gap:.9rem}
 .shop-sub{font-family:var(--mono);font-size:.62rem;letter-spacing:.15em;
   text-transform:uppercase;color:var(--glacier);margin:-.35rem 0 0}

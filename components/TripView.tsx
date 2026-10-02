@@ -15,6 +15,15 @@ export default function TripView({ slug }: { slug: string }) {
   const [trail, setTrail] = useState<LngLat[] | undefined>(undefined);
   const [basemap, setBasemap] = useState<Basemap>("satellite");
   const touch = useRef<{ x: number; y: number } | null>(null);
+  const [open, setOpen] = useState(false);
+  const dragY = useRef(0);
+  const drag = {
+    onTouchStart: (e: React.TouchEvent) => (dragY.current = e.touches[0].clientY),
+    onTouchEnd: (e: React.TouchEvent) => {
+      const dy = e.changedTouches[0].clientY - dragY.current;
+      if (Math.abs(dy) > 30) setOpen(dy < 0);
+    },
+  };
 
   if (!trip) return null;
   const day = trip.days[dayIdx];
@@ -51,8 +60,16 @@ export default function TripView({ slug }: { slug: string }) {
         </div>
       </div>
 
-      <aside className="sheet">
-        <header className="sheet-top">
+      <aside className="sheet" data-open={open}>
+        <button
+          type="button"
+          className="grip"
+          aria-label={open ? "Show more map" : "Show more plan"}
+          aria-expanded={open}
+          onClick={() => setOpen((o) => !o)}
+          {...drag}
+        />
+        <header className="sheet-top" {...drag}>
           <h1>
             {trip.title} <span>{trip.titleAccent}</span> {trip.titleTail}
           </h1>
