@@ -17,7 +17,11 @@ const subs = new Set<() => void>();
 const subscribe = (fn: () => void) => {
   subs.add(fn);
   addEventListener("hashchange", fn);
+  // Arriving from another page, Next writes the new URL (and its #tab) after this page
+  // has rendered, so read it once more after that settles.
+  const late = setTimeout(fn);
   return () => {
+    clearTimeout(late);
     subs.delete(fn);
     removeEventListener("hashchange", fn);
   };
