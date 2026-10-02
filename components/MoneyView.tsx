@@ -142,7 +142,7 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   if (!trip) return null;
 
-  const drinkers = people.filter((p) => !trip.noAlcohol.includes(p));
+  const drinkers = people.filter((p) => !trip.noAlcohol?.includes(p));
 
   const parsed = parseAmount(amount);
   const unreadable = amount.trim() !== "" && parsed === null;

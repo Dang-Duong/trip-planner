@@ -216,20 +216,24 @@ export default function TripView({ slug }: { slug: string }) {
         </footer>
       </div>
 
-      <Fab
-        variant="stack"
-        href={`/trips/${trip.slug}/money`}
-        label="Who owes whom"
-        sub="Settle up"
-        icon={COINS}
-      />
-      <Fab
-        variant="launch"
-        href={`/trips/${trip.slug}/shop`}
-        label="What to buy"
-        sub={`${trip.shop.en.groups.reduce((n, g) => n + g.items.length, 0)} items`}
-        icon={ROCKET}
-      />
+      {trip.shop && (
+        <>
+          <Fab
+            variant="stack"
+            href={`/trips/${trip.slug}/money`}
+            label="Who owes whom"
+            sub="Settle up"
+            icon={COINS}
+          />
+          <Fab
+            variant="launch"
+            href={`/trips/${trip.slug}/shop`}
+            label="What to buy"
+            sub={`${trip.shop.en.groups.reduce((n, g) => n + g.items.length, 0)} items`}
+            icon={ROCKET}
+          />
+        </>
+      )}
     </div>
   );
 }

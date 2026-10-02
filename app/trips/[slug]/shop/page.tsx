@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import ShopView from "@/components/ShopView";
 import { getTrip, trips } from "@/trips";
 
-export const generateStaticParams = () => trips.map((t) => ({ slug: t.slug }));
+export const generateStaticParams = () =>
+  trips.filter((t) => t.shop).map((t) => ({ slug: t.slug }));
 
 export async function generateMetadata({
   params,
@@ -20,6 +21,6 @@ export async function generateMetadata({
 
 export default async function ShopPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (!getTrip(slug)) notFound();
+  if (!getTrip(slug)?.shop) notFound();
   return <ShopView slug={slug} />;
 }

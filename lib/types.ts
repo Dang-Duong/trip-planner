@@ -134,7 +134,7 @@ export type Trip = {
   /** Everyone on the trip. The settle-up splits between these names. */
   people: string[];
   /** Who doesn't share an alcohol bill — the one-click preset on the settle-up page. */
-  noAlcohol: string[];
+  noAlcohol?: string[];
   waypoints: Waypoint[];
   maps: MapView[];
   pins: Pin[];
@@ -145,8 +145,9 @@ export type Trip = {
   hikes: Hike[];
   hikesNote?: ReactNode;
   pack: PackGroup[];
-  /** Who buys what — one list per person, on its own page, in both languages. */
-  shop: Record<Lang, ShopContent>;
+  /** Who buys what — one list per person, on its own page, in both languages. Without it
+   *  the trip has no shop or settle-up page. */
+  shop?: Record<Lang, ShopContent>;
   prep: PrepRow[];
   sources: Source[];
   sourcesNote?: string;

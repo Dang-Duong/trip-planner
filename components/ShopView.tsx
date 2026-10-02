@@ -62,7 +62,7 @@ export default function ShopView({ slug }: { slug: string }) {
     };
   }, [lang]);
 
-  if (!trip) return null;
+  if (!trip?.shop) return null;
 
   const t = COPY[lang];
   const content = trip.shop[lang];
