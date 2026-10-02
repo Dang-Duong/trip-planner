@@ -2,7 +2,6 @@
 
 import qrcode from "qrcode-generator";
 import { useMemo, useState } from "react";
-import Dock from "@/components/Dock";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
 import { showAccount, spayd, toIban } from "@/lib/payment";
@@ -560,7 +559,6 @@ export default function MoneyView({ slug }: { slug: string }) {
         </>
       )}
 
-      <Dock slug={trip.slug} shop />
     </div>
   );
 }

@@ -18,8 +18,8 @@ const subscribe = (fn: () => void) => {
   subs.add(fn);
   addEventListener("hashchange", fn);
   // Arriving from another page, Next writes the new URL (and its #tab) after this page
-  // has rendered, so read it once more after that settles.
-  const late = setTimeout(fn);
+  // has rendered, so everyone reads it once more after that settles.
+  const late = setTimeout(() => subs.forEach((f) => f()));
   return () => {
     clearTimeout(late);
     subs.delete(fn);
@@ -107,10 +107,17 @@ export default function Dock({ slug, shop }: { slug: string; shop: boolean }) {
 
   return (
     <nav className="dock" aria-label="Trip">
+      <span
+        className="mark"
+        aria-hidden="true"
+        hidden={!items.some((it) => it.on)}
+        style={
+          { "--i": items.findIndex((it) => it.on), "--n": items.length } as React.CSSProperties
+        }
+      />
       {items.map(({ id, label, href, on }) => {
         const body = (
           <>
-            {on && <span className="mark" />}
             <svg viewBox="0 0 24 24" aria-hidden="true">
               {ICONS[id]}
             </svg>
@@ -131,7 +138,15 @@ export default function Dock({ slug, shop }: { slug: string; shop: boolean }) {
             {body}
           </a>
         ) : (
-          <Link key={id} href={href} aria-current={current} scroll={false}>
+          <Link
+            key={id}
+            href={href}
+            aria-current={current}
+            scroll={false}
+            // Put the tab in the URL up front so the trip page and the dock agree on it from
+            // the first frame, rather than showing Plan until Next writes the hash.
+            onClick={() => isTab(id) && history.replaceState(history.state, "", `#${id}`)}
+          >
             {body}
           </Link>
         );

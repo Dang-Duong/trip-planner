@@ -61,26 +61,30 @@ h2{margin:0;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spac
 .sheet-top h1{font-size:clamp(1.45rem,4vw,1.9rem)}
 .sheet-top p{font-family:var(--mono);font-size:.7rem;color:var(--stone);white-space:nowrap}
 
-.pills{display:flex;gap:.4rem;padding:0 1.25rem .8rem;overflow-x:auto;scrollbar-width:none}
-.pills button{position:relative;isolation:isolate;flex:1 0 auto;display:grid;justify-items:center;gap:.15rem;padding:.55rem .8rem .5rem;
+/* One red block slides under the pills; the text sits above it and never changes to a
+   colour that only reads on red, so nothing flashes mid-slide. Equal-width columns are
+   what let --i alone place it. */
+.pills{position:relative;isolation:isolate;display:grid;grid-auto-flow:column;
+  grid-auto-columns:minmax(0,1fr);gap:.4rem;padding:0 1.25rem .8rem}
+.pills button{display:grid;justify-items:center;gap:.15rem;padding:.55rem .4rem .5rem;
   background:var(--panel);border:1px solid var(--rule);color:var(--stone);font:inherit;font-size:.7rem;
-  cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+  cursor:pointer;transition:border-color .2s,color .3s}
+.pills button>*{position:relative;z-index:2}
 .pills b{font-family:var(--display);font-stretch:80%;font-size:1.4rem;font-weight:800;line-height:1;color:var(--ink)}
 .pills button:hover{border-color:var(--tick);color:var(--ink-2)}
-.pills button[aria-selected="true"]{border-color:var(--blaze);color:var(--bg)}
-.pill-mark{position:absolute;inset:-1px;z-index:-1;background:var(--blaze);view-transition-name:pill-mark}
-.pills button[aria-selected="true"] b{color:var(--bg)}
+.pills button[aria-selected="true"]{border-color:transparent;color:var(--ink)}
+.pill-mark{position:absolute;z-index:1;top:0;left:1.25rem;height:calc(100% - .8rem);
+  width:calc((100% - 2.5rem - (var(--n) - 1) * .4rem) / var(--n));background:var(--blaze);
+  transform:translateX(calc(var(--i) * (100% + .4rem)));
+  transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
 
 .sheet-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
-  padding:.3rem 1.25rem 2rem;border-top:1px solid var(--rule)}
-/* Tab and day swaps run as view transitions: the sheet slides toward where you went,
-   and the red markers on the pills and the dock glide to their new place. */
+  padding:.3rem 1.25rem calc(6rem + env(safe-area-inset-bottom));border-top:1px solid var(--rule)}
+/* Tab and day swaps run as view transitions: the sheet slides toward where you went. */
 .sheet-body{view-transition-name:sheet}
 ::view-transition-old(root),::view-transition-new(root){animation:none}
 ::view-transition-old(sheet){animation:.2s ease-in both vt-out}
 ::view-transition-new(sheet){animation:.42s cubic-bezier(.2,.8,.2,1) .05s both vt-in}
-::view-transition-group(pill-mark),::view-transition-group(dock-mark){
-  animation-duration:.45s;animation-timing-function:cubic-bezier(.3,1.25,.5,1)}
 html{--d:0}html[data-dir="1"]{--d:1}html[data-dir="-1"]{--d:-1}
 @keyframes vt-out{to{opacity:0;translate:calc(var(--d) * -28px) calc((1 - var(--d) * var(--d)) * -6px)}}
 @keyframes vt-in{from{opacity:0;translate:calc(var(--d) * 36px) calc((1 - var(--d) * var(--d)) * 10px)}}
@@ -147,8 +151,11 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
 .sources{margin-top:1.6rem}
 
 /* ---------- dock ---------- */
-.dock{display:flex;flex:none;background:var(--panel);border-top:1px solid var(--rule);
-  padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
+/* One dock for every trip page, mounted by the trip layout: full width on a phone, and
+   the foot of the plan sheet's column on a desktop. */
+.dock{position:fixed;z-index:6;left:0;right:0;bottom:0;display:flex;background:var(--panel);
+  border-top:1px solid var(--rule);padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
+@media(min-width:1024px){.dock{left:auto;width:440px;border-left:1px solid var(--rule)}}
 .dock a{flex:1;position:relative;display:grid;justify-items:center;gap:.2rem;padding:.4rem 0;
   font-size:.66rem;color:var(--stone);text-decoration:none;transition:color .2s}
 .dock svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;
@@ -161,14 +168,11 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
 .dock a[aria-current] svg{transform:translateY(-2px)}
 .dock a[aria-current] .acc{stroke:var(--blaze)}.dock a[aria-current] .acc.fill{fill:var(--blaze);stroke:none}
 .dock a[aria-current]{color:var(--ink)}
-.dock .mark{position:absolute;top:-.36rem;left:28%;right:28%;height:2px;background:var(--blaze);
-  view-transition-name:dock-mark}
-/* On the long pages it floats instead of closing a sheet. */
-.shop .dock{position:fixed;z-index:5;left:50%;bottom:max(1rem,env(safe-area-inset-bottom));
-  transform:translateX(-50%);width:min(420px,calc(100% - 2rem));border:1px solid var(--rule);
-  background:rgba(18,24,27,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
-  box-shadow:0 14px 40px -14px rgba(0,0,0,.9)}
-
+/* Same sliding marker as the pills; the dock stays mounted across pages, so it slides
+   there too. */
+.dock .mark{position:absolute;top:-1px;left:.4rem;height:2px;padding:0 calc(var(--w) * .28);
+  --w:calc((100% - .8rem) / var(--n));width:var(--w);background:var(--blaze) content-box;
+  transform:translateX(calc(var(--i) * 100%));transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
 /* ---------- cursor: an ice axe, pick tip on the pointer ---------- */
 .cur{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;display:none;
   width:32px;height:32px;margin:-10.5px 0 0 -3px;transform-origin:25px 29.5px;
@@ -189,6 +193,7 @@ html.has-cursor,html.has-cursor *{cursor:none!important}
 @keyframes chip{to{translate:var(--x) var(--y);rotate:120deg;opacity:0;scale:.4}}
 
 @media(prefers-reduced-motion:reduce){
+  .pill-mark,.dock .mark{transition:none}
   .cur{transition:none}
 }
 
@@ -594,8 +599,6 @@ label:hover>.tick{border-color:var(--glacier)}
 /* An amount that won't parse says so, instead of just leaving the button grey. */
 .money-hint{font-style:normal;font-size:.72rem;color:var(--blaze);line-height:1.3}
 .money-f input[aria-invalid="true"]{border-color:var(--blaze)}
-/* The content rises in; the dock is left out so it stays put between pages (an animated
-   translate on its parent would also unpin it from the viewport while it runs). */
-.shop>:not(.dock){animation:page-in .45s cubic-bezier(.2,.8,.2,1)}
+.shop{animation:page-in .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes page-in{from{opacity:0;translate:0 12px}}
-@media(prefers-reduced-motion:reduce){.shop>:not(.dock){animation:none}}
+@media(prefers-reduced-motion:reduce){.shop{animation:none}}

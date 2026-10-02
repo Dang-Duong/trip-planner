@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import Dock from "@/components/Dock";
 import ShopList from "@/components/ShopList";
 import { useStoredChoice } from "@/lib/local-state";
 import type { Lang } from "@/lib/types";
@@ -129,7 +128,6 @@ export default function ShopView({ slug }: { slug: string }) {
         </ul>
       </section>
 
-      <Dock slug={trip.slug} shop />
     </div>
   );
 }

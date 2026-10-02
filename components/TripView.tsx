@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import DayTimeline, { More } from "@/components/DayTimeline";
-import Dock, { swap, useTab } from "@/components/Dock";
+import { swap, useTab } from "@/components/Dock";
 import PackList from "@/components/PackList";
 import TripMap, { BASEMAP_CHOICES, type Basemap } from "@/components/TripMap";
 import type { LngLat } from "@/lib/types";
@@ -60,7 +60,13 @@ export default function TripView({ slug }: { slug: string }) {
         </header>
 
         {tab === "plan" && (
-          <div className="pills" role="tablist" aria-label="Day">
+          <div
+            className="pills"
+            role="tablist"
+            aria-label="Day"
+            style={{ "--i": dayIdx, "--n": trip.days.length } as React.CSSProperties}
+          >
+            <span className="pill-mark" aria-hidden="true" />
             {trip.days.map((d, i) => (
               <button
                 key={d.date}
@@ -72,9 +78,8 @@ export default function TripView({ slug }: { slug: string }) {
                   if (e.key === "ArrowLeft") go(dayIdx - 1);
                 }}
               >
-                {i === dayIdx && <span className="pill-mark" />}
                 <b>{d.date}</b>
-                {d.title.split(" · ")[0]}
+                <span>{d.title.split(" · ")[0]}</span>
               </button>
             ))}
           </div>
@@ -188,7 +193,6 @@ export default function TripView({ slug }: { slug: string }) {
           )}
         </div>
 
-        <Dock slug={trip.slug} shop={!!trip.shop} />
       </aside>
     </div>
   );
