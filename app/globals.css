@@ -154,19 +154,28 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
   background:rgba(18,24,27,.86);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
   box-shadow:0 14px 40px -14px rgba(0,0,0,.9)}
 
-/* ---------- cursor ---------- */
-.cur-dot,.cur-ring{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;display:none;border-radius:50%}
-html.has-cursor[data-cursor="on"] :is(.cur-dot,.cur-ring){display:block}
+/* ---------- cursor: an ice axe, pick tip on the pointer ---------- */
+.cur{position:fixed;left:0;top:0;z-index:1000;pointer-events:none;display:none;
+  width:32px;height:32px;margin:-10.5px 0 0 -3px;transform-origin:25px 29.5px;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));
+  transition:rotate .25s cubic-bezier(.3,1.6,.5,1);will-change:translate}
+.cur svg{display:block;width:100%;height:100%}
+html.has-cursor[data-cursor="on"] .cur{display:block}
 html.has-cursor,html.has-cursor *{cursor:none!important}
-.cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--blaze)}
-.cur-ring{width:34px;height:34px;margin:-17px 0 0 -17px;border:1.5px solid #fff;mix-blend-mode:difference;
-  transition:scale .3s cubic-bezier(.2,.8,.2,1),background-color .3s;will-change:translate}
-.cur-ring[data-hover="true"]{scale:1.6;background:rgba(255,255,255,.12)}
-.cur-ring[data-down="true"]{scale:.8}
+.cur[data-hover="true"]{rotate:-16deg}
+.cur[data-down="true"]{rotate:10deg;transition-duration:.08s}
+/* Ice chips flying off where the pick strikes. */
+.chips{position:fixed;left:0;top:0;z-index:999;pointer-events:none}
+.chips i{position:absolute;width:3px;height:3px;background:#DDF3FA;
+  animation:chip .45s cubic-bezier(.2,.7,.4,1) forwards}
+.chips i:nth-child(1){--x:-14px;--y:-12px}.chips i:nth-child(2){--x:-4px;--y:-18px}
+.chips i:nth-child(3){--x:9px;--y:-15px}.chips i:nth-child(4){--x:15px;--y:-4px}
+.chips i:nth-child(5){--x:-17px;--y:2px}.chips i:nth-child(6){--x:6px;--y:6px;background:var(--glacier)}
+@keyframes chip{to{translate:var(--x) var(--y);rotate:120deg;opacity:0;scale:.4}}
 
 @media(prefers-reduced-motion:reduce){
   .enter{animation:none}
-  .cur-ring{transition:none}
+  .cur{transition:none}
 }
 
 /* ---------- shared headings ---------- */

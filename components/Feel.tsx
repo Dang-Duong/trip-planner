@@ -4,107 +4,69 @@ import { useEffect, useRef } from "react";
 
 const HOVER = "a,button,summary,label,select,[role=tab]";
 
-function scroller(el: Element | null): HTMLElement {
-  for (let n = el; n && n !== document.body; n = n.parentElement) {
-    const oy = getComputedStyle(n).overflowY;
-    if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight) return n as HTMLElement;
-  }
-  return document.scrollingElement as HTMLElement;
-}
-
 export default function Feel() {
-  const dot = useRef<HTMLDivElement>(null);
-  const ring = useRef<HTMLDivElement>(null);
+  const axe = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!matchMedia("(pointer: fine)").matches) return;
     const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const fine = matchMedia("(pointer: fine)").matches;
+    const root = document.documentElement;
     const ac = new AbortController();
     const on = { signal: ac.signal };
-    let raf = 0;
+    root.classList.add("has-cursor");
 
-    // Mouse wheels step in 100px jumps; trackpads already glide, so only coarse,
-    // whole-notch deltas are eased.
-    const targets = new Map<HTMLElement, number>();
-    const glide = () => {
-      raf = 0;
-      for (const [el, to] of targets) {
-        const d = to - el.scrollTop;
-        if (Math.abs(d) < 0.5) {
-          el.scrollTop = to;
-          targets.delete(el);
-        } else el.scrollTop += d * 0.16;
-      }
-      if (targets.size) raf = requestAnimationFrame(glide);
-    };
-    if (!calm) {
-      addEventListener(
-        "wheel",
-        (e) => {
-          const notch = e.deltaMode === 1 || (Math.abs(e.deltaY) >= 50 && Number.isInteger(e.deltaY));
-          const t = e.target as Element;
-          if (!notch || e.ctrlKey || e.shiftKey || t.closest(".maplibregl-map")) return;
-          const el = scroller(t);
-          const max = el.scrollHeight - el.clientHeight;
-          const from = targets.get(el) ?? el.scrollTop;
-          const to = Math.max(0, Math.min(max, from + e.deltaY * (e.deltaMode === 1 ? 40 : 1)));
-          if (to === from && !targets.has(el)) return;
-          e.preventDefault();
-          targets.set(el, to);
-          if (!raf) raf = requestAnimationFrame(glide);
-        },
-        { passive: false, signal: ac.signal },
-      );
-      // A scrollbar drag or keyboard scroll must win over a glide in flight.
-      addEventListener("keydown", () => targets.clear(), on);
-      addEventListener("pointerdown", () => targets.clear(), on);
-    }
-
-    if (fine) {
-      document.documentElement.classList.add("has-cursor");
-      let x = -100, y = -100, rx = x, ry = y, cr = 0;
-      const follow = () => {
-        rx += (x - rx) * (calm ? 1 : 0.35);
-        ry += (y - ry) * (calm ? 1 : 0.35);
-        // `translate`, not `transform`: the hover `scale` would multiply a transform's offset.
-        ring.current!.style.translate = `${rx}px ${ry}px`;
-        cr = Math.abs(x - rx) + Math.abs(y - ry) > 0.3 ? requestAnimationFrame(follow) : 0;
-      };
-      addEventListener(
-        "pointermove",
-        (e) => {
-          x = e.clientX;
-          y = e.clientY;
-          dot.current!.style.translate = `${x}px ${y}px`;
-          const r = ring.current!;
-          r.dataset.hover = String(!!(e.target as Element).closest?.(HOVER));
-          document.documentElement.dataset.cursor = "on";
-          if (!cr) cr = requestAnimationFrame(follow);
-        },
-        on,
-      );
-      addEventListener("pointerdown", () => (ring.current!.dataset.down = "true"), on);
-      addEventListener("pointerup", () => (ring.current!.dataset.down = "false"), on);
-      addEventListener(
-        "pointerout",
-        (e) => {
-          if (!e.relatedTarget) document.documentElement.dataset.cursor = "off";
-        },
-        on,
-      );
-    }
+    addEventListener(
+      "pointermove",
+      (e) => {
+        const el = axe.current!;
+        el.style.translate = `${e.clientX}px ${e.clientY}px`;
+        el.dataset.hover = String(!!(e.target as Element).closest?.(HOVER));
+        root.dataset.cursor = "on";
+      },
+      on,
+    );
+    addEventListener(
+      "pointerdown",
+      (e) => {
+        axe.current!.dataset.down = "true";
+        if (calm) return;
+        const chips = document.createElement("div");
+        chips.className = "chips";
+        chips.style.translate = `${e.clientX}px ${e.clientY}px`;
+        chips.innerHTML = "<i></i>".repeat(6);
+        chips.addEventListener("animationend", () => chips.remove(), { once: true });
+        document.body.append(chips);
+      },
+      on,
+    );
+    addEventListener("pointerup", () => (axe.current!.dataset.down = "false"), on);
+    addEventListener(
+      "pointerout",
+      (e) => {
+        if (!e.relatedTarget) root.dataset.cursor = "off";
+      },
+      on,
+    );
 
     return () => {
       ac.abort();
-      cancelAnimationFrame(raf);
-      document.documentElement.classList.remove("has-cursor");
+      root.classList.remove("has-cursor");
     };
   }, []);
 
+  // The pick tip at (3, 10.5) is the hotspot; the swing pivots on the grip.
   return (
-    <>
-      <div className="cur-ring" ref={ring} aria-hidden="true" />
-      <div className="cur-dot" ref={dot} aria-hidden="true" />
-    </>
+    <div className="cur" ref={axe} aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <g stroke="#06090A" strokeWidth="5">
+          <path d="M15.5 6 25 29.5" />
+          <path d="M3 10.5C6.5 7 10.5 5.2 15.5 5.2L22 4.6" />
+        </g>
+        <path d="M15.5 6 25 29.5" stroke="#C9D3D8" strokeWidth="2.6" />
+        <path d="M21.6 21 25 29.5" stroke="#FF5A45" strokeWidth="3" />
+        <path d="M3 10.5C6.5 7 10.5 5.2 15.5 5.2L22 4.6" stroke="#EAF0F2" strokeWidth="2.6" />
+        <path d="M19.8 2.7 25.5 2.2 25.8 6.6 20.2 7Z" fill="#EAF0F2" stroke="#06090A" strokeWidth="1.4" />
+      </svg>
+    </div>
   );
 }
