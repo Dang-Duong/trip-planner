@@ -1,14 +1,19 @@
+import { useState } from "react";
 import type { Day, DayOption, Leg } from "@/lib/types";
 
 const Legs = ({ legs }: { legs: Leg[] }) => (
-  <>
+  <ol className="legs">
     {legs.map((leg, i) => (
-      <div className="leg" key={i}>
-        <i>{leg.time}</i>
-        <span>{leg.text}</span>
-      </div>
+      <li key={i}>
+        <details className="fold">
+          <summary>
+            <i>{leg.time}</i>
+            <span>{leg.text}</span>
+          </summary>
+        </details>
+      </li>
     ))}
-  </>
+  </ol>
 );
 
 export default function DayTimeline({
@@ -16,48 +21,54 @@ export default function DayTimeline({
   onOption,
 }: {
   day: Day;
-  /** Called with the option under the pointer (or keyboard focus), null on leave. */
   onOption?: (opt: DayOption | null) => void;
 }) {
+  const [pick, setPick] = useState(0);
+  const opt = day.options?.[pick];
+
   return (
     <article className="day">
-      <div className="dh">
-        <span className="d">{day.date}</span>
-        <span className="t">{day.title}</span>
-        <span className="m">{day.meta}</span>
-      </div>
-
-      {day.options ? (
-        day.options.map((opt, i) => (
-          <div
-            className="opt"
-            key={opt.name}
-            // Focus is included so tabbing to the komoot link draws the trail too.
-            onMouseEnter={() => onOption?.(opt)}
-            onMouseLeave={() => onOption?.(null)}
-            onFocus={() => onOption?.(opt)}
-            onBlur={() => onOption?.(null)}
-          >
-            <div className="opt-h">
-              <span className="opt-tag">{String.fromCharCode(65 + i)}</span>
-              {opt.href ? (
-                <a className="opt-name" href={opt.href} target="_blank" rel="noreferrer">
-                  {opt.name} ↗
-                </a>
-              ) : (
-                <span className="opt-name">{opt.name}</span>
-              )}
-              <span className="opt-meta">{opt.meta}</span>
-            </div>
-            <Legs legs={opt.legs} />
-            {opt.note && <div className="fine">{opt.note}</div>}
-          </div>
-        ))
+      {day.options && (
+        <div className="seg" role="tablist" aria-label="Route options">
+          {day.options.map((o, i) => (
+            <button
+              key={o.name}
+              role="tab"
+              aria-selected={i === pick}
+              onClick={() => {
+                setPick(i);
+                onOption?.(o);
+              }}
+            >
+              {o.name}
+            </button>
+          ))}
+        </div>
+      )}
+      {opt ? (
+        <>
+          <p className="day-meta">
+            {opt.meta}
+            {opt.href && (
+              <a href={opt.href} target="_blank" rel="noreferrer">
+                komoot
+              </a>
+            )}
+          </p>
+          <Legs legs={opt.legs} />
+          {opt.note && <More>{opt.note}</More>}
+        </>
       ) : (
         <Legs legs={day.legs} />
       )}
-
-      {day.note && <div className="fine">{day.note}</div>}
+      {day.note && <More>{day.note}</More>}
     </article>
   );
 }
+
+export const More = ({ children }: { children: React.ReactNode }) => (
+  <details className="more">
+    <summary>Notes</summary>
+    <div>{children}</div>
+  </details>
+);

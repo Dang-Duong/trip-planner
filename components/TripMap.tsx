@@ -109,10 +109,12 @@ const empty = (): GeoJSON.FeatureCollection => ({ type: "FeatureCollection", fea
 // Generous, and wider on the right: labels sit beside their dot and would clip otherwise.
 const PADDING = { top: 62, bottom: 72, left: 82, right: 108 };
 
-function fit(m: MLMap, lib: ML, pts: LngLat[], maxZoom: number, duration: number) {
+type Cam = { pitch: number; bearing: number };
+
+function fit(m: MLMap, lib: ML, pts: LngLat[], maxZoom: number, duration: number, cam: Cam) {
   if (!pts.length) return;
   const bounds = pts.reduce((b, p) => b.extend(p), new lib.LngLatBounds(pts[0], pts[0]));
-  m.fitBounds(bounds, { padding: PADDING, maxZoom, duration });
+  m.fitBounds(bounds, { padding: PADDING, maxZoom, duration, ...cam });
 }
 
 // What survives when labels collide. A day's objective and the campsites outrank
@@ -208,6 +210,7 @@ export default function TripMap({
   // What the active day's map is framed on, so letting go of a hovered hike can put
   // the camera back without rebuilding the view.
   const viewPts = useRef<LngLat[]>([]);
+  const viewCam = useRef<Cam>({ pitch: 0, bearing: 0 });
   const hadTrail = useRef(false);
 
   // Create the map once. Sources and layers are declared in the initial style so
@@ -231,10 +234,7 @@ export default function TripMap({
       const m = new lib.Map({
         container: node,
         attributionControl: false,
-        // Trackpad pinch (which the OS sends as ctrl+wheel) and ⌘/ctrl+scroll zoom the
-        // map; a plain two-finger scroll still scrolls the page. Without this a sticky
-        // half-screen map swallows the wheel and you can't scroll past it.
-        cooperativeGestures: true,
+        maxPitch: 75,
         center: [8.5, 47],
         zoom: 5,
         style: {
@@ -261,8 +261,25 @@ export default function TripMap({
               maxzoom: BASEMAPS.satlabels.maxzoom,
               attribution: BASEMAPS.satlabels.attribution,
             },
+            // Mapzen terrain on AWS open data: keyless, CORS-open, ~30 m in the Alps.
+            dem: {
+              type: "raster-dem",
+              tiles: ["https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png"],
+              encoding: "terrarium",
+              tileSize: 256,
+              maxzoom: 14,
+            },
             route: { type: "geojson", data: empty() },
             trail: { type: "geojson", data: empty() },
+          },
+          terrain: { source: "dem", exaggeration: 1.25 },
+          sky: {
+            "sky-color": "#0E2A3A",
+            "horizon-color": "#9FD6E8",
+            "fog-color": "#0A0E10",
+            "sky-horizon-blend": 0.6,
+            "horizon-fog-blend": 0.5,
+            "fog-ground-blend": 0.75,
           },
           layers: [
             { id: "bg", type: "background", paint: { "background-color": "#E9E8E3" } },
@@ -326,7 +343,7 @@ export default function TripMap({
       });
 
       m.addControl(new lib.AttributionControl({ compact: true }), "bottom-right");
-      m.addControl(new lib.NavigationControl({ showCompass: false }), "top-right");
+      m.addControl(new lib.NavigationControl({ visualizePitch: true }), "top-right");
       m.addControl(new lib.ScaleControl({ maxWidth: 84, unit: "metric" }), "bottom-left");
 
       map.current = m;
@@ -385,10 +402,11 @@ export default function TripMap({
 
     const pts = [...marked.map((w) => w.at), ...line];
     viewPts.current = pts;
+    viewCam.current = { pitch: view.pitch ?? 0, bearing: view.bearing ?? 0 };
     // The pane can settle to its final size after the map is built; without this the
     // fit is computed against a stale width and drifts off-centre.
     m.resize();
-    fit(m, lib, pts, 14, 900);
+    fit(m, lib, pts, 14, 1800, viewCam.current);
   }, [ready, activeId, views, waypoints]);
 
   // Basemap swapping is kept apart from the effect above on purpose: it must not
@@ -432,7 +450,7 @@ export default function TripMap({
 
     // Quick, because this tracks the pointer: a leisurely fly makes moving between the
     // two options feel like the map is lagging behind you.
-    fit(m, lib, drawn ?? viewPts.current, drawn ? 15 : 14, 500);
+    fit(m, lib, drawn ?? viewPts.current, drawn ? 15 : 14, 500, viewCam.current);
   }, [ready, trail]);
 
   return <div className="mapbox" ref={box} role="img" aria-label={activeId} />;

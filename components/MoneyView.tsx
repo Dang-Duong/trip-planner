@@ -2,7 +2,7 @@
 
 import qrcode from "qrcode-generator";
 import { useMemo, useState } from "react";
-import Fab, { ARROW } from "@/components/Fab";
+import Dock from "@/components/Dock";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
 import { showAccount, spayd, toIban } from "@/lib/payment";
@@ -560,13 +560,7 @@ export default function MoneyView({ slug }: { slug: string }) {
         </>
       )}
 
-      <Fab
-        variant="back"
-        href={`/trips/${trip.slug}/shop`}
-        label="Back to the list"
-        sub="What to buy"
-        icon={ARROW}
-      />
+      <Dock slug={trip.slug} shop />
     </div>
   );
 }

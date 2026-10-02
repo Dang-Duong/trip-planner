@@ -1,73 +1,42 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import DayTimeline from "@/components/DayTimeline";
+import { useRef, useState } from "react";
+import DayTimeline, { More } from "@/components/DayTimeline";
+import Dock, { useTab } from "@/components/Dock";
 import PackList from "@/components/PackList";
-import HikeTable from "@/components/HikeTable";
-import PinTable from "@/components/PinTable";
-import Fab, { COINS, ROCKET } from "@/components/Fab";
 import TripMap, { BASEMAP_CHOICES, type Basemap } from "@/components/TripMap";
 import type { LngLat } from "@/lib/types";
 import { getTrip } from "@/trips";
 
 export default function TripView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
-  const [active, setActive] = useState(trip?.maps[0]?.id ?? "");
+  const tab = useTab();
+  const [dayIdx, setDayIdx] = useState(0);
+  const [dir, setDir] = useState(1);
   const [trail, setTrail] = useState<LngLat[] | undefined>(undefined);
   const [basemap, setBasemap] = useState<Basemap>("satellite");
-
-  // Scrollspy: the last [data-map] block whose top has passed an anchor line near the
-  // top of the reading column wins. Anchoring at the top rather than mid-viewport
-  // matters — on a tall window the middle of the screen is already inside Saturday
-  // while the page is still scrolled to the very top, which showed the wrong map first.
-  useEffect(() => {
-    const blocks = Array.from(document.querySelectorAll<HTMLElement>("[data-map]"));
-    if (!blocks.length) return;
-
-    let raf = 0;
-    const pick = () => {
-      raf = 0;
-      // In the stacked layout the map is stuck across the top of the viewport, so the
-      // anchor has to sit below it. Measured rather than hard-coding the breakpoint:
-      // side by side, the pane is full height and its bottom is the viewport bottom.
-      const pane = document.querySelector<HTMLElement>(".mappane");
-      const paneBottom = pane ? pane.getBoundingClientRect().bottom : 0;
-      const top = paneBottom < window.innerHeight - 1 ? paneBottom : 0;
-      const line = top + (window.innerHeight - top) * 0.3;
-      let current = blocks[0];
-      for (const b of blocks) {
-        if (b.getBoundingClientRect().top <= line) current = b;
-      }
-      if (current.dataset.map) setActive(current.dataset.map);
-    };
-    const schedule = () => {
-      if (!raf) raf = requestAnimationFrame(pick);
-    };
-
-    schedule();
-    window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
-    return () => {
-      window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, []);
+  const touch = useRef<{ x: number; y: number } | null>(null);
 
   if (!trip) return null;
+  const day = trip.days[dayIdx];
+  const go = (i: number) => {
+    if (i < 0 || i >= trip.days.length || i === dayIdx) return;
+    setDir(i > dayIdx ? 1 : -1);
+    setDayIdx(i);
+    setTrail(undefined);
+  };
+  const mapId = tab === "plan" ? (day.mapId ?? trip.maps[0].id) : trip.maps[0].id;
 
   return (
-    <div className="split">
-      <div className="mappane">
+    <div className="app">
+      <div className="stage">
         <TripMap
           views={trip.maps}
-          activeId={active}
+          activeId={mapId}
           waypoints={trip.waypoints}
           trail={trail}
           basemap={basemap}
         />
-        {/* Top-left is the only free corner — zoom is top-right, scale bottom-left,
-            attribution bottom-right. */}
         <div className="basemaps" role="group" aria-label="Base map">
           {BASEMAP_CHOICES.map((c) => (
             <button
@@ -80,160 +49,146 @@ export default function TripView({ slug }: { slug: string }) {
             </button>
           ))}
         </div>
-        <div className="mtabs" role="tablist" aria-label="Map view">
-          {trip.maps.map((m) => (
-            <button
-              key={m.id}
-              role="tab"
-              aria-selected={m.id === active}
-              // Scroll to the day this map belongs to; the scrollspy then sets `active`.
-              onClick={() => {
-                const target = document.querySelector<HTMLElement>(`.chapter[data-map="${m.id}"]`);
-                if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
-                else setActive(m.id);
-              }}
-            >
-              {m.title}
-            </button>
-          ))}
-        </div>
       </div>
 
-      <div className="plan">
-        {/* One full-height chapter per day: the map on the left follows whichever
-            day you have scrolled to, and the column snaps between them. */}
-        {trip.days.map((day, i) => (
-          <div className="chapter" key={day.date} data-map={day.mapId}>
-            {i === 0 && (
-              <header className="phead">
-                <span className="blz" aria-hidden="true">
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <h1>
-                  {trip.title} <span>{trip.titleAccent}</span> {trip.titleTail}
-                </h1>
-                <p className="fine">{trip.subtitle}</p>
-                <div className="stats">
-                  {trip.stats.map((s) => (
-                    <div key={s.label}>
-                      <b>{s.value}</b>
-                      <span>{s.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </header>
-            )}
-            <div className="chapter-head">
-              <b>{String(i + 1).padStart(2, "0")}</b>
-              <h2>
-                Day {i + 1} of {trip.days.length}
-              </h2>
+      <aside className="sheet">
+        <header className="sheet-top">
+          <h1>
+            {trip.title} <span>{trip.titleAccent}</span> {trip.titleTail}
+          </h1>
+          <p>{trip.dates}</p>
+        </header>
+
+        {tab === "plan" && (
+          <div className="pills" role="tablist" aria-label="Day">
+            {trip.days.map((d, i) => (
+              <button
+                key={d.date}
+                role="tab"
+                aria-selected={i === dayIdx}
+                onClick={() => go(i)}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowRight") go(dayIdx + 1);
+                  if (e.key === "ArrowLeft") go(dayIdx - 1);
+                }}
+              >
+                <b>{d.date}</b>
+                {d.title.split(" · ")[0]}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div
+          className="sheet-body"
+          onTouchStart={(e) => (touch.current = { x: e.touches[0].clientX, y: e.touches[0].clientY })}
+          onTouchEnd={(e) => {
+            const t = touch.current;
+            if (!t || tab !== "plan") return;
+            const dx = e.changedTouches[0].clientX - t.x;
+            const dy = e.changedTouches[0].clientY - t.y;
+            if (Math.abs(dx) > 60 && Math.abs(dx) > 2 * Math.abs(dy)) go(dayIdx - Math.sign(dx));
+          }}
+        >
+          {tab === "plan" && (
+            <div className="enter" key={day.date} style={{ "--dir": dir } as React.CSSProperties}>
+              <div className="day-head">
+                <h2>{day.title.split(" · ").slice(1).join(" · ")}</h2>
+                <p className="day-meta">{day.meta}</p>
+              </div>
+              <DayTimeline day={day} onOption={(opt) => setTrail(opt?.line)} />
             </div>
-            <DayTimeline day={day} onOption={(opt) => setTrail(opt?.line)} />
-          </div>
-        ))}
-
-        <section data-map="overview">
-          <div className="hd">
-            <b>01</b>
-            <h2>Hikes</h2>
-          </div>
-          <HikeTable hikes={trip.hikes} />
-          {trip.hikesNote && (
-            <p className="fine" style={{ marginTop: ".7rem" }}>
-              {trip.hikesNote}
-            </p>
-          )}
-        </section>
-
-        <section data-map="overview">
-          <div className="hd">
-            <b>02</b>
-            <h2>Pins &amp; parking</h2>
-          </div>
-          <PinTable pins={trip.pins} />
-          {trip.pinsNote && (
-            <p className="fine" style={{ marginTop: ".7rem" }}>
-              {trip.pinsNote}
-            </p>
           )}
 
-          <h2 style={{ margin: "1.7rem 0 .7rem" }}>{trip.flagsTitle}</h2>
-          <ul className="flags">
-            {trip.flags.map((flag, i) => (
-              <li key={i}>{flag}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section>
-          <div className="hd">
-            <b>03</b>
-            <h2>Pack</h2>
-          </div>
-          <PackList groups={trip.pack} slug={trip.slug} />
-        </section>
-
-        <section>
-          <div className="hd">
-            <b>04</b>
-            <h2>Before you go</h2>
-          </div>
-          <div className="scroll">
-            <table>
-              <thead>
-                <tr>
-                  <th>Do</th>
-                  <th>When</th>
-                </tr>
-              </thead>
-              <tbody>
-                {trip.prep.map((row, i) => (
-                  <tr key={i}>
-                    <td>{row.what}</td>
-                    <td className="mono">{row.when}</td>
-                  </tr>
+          {tab === "places" && (
+            <div className="enter">
+              <h2 className="sec">Stops</h2>
+              <ul className="rows">
+                {trip.pins.map((pin, i) => (
+                  <li key={i}>
+                    <details className="fold">
+                      <summary>
+                        <i>{pin.when}</i>
+                        <span>{pin.what}</span>
+                        <em>{pin.cost === "—" ? "" : pin.cost}</em>
+                      </summary>
+                      <div className="fold-body">
+                        {pin.sub && <p>{pin.sub}</p>}
+                        <a className="go" href={pin.href} target="_blank" rel="noreferrer">
+                          Open in Maps
+                        </a>
+                      </div>
+                    </details>
+                  </li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+              </ul>
 
-        <footer>
-          <p className="fine">
-            {trip.sources.map((s, i) => (
-              <span key={s.href}>
-                {i > 0 && " · "}
-                <a href={s.href} target="_blank" rel="noreferrer">
-                  {s.label}
-                </a>
-              </span>
-            ))}
-            {trip.sourcesNote && ` — ${trip.sourcesNote}`}
-          </p>
-        </footer>
-      </div>
+              <h2 className="sec">Hikes</h2>
+              <div className="hikes">
+                {trip.hikes.map((h) => (
+                  <a className="hike" key={h.href} href={h.href} target="_blank" rel="noreferrer">
+                    <b>{h.name}</b>
+                    <span>{h.when}</span>
+                    <dl>
+                      <div><dt>km</dt><dd>{h.km}</dd></div>
+                      <div><dt>up</dt><dd>{h.ascent}</dd></div>
+                      <div><dt>time</dt><dd>{h.time}</dd></div>
+                      <div><dt>top</dt><dd>{h.high}</dd></div>
+                    </dl>
+                  </a>
+                ))}
+              </div>
+              {trip.hikesNote && <More>{trip.hikesNote}</More>}
 
-      {trip.shop && (
-        <>
-          <Fab
-            variant="stack"
-            href={`/trips/${trip.slug}/money`}
-            label="Who owes whom"
-            sub="Settle up"
-            icon={COINS}
-          />
-          <Fab
-            variant="launch"
-            href={`/trips/${trip.slug}/shop`}
-            label="What to buy"
-            sub={`${trip.shop.en.groups.reduce((n, g) => n + g.items.length, 0)} items`}
-            icon={ROCKET}
-          />
-        </>
-      )}
+              <h2 className="sec">{trip.flagsTitle}</h2>
+              <ul className="rows">
+                {trip.flags.map((flag, i) => (
+                  <li key={i}>
+                    <details className="fold">
+                      <summary>
+                        <span>{flag}</span>
+                      </summary>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+              {trip.pinsNote && <p className="fine">{trip.pinsNote}</p>}
+            </div>
+          )}
+
+          {tab === "pack" && (
+            <div className="enter">
+              <h2 className="sec">Pack</h2>
+              <PackList groups={trip.pack} slug={trip.slug} />
+              <h2 className="sec">Before you go</h2>
+              <ul className="rows">
+                {trip.prep.map((row, i) => (
+                  <li key={i}>
+                    <details className="fold">
+                      <summary>
+                        <i>{row.when}</i>
+                        <span>{row.what}</span>
+                      </summary>
+                    </details>
+                  </li>
+                ))}
+              </ul>
+              <p className="fine sources">
+                {trip.sources.map((s, i) => (
+                  <span key={s.href}>
+                    {i > 0 && ", "}
+                    <a href={s.href} target="_blank" rel="noreferrer">
+                      {s.label}
+                    </a>
+                  </span>
+                ))}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <Dock slug={trip.slug} shop={!!trip.shop} />
+      </aside>
     </div>
   );
 }

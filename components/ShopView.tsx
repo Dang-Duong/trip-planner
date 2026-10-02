@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import Fab, { ARROW, COINS } from "@/components/Fab";
+import Dock from "@/components/Dock";
 import ShopList from "@/components/ShopList";
 import { useStoredChoice } from "@/lib/local-state";
 import type { Lang } from "@/lib/types";
@@ -17,10 +17,6 @@ const COPY = {
     bought: "bought",
     reset: "Reset",
     notes: "Before anyone buys anything",
-    back: "Back to the plan",
-    backSub: "Map & days",
-    money: "Who owes whom",
-    moneySub: "Settle up",
     switchTo: "Přepnout do češtiny",
   },
   cs: {
@@ -32,10 +28,6 @@ const COPY = {
     bought: "koupeno",
     reset: "Vynulovat",
     notes: "Než někdo začne nakupovat",
-    back: "Zpátky na plán",
-    backSub: "Mapa a dny",
-    money: "Kdo komu dluží",
-    moneySub: "Vyrovnání",
     switchTo: "Switch to English",
   },
 } as const;
@@ -137,20 +129,7 @@ export default function ShopView({ slug }: { slug: string }) {
         </ul>
       </section>
 
-      <Fab
-        variant="back"
-        href={`/trips/${trip.slug}`}
-        label={t.back}
-        sub={t.backSub}
-        icon={ARROW}
-      />
-      <Fab
-        variant="launch"
-        href={`/trips/${trip.slug}/money`}
-        label={t.money}
-        sub={t.moneySub}
-        icon={COINS}
-      />
+      <Dock slug={trip.slug} shop />
     </div>
   );
 }

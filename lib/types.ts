@@ -30,6 +30,9 @@ export type MapView = {
    */
   routeLine?: LngLat[];
   note?: string;
+  /** 3D camera tilt and heading for this view; flat and north-up when omitted. */
+  pitch?: number;
+  bearing?: number;
 };
 
 export type Leg = { time: string; text: ReactNode };

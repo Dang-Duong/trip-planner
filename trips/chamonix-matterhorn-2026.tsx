@@ -209,6 +209,8 @@ export const chamonixMatterhorn2026: Trip = {
     {
       id: "sat",
       title: "Sat · Mont Buet",
+      pitch: 52,
+      bearing: 20,
       waypoints: ["argentiere", "lebuet", "refugeberard", "montbuet"],
       routeLine: montbuetTrail,
       note: "Drive from Argentière to the car park at Le Buet, about ten minutes, then north-west up the Bérard valley past the refuge to the summit, and back the same way.",
@@ -216,6 +218,10 @@ export const chamonixMatterhorn2026: Trip = {
     {
       id: "sun",
       title: "Sun · 5 Lakes",
+      // From the Zermatt side looking east: the lakes sit on a west-facing slope and
+      // the Unterrothorn ridge hides them from anywhere else.
+      pitch: 55,
+      bearing: 75,
       // Framed on the hike: with Randa and the Matterhorn in view the five lakes shrink to
       // one knot of overlapping labels. The drive to Täsch is on the overview map.
       // Lakes first: when labels collide on a phone, the list order decides who keeps one,

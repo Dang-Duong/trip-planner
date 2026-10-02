@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Archivo, IBM_Plex_Mono, Instrument_Sans } from "next/font/google";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
+import Feel from "@/components/Feel";
 
 // Self-hosted by next/font, so no request to Google at runtime and no swap flash.
 // Archivo is variable on both width and weight — the headline voice is the narrow,
@@ -51,14 +52,17 @@ export const metadata: Metadata = {
 
 // Phones are where this gets read, and the dark page looks wrong behind light
 // browser chrome. Separate from `metadata` — Next moved themeColor here.
-export const viewport: Viewport = { themeColor: "#0A0E10" };
+export const viewport: Viewport = { themeColor: "#0A0E10", viewportFit: "cover" };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Feel />
+      </body>
     </html>
   );
 }
