@@ -104,9 +104,9 @@ export const grosserPriel2026: Trip = {
     {
       id: "sun",
       title: "Sun · Großer Priel",
-      waypoints: ["hut", "brotfall", "priel"],
-      routeLine: summitLine,
-      note: "From the hut up the Kühkar to the Brotfallscharte, then the cabled summit ridge. Back down the same way, past the hut to the car.",
+      waypoints: ["hut", "brotfall", "priel", "polsterlucke"],
+      routeLine: [...walkIn, ...summitLine],
+      note: "From the hut up the Kühkar to the Brotfallscharte, then the cabled summit ridge. Back down the same way, past the hut to the car at Polsterlucke.",
     },
   ],
 
