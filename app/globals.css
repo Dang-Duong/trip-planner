@@ -62,18 +62,28 @@ h2{margin:0;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spac
 .sheet-top p{font-family:var(--mono);font-size:.7rem;color:var(--stone);white-space:nowrap}
 
 .pills{display:flex;gap:.4rem;padding:0 1.25rem .8rem;overflow-x:auto;scrollbar-width:none}
-.pills button{flex:1 0 auto;display:grid;justify-items:center;gap:.15rem;padding:.55rem .8rem .5rem;
+.pills button{position:relative;isolation:isolate;flex:1 0 auto;display:grid;justify-items:center;gap:.15rem;padding:.55rem .8rem .5rem;
   background:var(--panel);border:1px solid var(--rule);color:var(--stone);font:inherit;font-size:.7rem;
   cursor:pointer;transition:background .2s,border-color .2s,color .2s}
 .pills b{font-family:var(--display);font-stretch:80%;font-size:1.4rem;font-weight:800;line-height:1;color:var(--ink)}
 .pills button:hover{border-color:var(--tick);color:var(--ink-2)}
-.pills button[aria-selected="true"]{background:var(--blaze);border-color:var(--blaze);color:var(--bg)}
+.pills button[aria-selected="true"]{border-color:var(--blaze);color:var(--bg)}
+.pill-mark{position:absolute;inset:-1px;z-index:-1;background:var(--blaze);view-transition-name:pill-mark}
 .pills button[aria-selected="true"] b{color:var(--bg)}
 
 .sheet-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
   padding:.3rem 1.25rem 2rem;border-top:1px solid var(--rule)}
-.enter{animation:enter .4s cubic-bezier(.2,.8,.2,1)}
-@keyframes enter{from{opacity:0;transform:translateX(calc(var(--dir,0) * 28px))}}
+/* Tab and day swaps run as view transitions: the sheet slides toward where you went,
+   and the red markers on the pills and the dock glide to their new place. */
+.sheet-body{view-transition-name:sheet}
+::view-transition-old(root),::view-transition-new(root){animation:none}
+::view-transition-old(sheet){animation:.2s ease-in both vt-out}
+::view-transition-new(sheet){animation:.42s cubic-bezier(.2,.8,.2,1) .05s both vt-in}
+::view-transition-group(pill-mark),::view-transition-group(dock-mark){
+  animation-duration:.45s;animation-timing-function:cubic-bezier(.3,1.25,.5,1)}
+html{--d:0}html[data-dir="1"]{--d:1}html[data-dir="-1"]{--d:-1}
+@keyframes vt-out{to{opacity:0;translate:calc(var(--d) * -28px) calc((1 - var(--d) * var(--d)) * -6px)}}
+@keyframes vt-in{from{opacity:0;translate:calc(var(--d) * 36px) calc((1 - var(--d) * var(--d)) * 10px)}}
 
 .day-head{padding-top:1rem}
 .day-head h2{font-family:var(--display);font-stretch:85%;font-size:1.3rem;font-weight:800;
@@ -141,13 +151,18 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
   padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
 .dock a{flex:1;position:relative;display:grid;justify-items:center;gap:.2rem;padding:.4rem 0;
   font-size:.66rem;color:var(--stone);text-decoration:none;transition:color .2s}
-.dock img{width:30px;height:30px;filter:grayscale(1) brightness(.75);opacity:.6;
-  transition:filter .3s,opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
+.dock svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;
+  stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+.dock .acc{stroke:var(--tick);transition:stroke .25s,fill .25s}
+.dock .acc.fill{fill:var(--tick);stroke:none}
 .dock a:hover{color:var(--ink-2)}
-.dock a:hover img{filter:none;opacity:1;transform:translateY(-3px) rotate(-8deg) scale(1.1)}
-.dock a[aria-current] img{filter:drop-shadow(0 6px 8px rgba(0,0,0,.55));opacity:1;transform:translateY(-4px) scale(1.12)}
+.dock a:hover svg{transform:translateY(-2px)}
+.dock a:hover .acc{stroke:var(--ink-2)}.dock a:hover .acc.fill{fill:var(--ink-2);stroke:none}
+.dock a[aria-current] svg{transform:translateY(-2px)}
+.dock a[aria-current] .acc{stroke:var(--blaze)}.dock a[aria-current] .acc.fill{fill:var(--blaze);stroke:none}
 .dock a[aria-current]{color:var(--ink)}
-.dock a[aria-current]::before{content:"";position:absolute;top:-.36rem;left:28%;right:28%;height:2px;background:var(--blaze)}
+.dock .mark{position:absolute;top:-.36rem;left:28%;right:28%;height:2px;background:var(--blaze);
+  view-transition-name:dock-mark}
 /* On the long pages it floats instead of closing a sheet. */
 .shop .dock{position:fixed;z-index:5;left:50%;bottom:max(1rem,env(safe-area-inset-bottom));
   transform:translateX(-50%);width:min(420px,calc(100% - 2rem));border:1px solid var(--rule);
@@ -174,7 +189,6 @@ html.has-cursor,html.has-cursor *{cursor:none!important}
 @keyframes chip{to{translate:var(--x) var(--y);rotate:120deg;opacity:0;scale:.4}}
 
 @media(prefers-reduced-motion:reduce){
-  .enter{animation:none}
   .cur{transition:none}
 }
 
@@ -287,7 +301,7 @@ label:hover>.tick{border-color:var(--glacier)}
 /* ---------- who buys what ---------- */
 /* Its own look, not the packing grid: these are fourteen separate assignments, so they
    are fourteen separate cards with air between them rather than one welded slab. */
-.shop{max-width:1460px;margin:0 auto;padding:0 clamp(1.1rem,3.5vw,2.6rem) 8rem}
+.shop{animation:page-in .45s cubic-bezier(.2,.8,.2,1);max-width:1460px;margin:0 auto;padding:0 clamp(1.1rem,3.5vw,2.6rem) 8rem}
 
 .shop-head{padding:clamp(5.4rem,9vw,7rem) 0 2.2rem;display:grid;
   grid-template-columns:minmax(0,1fr);gap:.9rem}
@@ -580,3 +594,5 @@ label:hover>.tick{border-color:var(--glacier)}
 /* An amount that won't parse says so, instead of just leaving the button grey. */
 .money-hint{font-style:normal;font-size:.72rem;color:var(--blaze);line-height:1.3}
 .money-f input[aria-invalid="true"]{border-color:var(--blaze)}
+@keyframes page-in{from{opacity:0;translate:0 12px}}
+@media(prefers-reduced-motion:reduce){.shop{animation:none}}

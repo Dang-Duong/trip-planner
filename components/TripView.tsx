@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import DayTimeline, { More } from "@/components/DayTimeline";
-import Dock, { useTab } from "@/components/Dock";
+import Dock, { swap, useTab } from "@/components/Dock";
 import PackList from "@/components/PackList";
 import TripMap, { BASEMAP_CHOICES, type Basemap } from "@/components/TripMap";
 import type { LngLat } from "@/lib/types";
@@ -12,7 +12,6 @@ export default function TripView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const tab = useTab();
   const [dayIdx, setDayIdx] = useState(0);
-  const [dir, setDir] = useState(1);
   const [trail, setTrail] = useState<LngLat[] | undefined>(undefined);
   const [basemap, setBasemap] = useState<Basemap>("satellite");
   const touch = useRef<{ x: number; y: number } | null>(null);
@@ -21,9 +20,10 @@ export default function TripView({ slug }: { slug: string }) {
   const day = trip.days[dayIdx];
   const go = (i: number) => {
     if (i < 0 || i >= trip.days.length || i === dayIdx) return;
-    setDir(i > dayIdx ? 1 : -1);
-    setDayIdx(i);
-    setTrail(undefined);
+    swap(() => {
+      setDayIdx(i);
+      setTrail(undefined);
+    }, Math.sign(i - dayIdx));
   };
   const mapId = tab === "plan" ? (day.mapId ?? trip.maps[0].id) : trip.maps[0].id;
 
@@ -72,6 +72,7 @@ export default function TripView({ slug }: { slug: string }) {
                   if (e.key === "ArrowLeft") go(dayIdx - 1);
                 }}
               >
+                {i === dayIdx && <span className="pill-mark" />}
                 <b>{d.date}</b>
                 {d.title.split(" · ")[0]}
               </button>
@@ -91,7 +92,7 @@ export default function TripView({ slug }: { slug: string }) {
           }}
         >
           {tab === "plan" && (
-            <div className="enter" key={day.date} style={{ "--dir": dir } as React.CSSProperties}>
+            <div key={day.date}>
               <div className="day-head">
                 <h2>{day.title.split(" · ").slice(1).join(" · ")}</h2>
                 <p className="day-meta">{day.meta}</p>
@@ -101,7 +102,7 @@ export default function TripView({ slug }: { slug: string }) {
           )}
 
           {tab === "places" && (
-            <div className="enter">
+            <div>
               <h2 className="sec">Stops</h2>
               <ul className="rows">
                 {trip.pins.map((pin, i) => (
@@ -157,7 +158,7 @@ export default function TripView({ slug }: { slug: string }) {
           )}
 
           {tab === "pack" && (
-            <div className="enter">
+            <div>
               <h2 className="sec">Pack</h2>
               <PackList groups={trip.pack} slug={trip.slug} />
               <h2 className="sec">Before you go</h2>
