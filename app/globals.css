@@ -141,10 +141,11 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
   padding:.35rem .4rem calc(.35rem + env(safe-area-inset-bottom))}
 .dock a{flex:1;position:relative;display:grid;justify-items:center;gap:.2rem;padding:.4rem 0;
   font-size:.66rem;color:var(--stone);text-decoration:none;transition:color .2s}
-.dock svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;
-  stroke-linecap:round;stroke-linejoin:round;transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.dock img{width:30px;height:30px;filter:grayscale(1) brightness(.75);opacity:.6;
+  transition:filter .3s,opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)}
 .dock a:hover{color:var(--ink-2)}
-.dock a:hover svg{transform:translateY(-2px)}
+.dock a:hover img{filter:none;opacity:1;transform:translateY(-3px) rotate(-8deg) scale(1.1)}
+.dock a[aria-current] img{filter:drop-shadow(0 6px 8px rgba(0,0,0,.55));opacity:1;transform:translateY(-4px) scale(1.12)}
 .dock a[aria-current]{color:var(--ink)}
 .dock a[aria-current]::before{content:"";position:absolute;top:-.36rem;left:28%;right:28%;height:2px;background:var(--blaze)}
 /* On the long pages it floats instead of closing a sheet. */
@@ -159,7 +160,7 @@ html.has-cursor[data-cursor="on"] :is(.cur-dot,.cur-ring){display:block}
 html.has-cursor,html.has-cursor *{cursor:none!important}
 .cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--blaze)}
 .cur-ring{width:34px;height:34px;margin:-17px 0 0 -17px;border:1.5px solid #fff;mix-blend-mode:difference;
-  transition:scale .3s cubic-bezier(.2,.8,.2,1),background-color .3s;will-change:transform}
+  transition:scale .3s cubic-bezier(.2,.8,.2,1),background-color .3s;will-change:translate}
 .cur-ring[data-hover="true"]{scale:1.6;background:rgba(255,255,255,.12)}
 .cur-ring[data-down="true"]{scale:.8}
 

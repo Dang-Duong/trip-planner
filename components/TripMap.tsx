@@ -392,7 +392,7 @@ export default function TripMap({
     markers.current = marked.map((wp) => {
       const el = markerEl(wp);
       return {
-        mk: new lib.Marker({ element: el, anchor: "center" }).setLngLat(wp.at).addTo(m),
+        mk: new lib.Marker({ element: el, anchor: "center", opacityWhenCovered: "1" }).setLngLat(wp.at).addTo(m),
         el,
         kind: wp.kind,
         side: (wp.labelSide ?? "right") as Side,

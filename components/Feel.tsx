@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 
-const HOVER = "a,button,summary,label,select,[role=tab],.maplibregl-canvas";
+const HOVER = "a,button,summary,label,select,[role=tab]";
 
 function scroller(el: Element | null): HTMLElement {
   for (let n = el; n && n !== document.body; n = n.parentElement) {
@@ -64,9 +64,10 @@ export default function Feel() {
       document.documentElement.classList.add("has-cursor");
       let x = -100, y = -100, rx = x, ry = y, cr = 0;
       const follow = () => {
-        rx += (x - rx) * (calm ? 1 : 0.2);
-        ry += (y - ry) * (calm ? 1 : 0.2);
-        ring.current!.style.transform = `translate3d(${rx}px,${ry}px,0)`;
+        rx += (x - rx) * (calm ? 1 : 0.35);
+        ry += (y - ry) * (calm ? 1 : 0.35);
+        // `translate`, not `transform`: the hover `scale` would multiply a transform's offset.
+        ring.current!.style.translate = `${rx}px ${ry}px`;
         cr = Math.abs(x - rx) + Math.abs(y - ry) > 0.3 ? requestAnimationFrame(follow) : 0;
       };
       addEventListener(
@@ -74,7 +75,7 @@ export default function Feel() {
         (e) => {
           x = e.clientX;
           y = e.clientY;
-          dot.current!.style.transform = `translate3d(${x}px,${y}px,0)`;
+          dot.current!.style.translate = `${x}px ${y}px`;
           const r = ring.current!;
           r.dataset.hover = String(!!(e.target as Element).closest?.(HOVER));
           document.documentElement.dataset.cursor = "on";
@@ -84,7 +85,13 @@ export default function Feel() {
       );
       addEventListener("pointerdown", () => (ring.current!.dataset.down = "true"), on);
       addEventListener("pointerup", () => (ring.current!.dataset.down = "false"), on);
-      document.addEventListener("pointerleave", () => (document.documentElement.dataset.cursor = "off"), on);
+      addEventListener(
+        "pointerout",
+        (e) => {
+          if (!e.relatedTarget) document.documentElement.dataset.cursor = "off";
+        },
+        on,
+      );
     }
 
     return () => {
