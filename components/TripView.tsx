@@ -32,7 +32,7 @@ export default function TripView({ slug }: { slug: string }) {
     swap(() => {
       setDayIdx(i);
       setTrail(undefined);
-    }, Math.sign(i - dayIdx));
+    });
   };
   const mapId = tab === "plan" ? (day.mapId ?? trip.maps[0].id) : trip.maps[0].id;
 

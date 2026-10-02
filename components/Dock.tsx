@@ -29,9 +29,8 @@ const subscribe = (fn: () => void) => {
 
 export const useTab = () => useSyncExternalStore(subscribe, read, (): Tab => "plan");
 
-/** Runs a UI swap as a view transition. `dir` slides the sheet: 1 forward, -1 back, 0 fade. */
-export function swap(update: () => void, dir = 0) {
-  document.documentElement.dataset.dir = String(dir);
+/** Runs a UI swap as a view transition: the sheet crossfades. */
+export function swap(update: () => void) {
   if (!document.startViewTransition || matchMedia("(prefers-reduced-motion: reduce)").matches) {
     update();
     return;
@@ -43,9 +42,8 @@ export function swap(update: () => void, dir = 0) {
 // the same page switch here instead. history.state is kept: Next reloads on a popstate
 // whose state it doesn't recognise.
 function goTab(t: Tab) {
-  const from = TABS.indexOf(read());
   history.replaceState(history.state, "", `#${t}`);
-  swap(() => subs.forEach((fn) => fn()), Math.sign(TABS.indexOf(t) - from));
+  swap(() => subs.forEach((fn) => fn()));
 }
 
 const ICONS: Record<Tab | "shop" | "money", React.ReactNode> = {
