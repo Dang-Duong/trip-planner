@@ -4,6 +4,8 @@ import type { LngLat, Trip } from "@/lib/types";
 // ~12 m; the summit line is BRouter's hiking-mountain route from the hut. To regenerate:
 //   curl https://api.komoot.de/v007/tours/111843032/coordinates
 //   curl "https://brouter.de/brouter?lonlats=15.148345,47.622165|15.142451,47.618242&profile=hiking-mountain&format=geojson"
+// The loop down is BRouter over the Ringkarwand, Brandlmauer and Aflenzer Staritzen, as bergfex 5804694:
+//   curl "https://brouter.de/brouter?lonlats=15.148345,47.622165|15.196549,47.627549|15.216054,47.627136|15.27266,47.61856&profile=hiking-mountain&format=geojson"
 
 const wayUp: LngLat[] = [
   [15.27266, 47.61856], [15.26559, 47.6192], [15.26216, 47.62024], [15.26056, 47.62025],
@@ -37,6 +39,38 @@ const summitLine: LngLat[] = [
   [15.14784, 47.62022], [15.14713, 47.61957], [15.14671, 47.61931], [15.14611, 47.61928],
   [15.14591, 47.61913], [15.14495, 47.61928], [15.14439, 47.61914], [15.14341, 47.61864],
   [15.14266, 47.61804],
+];
+
+const loopDown: LngLat[] = [
+  [15.14851, 47.62218], [15.14944, 47.62198], [15.14997, 47.62149], [15.15074, 47.62118],
+  [15.15311, 47.62179], [15.15375, 47.62169], [15.15434, 47.62137], [15.15547, 47.62246],
+  [15.15635, 47.62264], [15.15686, 47.62253], [15.1578, 47.62176], [15.16022, 47.62326],
+  [15.16086, 47.62418], [15.16144, 47.62457], [15.16248, 47.62445], [15.16279, 47.62469],
+  [15.16389, 47.62484], [15.16456, 47.62515], [15.16461, 47.6258], [15.1641, 47.62644],
+  [15.16508, 47.62619], [15.16558, 47.62633], [15.16592, 47.62613], [15.16841, 47.6257],
+  [15.16921, 47.62541], [15.16987, 47.6249], [15.17219, 47.62431], [15.17623, 47.62423],
+  [15.17643, 47.62444], [15.17801, 47.62485], [15.1798, 47.62665], [15.18226, 47.62799],
+  [15.18391, 47.62774], [15.18541, 47.62685], [15.18707, 47.62674], [15.1893, 47.62574],
+  [15.18986, 47.6257], [15.19307, 47.62637], [15.19536, 47.62628], [15.19576, 47.62676],
+  [15.19636, 47.62677], [15.1982, 47.62791], [15.19978, 47.62802], [15.2023, 47.62781],
+  [15.20511, 47.6287], [15.20566, 47.6285], [15.20641, 47.62785], [15.20735, 47.62778],
+  [15.20943, 47.62797], [15.21028, 47.62706], [15.21234, 47.62624], [15.21267, 47.62626],
+  [15.21376, 47.62655], [15.21641, 47.62796], [15.21984, 47.62825], [15.22284, 47.62922],
+  [15.22412, 47.62935], [15.22662, 47.63033], [15.22787, 47.63107], [15.23029, 47.63196],
+  [15.23387, 47.63278], [15.23626, 47.63402], [15.24267, 47.63516], [15.24748, 47.63481],
+  [15.25009, 47.63543], [15.25274, 47.63655], [15.25517, 47.63705], [15.25631, 47.63706],
+  [15.25657, 47.63689], [15.26119, 47.6376], [15.26476, 47.63749], [15.26674, 47.63792],
+  [15.26727, 47.63782], [15.26744, 47.63694], [15.26842, 47.63682], [15.26885, 47.63657],
+  [15.26821, 47.63626], [15.26939, 47.63492], [15.26871, 47.63455], [15.26894, 47.63401],
+  [15.26812, 47.6337], [15.26943, 47.63209], [15.27013, 47.63165], [15.26996, 47.63144],
+  [15.2712, 47.63115], [15.27415, 47.63116], [15.27618, 47.63173], [15.27684, 47.63163],
+  [15.27748, 47.63113], [15.27848, 47.63083], [15.27925, 47.63034], [15.27966, 47.62962],
+  [15.27938, 47.62929], [15.27939, 47.62819], [15.27969, 47.62778], [15.28097, 47.62707],
+  [15.28182, 47.62601], [15.2822, 47.62604], [15.28265, 47.62541], [15.28276, 47.62502],
+  [15.28235, 47.62499], [15.28251, 47.62438], [15.28154, 47.62338], [15.28121, 47.62231],
+  [15.28051, 47.62202], [15.28006, 47.62218], [15.27864, 47.62187], [15.27619, 47.6223],
+  [15.27504, 47.62203], [15.27399, 47.6226], [15.27307, 47.62246], [15.27223, 47.62193],
+  [15.27142, 47.62181], [15.2715, 47.61988], [15.27266, 47.61856],
 ];
 
 const maps = (q: string) =>
@@ -77,6 +111,8 @@ export const hochschwab2026: Trip = {
     { id: "voisthaler", name: "Voisthalerhütte", at: [15.18095, 47.61229], kind: "hut", note: "1 654 m · lunch", labelSide: "below" },
     { id: "schiestlhaus", name: "Schiestlhaus", at: [15.14835, 47.62216], kind: "hut", note: "2 153 m · night Sat", labelSide: "right" },
     { id: "hochschwab", name: "Hochschwab", at: [15.14245, 47.61824], kind: "goal", note: "2 277 m", labelSide: "left" },
+    { id: "ringkarwand", name: "Ringkarwand", at: [15.19655, 47.62755], kind: "peak", note: "2 041 m" },
+    { id: "brandlmauer", name: "Brandlmauer", at: [15.21605, 47.62714], kind: "peak", note: "2 020 m", labelSide: "right" },
   ],
 
   maps: [
@@ -112,9 +148,9 @@ export const hochschwab2026: Trip = {
       title: "Sun · Hochschwab",
       pitch: 55,
       bearing: -70,
-      waypoints: ["schiestlhaus", "hochschwab", "voisthaler", "seewiesen"],
-      routeLine: [...summitLine.slice().reverse(), ...summitLine, ...wayUp.slice().reverse()],
-      note: "Half an hour from the hut to the summit cross, back to the hut, then down the same way to the car at Seewiesen.",
+      waypoints: ["schiestlhaus", "hochschwab", "ringkarwand", "brandlmauer", "seewiesen"],
+      routeLine: [...summitLine.slice().reverse(), ...summitLine, ...loopDown],
+      note: "Summit and back to the hut, then east along the plateau over the Ringkarwand and Brandlmauer and down the Aflenzer Staritzen to Seewiesen. About 15 km, +400 / −1 600 m. In fog, go down the way you came up.",
     },
   ],
 
@@ -186,13 +222,13 @@ export const hochschwab2026: Trip = {
       that is the A/B via ferrata.
     </>,
     <>
-      <b>Saturday turns wet from about 13:00–15:00</b>, snow at the hut by evening. Be walking by
-      10:00 to be at the hut before the worst of it.
+      <b>Snow above ~1 600 m.</b> About 5–7 cm on Thu 22 and ~5 cm more on Saturday, so ~10 cm
+      on a frozen base by Sunday. Rain or sleet lower down. Microspikes from the Voisthalerhütte,
+      gaiters with low shoes, and follow the red-white markings and poles.
     </>,
     <>
-      <b>Sunday wind.</b> One model has 70–95 km/h gusts until midday, the ensemble only ~30. If
-      it&rsquo;s blowing, skip the sunrise and go up after breakfast. Rain then −4 °C overnight
-      means ice on the rock — microspikes.
+      <b>Sunday is cold and calm until midday:</b> −10 °C at sunrise, feels like −14, gusts ~13
+      km/h. The wind reaches ~50 km/h by 15:00 — be off the plateau by then. Forecast of 21 Oct.
     </>,
     <>
       <b>Both huts close on Mon 26 Oct</b>, the Austrian national holiday. Last weekend of the
@@ -242,7 +278,7 @@ export const hochschwab2026: Trip = {
     {
       date: "25",
       title: "Sun · Hochschwab → Praha",
-      meta: "+130 m · −1 350 m · 2 277 m",
+      meta: "~15 km · +500 m · −1 700 m · 2 277 m",
       mapId: "sun",
       legs: [
         { time: "06:00", text: <>Headtorches, up to the summit. Only if the wind allows.</> },
@@ -256,15 +292,25 @@ export const hochschwab2026: Trip = {
           ),
         },
         { time: "07:30", text: <><b>Breakfast at the hut</b>, kitchen from 07:00. Pack up.</> },
-        { time: "08:30", text: <>Down the Graf-Meran-Steig. Slow on the cables if they&rsquo;re iced.</> },
-        { time: "~10:00", text: <>Voisthalerhütte.</> },
-        { time: "~12:30", text: <>Seewiesen. Boots off.</> },
-        { time: "~18:00", text: <>Praha. 5 h driving, ~5½ with a stop.</> },
+        {
+          time: "08:30",
+          text: (
+            <>
+              <b>Decide at the hut.</b> If you can see from pole to pole, go east along the plateau.
+              If not, go down the way you came up — Seewiesen ~12:30.
+            </>
+          ),
+        },
+        { time: "~10:30", text: <><b>Ringkarwand, 2 041 m</b>, then the Brandlmauer.</> },
+        { time: "~12:00", text: <>Over the Aflenzer Staritzen, then 1 000 m down to the valley.</> },
+        { time: "~15:00", text: <>Seewiesen. Boots off.</> },
+        { time: "~20:30", text: <>Praha. 5 h driving, ~5½ with a stop.</> },
       ],
       note: (
         <>
           <b>Windy morning?</b> Breakfast first, summit ~09:00, back at the hut by 10:00 — then
-          the car around 14:00 and Praha by ~19:30. Sunset 16:50.
+          the way you came up, the car around 14:00 and Praha by ~19:30. No time for the loop.
+          Sunset 16:50.
         </>
       ),
     },
@@ -292,6 +338,26 @@ export const hochschwab2026: Trip = {
           ·{" "}
           <a href="https://www.komoot.com/highlight/115939" target="_blank" rel="noreferrer">
             Summit ↗
+          </a>
+        </>
+      ),
+    },
+    {
+      name: "Hochschwab – Aflenzer Staritzen",
+      href: "https://www.bergfex.at/sommer/steiermark/touren/wanderung/5804694,hochschwab--aflenzer-staritzen/",
+      when: "Hochschwab · Sun down, if it's clear",
+      km: "~15 km",
+      ascent: "+500 m",
+      time: "~6 h",
+      high: "2 277 m",
+      grade: "T3",
+      note: (
+        <>
+          <b>The loop.</b> From the summit east along the plateau over the Ringkarwand and
+          Brandlmauer and down to Seewiesen. The plateau is high, open and confusing in fog — only
+          with visibility.{" "}
+          <a href="https://www.alltrails.com/trail/austria/styria/aflenzer-staritzen" target="_blank" rel="noreferrer">
+            AllTrails ↗
           </a>
         </>
       ),
