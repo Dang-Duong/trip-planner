@@ -314,7 +314,7 @@ export const hochschwab2026: Trip = {
         { label: "Trekking poles", sub: "1 350 m of descent on Sunday" },
         { label: "Gloves you can grip a cable in", sub: "Cold steel at 2 000 m" },
         { label: "Headtorch + spares", sub: "Sunrise summit in the dark" },
-        { label: "1½ L water each", sub: "Refill at the huts" },
+        { label: "2 L water each", sub: "Schiestlhaus water is rainwater only — fill up in the valley" },
         { label: "Trail food for both days" },
         { label: "First aid, blisters, foil blanket" },
         { label: "Sunglasses, SPF" },
