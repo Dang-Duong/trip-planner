@@ -333,11 +333,11 @@ export const hochschwab2026: Trip = {
     {
       title: "Hut",
       items: [
-        { label: <b>Sleeping-bag liner</b>, sub: "Compulsory at the Schiestlhaus" },
+        { label: <b>Sleeping-bag liner</b>, sub: "Compulsory — or €30 at the hut" },
         { label: "Hut slippers or light socks" },
         { label: "Earplugs", sub: "Last weekend of the season — full dorms" },
         { label: "Toiletries + small towel" },
-        { label: "Cash in EUR", sub: "Don't count on the card reader" },
+        { label: <b>Cash in EUR, ~€170 for two</b>, sub: "The Schiestlhaus takes cash only" },
         { label: "Alpenverein / ÖTK card, if you have one", sub: "Member discount on the night" },
       ],
     },
