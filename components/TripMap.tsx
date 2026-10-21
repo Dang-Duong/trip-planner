@@ -352,6 +352,28 @@ export default function TripMap({
       m.addControl(new lib.NavigationControl({ visualizePitch: true }), "top-right");
       m.addControl(new lib.ScaleControl({ maxWidth: 84, unit: "metric" }), "bottom-left");
 
+      // Trackpad rotate: ⌥ + two-finger scroll everywhere, and the native twist in Safari.
+      node.addEventListener(
+        "wheel",
+        (e) => {
+          if (!e.altKey) return;
+          e.preventDefault();
+          e.stopPropagation();
+          m.setBearing(m.getBearing() + e.deltaX * 0.3);
+          m.setPitch(m.getPitch() - e.deltaY * 0.2);
+        },
+        { capture: true, passive: false },
+      );
+      let startBearing = 0;
+      node.addEventListener("gesturestart", (e) => {
+        e.preventDefault();
+        startBearing = m.getBearing();
+      });
+      node.addEventListener("gesturechange", (e) => {
+        e.preventDefault();
+        m.setBearing(startBearing - (e as Event & { rotation: number }).rotation);
+      });
+
       map.current = m;
       m.on("load", () => !cancelled && setReady(true));
       // Which labels collide depends on the camera, so recheck once it settles —
