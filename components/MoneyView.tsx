@@ -190,13 +190,14 @@ export default function MoneyView({ slug }: { slug: string }) {
           {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates}
         </p>
         <p className="shop-lede">
-          Put in what a receipt came to and tick who it was for. Untick the
-          youngest two on anything alcoholic and they stop paying for it.
+          Put in what a receipt came to and tick who it was for.
+          {trip.noAlcohol?.length
+            ? " Untick the youngest two on anything alcoholic and they stop paying for it."
+            : ""}{" "}
           Everything nets off at the bottom into the fewest payments.
         </p>
         <p className="money-warn">
-          Receipts are <b>shared with everyone</b> on this page, like the
-          shopping ticks. Add one with no signal and it is kept on your phone
+          Receipts are <b>shared with everyone</b> on this page. Add one with no signal and it is kept on your phone
           until you have bars again — the badge says so while it waits.{" "}
           <SyncBadge sync={sync} pending={pending} />
         </p>
@@ -337,9 +338,11 @@ export default function MoneyView({ slug }: { slug: string }) {
               <button type="button" onClick={() => setShares(people)}>
                 Everyone
               </button>
-              <button type="button" onClick={() => setShares(drinkers)}>
-                No alcohol for the youngest
-              </button>
+              {trip.noAlcohol?.length ? (
+                <button type="button" onClick={() => setShares(drinkers)}>
+                  No alcohol for the youngest
+                </button>
+              ) : null}
               <button type="button" onClick={() => setShares([])}>
                 None
               </button>

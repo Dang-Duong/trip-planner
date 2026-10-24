@@ -85,7 +85,15 @@ const ICONS: Record<Tab | "shop" | "money", React.ReactNode> = {
   ),
 };
 
-export default function Dock({ slug, shop }: { slug: string; shop: boolean }) {
+export default function Dock({
+  slug,
+  shop,
+  money,
+}: {
+  slug: string;
+  shop: boolean;
+  money: boolean;
+}) {
   const path = usePathname();
   const tab = useTab();
   const base = `/trips/${slug}`;
@@ -97,10 +105,10 @@ export default function Dock({ slug, shop }: { slug: string; shop: boolean }) {
     { id: "pack", label: "Pack", href: `${base}#pack`, on: home && tab === "pack" },
   ];
   if (shop) {
-    items.push(
-      { id: "shop", label: "Shop", href: `${base}/shop`, on: path === `${base}/shop` },
-      { id: "money", label: "Money", href: `${base}/money`, on: path === `${base}/money` },
-    );
+    items.push({ id: "shop", label: "Shop", href: `${base}/shop`, on: path === `${base}/shop` });
+  }
+  if (money) {
+    items.push({ id: "money", label: "Money", href: `${base}/money`, on: path === `${base}/money` });
   }
 
   return (

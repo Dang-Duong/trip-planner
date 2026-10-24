@@ -15,7 +15,7 @@ export default async function TripLayout({
   return (
     <>
       {children}
-      {trip && <Dock slug={slug} shop={!!trip.shop} />}
+      {trip && <Dock slug={slug} shop={!!trip.shop} money={trip.people.length > 1} />}
     </>
   );
 }
