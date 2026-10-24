@@ -53,18 +53,18 @@ export const hochschwab2026: Trip = {
   titleTail: "Hochschwab",
   dates: "24–25 Oct 2026",
   subtitle:
-    "24–25 Oct 2026 · Čongus & Tung · Praha out and back · one night at the Schiestlhaus",
-  blurb: "Čongus & Tung · Praha out and back · one night at the Schiestlhaus",
+    "24–25 Oct 2026 · Čongus, Tung, Tranvan, Kuba & Tomajto · Praha out and back · one night at the Schiestlhaus",
+  blurb: "Čongus, Tung, Tranvan, Kuba & Tomajto · Praha out and back · one night at the Schiestlhaus",
 
   stats: [
-    { value: "2", label: "people" },
+    { value: "5", label: "people" },
     { value: "770", label: "km driving" },
     { value: "1 400", label: "m ascent" },
     { value: "2 277", label: "m high point" },
     { value: "~4½ h", label: "walk up Sat" },
   ],
 
-  people: ["Čongus", "Tung"],
+  people: ["Čongus", "Tung", "Tranvan", "Kuba", "Tomajto"],
 
   waypoints: [
     { id: "praha", name: "Praha", at: [14.47, 50.02], kind: "start", note: "start 04:30 Sat", labelSide: "right" },
@@ -359,7 +359,7 @@ export const hochschwab2026: Trip = {
         { label: "Hut slippers or light socks" },
         { label: "Earplugs", sub: "Last weekend of the season — full dorms" },
         { label: "Toiletries + small towel" },
-        { label: <b>Cash in EUR, ~€170 for two</b>, sub: "The Schiestlhaus takes cash only" },
+        { label: <b>Cash in EUR, ~€90 each</b>, sub: "The Schiestlhaus takes cash only" },
         { label: "Alpenverein / ÖTK card, if you have one", sub: "Member discount on the night" },
       ],
     },
@@ -386,7 +386,7 @@ export const hochschwab2026: Trip = {
     {
       what: (
         <>
-          <b>Phone the Schiestlhaus, Sat 24 Oct for two</b>{" "}
+          <b>Phone the Schiestlhaus, Sat 24 Oct for five</b>{" "}
           <span className="fine">— +43 699 108 121 99, weekdays ~10–12</span>
         </>
       ),
