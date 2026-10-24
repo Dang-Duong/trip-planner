@@ -6,8 +6,7 @@ import type { LngLat, Trip } from "@/lib/types";
 //   curl "https://brouter.de/brouter?lonlats=15.148345,47.622165|15.142451,47.618242&profile=hiking-mountain&format=geojson"
 
 const wayUp: LngLat[] = [
-  [15.27266, 47.61856], [15.26559, 47.6192], [15.26216, 47.62024], [15.26056, 47.62025],
-  [15.25718, 47.62104], [15.25542, 47.62101], [15.25043, 47.62025], [15.24846, 47.61945],
+  [15.25501, 47.62096], [15.25542, 47.62101], [15.25043, 47.62025], [15.24846, 47.61945],
   [15.2475, 47.61957], [15.24689, 47.61916], [15.2462, 47.61898], [15.24369, 47.61891],
   [15.24133, 47.61961], [15.23976, 47.61901], [15.23505, 47.61878], [15.23377, 47.61829],
   [15.23108, 47.61765], [15.23031, 47.61726], [15.22873, 47.61715], [15.22639, 47.61656],
@@ -72,7 +71,7 @@ export const hochschwab2026: Trip = {
     { id: "amstetten", name: "Amstetten", at: [14.87, 48.12], kind: "stop", note: "off the A1" },
     { id: "mariazell", name: "Mariazell", at: [15.32, 47.77], kind: "stop" },
     // Coordinates from OSM (Nominatim) and the end of the komoot track.
-    { id: "seewiesen", name: "Seewiesen", at: [15.27266, 47.61856], kind: "start", note: "~940 m · car park", labelSide: "right" },
+    { id: "seewiesen", name: "Seetal car park", at: [15.25501, 47.62096], kind: "start", note: "~980 m · free", labelSide: "right" },
     { id: "florl", name: "Florlhütte", at: [15.21012, 47.61523], kind: "stop", note: "1 284 m", labelSide: "below" },
     { id: "voisthaler", name: "Voisthalerhütte", at: [15.18095, 47.61229], kind: "hut", note: "1 654 m · lunch", labelSide: "below" },
     { id: "schiestlhaus", name: "Schiestlhaus", at: [15.14835, 47.62216], kind: "hut", note: "2 153 m · night Sat", labelSide: "right" },
@@ -95,6 +94,7 @@ export const hochschwab2026: Trip = {
         [14.5018, 48.2188], [14.6263, 48.1159], [14.9073, 48.1468], [15.0143, 48.1287],
         [15.0558, 48.0651], [15.1342, 48.0577], [15.1744, 47.9833], [15.2735, 47.9487],
         [15.3292, 47.8728], [15.2949, 47.8104], [15.3295, 47.693], [15.2727, 47.6186],
+        [15.26559, 47.6192], [15.26216, 47.62024], [15.25718, 47.62104], [15.25501, 47.62096],
       ],
       note: "Praha → Seewiesen 384 km · D3 to Linz, the A1 to Amstetten, then over Mariazell and the Seeberg · real road geometry",
     },
@@ -124,15 +124,15 @@ export const hochschwab2026: Trip = {
       what: "Praha → Seewiesen · 384 km",
       sub: "About 5 h, plus a stop. Holiday weekend in Austria — allow longer.",
       cost: "—",
-      href: dir("Praha", "Seewiesen, Turnau, Austria"),
+      href: dir("Praha", "47.62096,15.25501"),
       linkLabel: "Route ↗",
     },
     {
       when: "Sat hike",
-      what: <b>Seewiesen car park</b>,
-      sub: "Where the Seetal road ends, on the Seeberg road between Mariazell and Aflenz. The car stays overnight.",
-      cost: "—",
-      href: maps("47.61856,15.27266"),
+      what: <b>Seetal car park</b>,
+      sub: "In Seewiesen turn west off the Seeberg road into the Seetal and drive ~1.5 km to the barrier — the car park is just before it. Full? A free 12-car lot halfway in. The car stays overnight.",
+      cost: "Free",
+      href: maps("47.62096,15.25501"),
       linkLabel: "Pin ↗",
     },
     {
@@ -160,7 +160,7 @@ export const hochschwab2026: Trip = {
       when: "Sun",
       what: "Seewiesen → Praha · 384 km",
       cost: "—",
-      href: dir("Seewiesen, Turnau, Austria", "Praha"),
+      href: dir("47.62096,15.25501", "Praha"),
       linkLabel: "Route ↗",
     },
   ],
@@ -215,7 +215,7 @@ export const hochschwab2026: Trip = {
         { time: "04:30", text: <>D3 south past České Budějovice. <b>Fuel up in Czechia.</b></> },
         { time: "~07:00", text: <>Into Austria, past Linz onto the A1 east to Amstetten.</> },
         { time: "~08:30", text: <>South over Mariazell and up to the Seeberg road.</> },
-        { time: "~09:45", text: <><b>Seewiesen car park</b>, ~940 m. Boots on.</> },
+        { time: "~09:45", text: <><b>Seetal car park</b>, 1.5 km past Seewiesen. Boots on.</> },
         { time: "10:00", text: <>Walking, up the Seetal on the forest road, past the Florlhütte.</> },
         { time: "~12:30", text: <><b>Voisthalerhütte, 1 654 m.</b> Soup and a break.</> },
         {
