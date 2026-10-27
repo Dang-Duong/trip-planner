@@ -224,13 +224,8 @@ export default function MoneyView({ slug }: { slug: string }) {
         <div className="who-title">
           <h1>Who owes whom</h1>
           <button type="button" className="who-chip" onClick={() => setSwitching(true)}>
-            {me ? (
-              <span>
-                I&apos;m <b>{me}</b>
-              </span>
-            ) : (
-              <span>Viewing everyone</span>
-            )}
+            <small>{me ? "You are" : "Viewing as"}</small>
+            <b>{me || "Everyone"}</b>
             <i>{me ? "Switch" : "Pick your name"}</i>
           </button>
         </div>
