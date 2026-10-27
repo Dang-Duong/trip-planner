@@ -17,6 +17,9 @@ const spread = (ns: number[]) => Math.max(...ns) - Math.min(...ns);
 // --- currency ---
 assert.equal(toCzk({ amount: 124000, currency: "CZK" }), 1240);
 assert.equal(toCzk({ amount: 4650, currency: "EUR" }), 1163, "46.50 EUR, rounded once");
+assert.equal(toCzk({ amount: 4650, currency: "EUR", rate: 24.34 }), 1132, "stamped rate wins");
+assert.equal(toCzk({ amount: 100, currency: "CZK", rate: 24.34 }), 1, "CZK ignores a rate");
+assert.equal(sanitizeExpenses([{ id: "1", amount: 1, currency: "EUR", payer: "a", shares: ["a"], rate: 1e9 }])[0].rate, undefined);
 
 const people = ["Bobr", "BM", "Chipi", "Tuty"];
 

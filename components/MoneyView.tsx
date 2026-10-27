@@ -1,7 +1,7 @@
 "use client";
 
 import qrcode from "qrcode-generator";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
 import { showAccount, spayd, toIban } from "@/lib/payment";
@@ -76,6 +76,14 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [armed, setArmed] = useState<string | null>(null);
   const [why, setWhy] = useState<string | null>(null);
   const [qr, setQr] = useState<string | null>(null);
+  const [live, setLive] = useState<{ date: string; rates: Partial<Record<Currency, number>> }>();
+  useEffect(() => {
+    fetch("/api/rates")
+      .then((r) => (r.ok ? r.json() : undefined))
+      .then(setLive)
+      .catch(() => {});
+  }, []);
+  const rate = currency === "CZK" ? undefined : (live?.rates[currency] ?? RATES[currency]);
   const everyone = useMemo(() => ["", ...people], [people]);
   const [me, setMe] = useStoredChoice(`money-me:${slug}`, everyone, "");
   const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
@@ -156,6 +164,7 @@ export default function MoneyView({ slug }: { slug: string }) {
         what: what.trim() || "Shopping",
         amount: parsed,
         currency,
+        ...(rate ? { rate } : {}),
         payer,
         shares,
       },
@@ -313,6 +322,12 @@ export default function MoneyView({ slug }: { slug: string }) {
                 </option>
               ))}
             </select>
+            {rate && (
+              <i className="money-hint money-rate">
+                1 {currency} = {rate.toLocaleString("cs-CZ")} Kč
+                {live?.rates[currency] ? ` · ČNB ${live.date}` : " · offline guess"}
+              </i>
+            )}
           </label>
           <label className="money-f">
             <span>Who paid</span>

@@ -14,7 +14,7 @@
 
 export type Currency = "CZK" | "EUR" | "CHF";
 
-/** Fixed, because rates don't move enough over four days to be worth fetching. */
+/** Fallback only: receipts carry the ČNB rate of the day they were added (`rate`). */
 export const RATES: Record<Currency, number> = { CZK: 1, EUR: 25, CHF: 27 };
 
 export type Expense = {
@@ -23,6 +23,8 @@ export type Expense = {
   /** In `currency`, minor units, so 46.50 EUR stays exact on its own receipt line. */
   amount: number;
   currency: Currency;
+  /** CZK per one unit of `currency`, stamped when added so balances don't drift with the market. */
+  rate?: number;
   /** Who actually paid at the till. */
   payer: string;
   /** Who the cost is divided between. Not necessarily everyone — see the drink lists. */
@@ -38,8 +40,8 @@ export type Expense = {
 };
 
 /** Minor units in the expense's own currency -> whole crowns. Rounds once, here. */
-export const toCzk = (e: Pick<Expense, "amount" | "currency">) =>
-  Math.round((e.amount * RATES[e.currency]) / 100);
+export const toCzk = (e: Pick<Expense, "amount" | "currency" | "rate">) =>
+  Math.round((e.amount * (e.currency === "CZK" ? 1 : (e.rate ?? RATES[e.currency]))) / 100);
 
 /**
  * Round fractional shares to whole crowns so they still add up to `target`.
@@ -221,6 +223,8 @@ export function sanitizeExpenses(raw: unknown): Expense[] {
       currency: x.currency as Currency,
       payer: x.payer,
       shares: x.shares as string[],
+      // Shared store is public: a rate outside 1–1000 is junk, so fall back to RATES.
+      ...(typeof x.rate === "number" && x.rate >= 1 && x.rate <= 1000 ? { rate: x.rate } : {}),
       ...(x.settlement === true ? { settlement: true } : {}),
     });
   }
