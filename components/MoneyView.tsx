@@ -238,6 +238,14 @@ export default function MoneyView({ slug }: { slug: string }) {
             </select>
           </label>
 
+          {!me && (
+            <p className="money-me-note money-me-why">
+              Pick your name to see what you owe or get back, pay with a QR
+              code in your banking app, and add your account so others can pay
+              you the same way.
+            </p>
+          )}
+
           {me && (
             <>
               <p className="money-me-sum">

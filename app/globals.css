@@ -467,6 +467,7 @@ label:hover>.tick{border-color:var(--glacier)}
   text-transform:none;font-weight:500;color:var(--stone);font-size:.9rem}
 .money-me-list .money-paid{margin-left:0;width:100%;margin-top:.4rem;padding:.6rem}
 .money-me-note{flex-basis:100%;margin:0;font-size:.8rem;color:var(--stone)}
+.money-me-why{margin-top:.7rem;max-width:34rem;line-height:1.45}
 .money-me .money-qr p{margin:0;flex:1 1 12rem;font-size:.8rem;line-height:1.5;color:var(--stone)}
 .money-me .money-qr p b{display:block;font-weight:600;color:var(--ink)}
 .money-me .money-qr p span{display:block;margin-top:.4rem;color:var(--ink);
