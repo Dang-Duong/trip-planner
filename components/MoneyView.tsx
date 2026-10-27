@@ -322,7 +322,7 @@ export default function MoneyView({ slug }: { slug: string }) {
               id="money-what"
               value={what}
               onChange={(e) => setWhat(e.target.value)}
-              placeholder="Meat, soju, water…"
+              placeholder="Gas, tolls, groceries, hut…"
             />
           </label>
           <label className="money-f">
