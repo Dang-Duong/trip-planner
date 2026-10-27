@@ -2,6 +2,7 @@
 
 import qrcode from "qrcode-generator";
 import { useEffect, useMemo, useState } from "react";
+import Select from "@/components/Select";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
 import { showAccount, spayd, toIban } from "@/lib/payment";
@@ -228,14 +229,11 @@ export default function MoneyView({ slug }: { slug: string }) {
         <section className="money-me">
           <label className="money-f">
             <span>Who are you?</span>
-            <select value={me} onChange={(e) => setMe(e.target.value)}>
-              <option value="">Pick your name…</option>
-              {people.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+            <Select
+              value={me}
+              onChange={setMe}
+              options={[{ value: "", label: "Pick your name…" }, ...people.map((p) => ({ value: p, label: p }))]}
+            />
           </label>
 
           {!me && (
@@ -331,17 +329,11 @@ export default function MoneyView({ slug }: { slug: string }) {
           </label>
           <label className="money-f">
             <span>Currency</span>
-            <select
-              id="money-currency"
+            <Select
               value={currency}
-              onChange={(e) => setCurrency(e.target.value as Currency)}
-            >
-              {CURRENCIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              onChange={(c) => setCurrency(c as Currency)}
+              options={CURRENCIES.map((c) => ({ value: c, label: c }))}
+            />
             {rate && (
               <i className="money-hint money-rate">
                 1 {currency} = {rate.toLocaleString("cs-CZ")} Kč
@@ -351,18 +343,11 @@ export default function MoneyView({ slug }: { slug: string }) {
           </label>
           <label className="money-f">
             <span>Who paid</span>
-            <select
-              id="money-payer"
+            <Select
               value={payer}
-              onChange={(e) => setPayer(e.target.value)}
-            >
-              <option value="">Pick…</option>
-              {people.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+              onChange={setPayer}
+              options={[{ value: "", label: "Pick…" }, ...people.map((p) => ({ value: p, label: p }))]}
+            />
           </label>
         </div>
 
@@ -459,14 +444,11 @@ export default function MoneyView({ slug }: { slug: string }) {
 
           <label className="money-f money-filter">
             <span>Show</span>
-            <select value={me} onChange={(e) => setMe(e.target.value)}>
-              <option value="">Everyone</option>
-              {people.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
+            <Select
+              value={me}
+              onChange={setMe}
+              options={[{ value: "", label: "Everyone" }, ...people.map((p) => ({ value: p, label: p }))]}
+            />
           </label>
 
           <section className="money-bal">
