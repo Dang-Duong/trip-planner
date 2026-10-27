@@ -16,7 +16,7 @@ export async function GET() {
     for (const line of text.split("\n")) {
       const [, , amount, code, rate] = line.split("|");
       if (code in RATES && code !== "CZK") {
-        const r = Number(rate) / Number(amount);
+        const r = Math.round((Number(rate) / Number(amount)) * 10) / 10;
         if (Number.isFinite(r) && r > 0) rates[code as Currency] = r;
       }
     }
