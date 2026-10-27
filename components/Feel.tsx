@@ -14,11 +14,21 @@ export default function Feel() {
     const ac = new AbortController();
     const on = { signal: ac.signal };
     root.classList.add("has-cursor");
+    // Modal dialogs sit in the top layer, above any z-index; re-entering it puts the axe over them.
+    let modal: Element | null | undefined;
+    const raise = (el: HTMLElement) => {
+      const next = document.querySelector("dialog:modal");
+      if (next === modal) return;
+      modal = next;
+      if (el.matches(":popover-open")) el.hidePopover();
+      el.showPopover();
+    };
 
     addEventListener(
       "pointermove",
       (e) => {
         const el = axe.current!;
+        raise(el);
         el.style.translate = `${e.clientX}px ${e.clientY}px`;
         el.dataset.hover = String(!!(e.target as Element).closest?.(HOVER));
         root.dataset.cursor = "on";
@@ -35,7 +45,7 @@ export default function Feel() {
         chips.style.translate = `${e.clientX}px ${e.clientY}px`;
         chips.innerHTML = "<i></i>".repeat(6);
         chips.addEventListener("animationend", () => chips.remove(), { once: true });
-        document.body.append(chips);
+        (document.querySelector("dialog:modal") ?? document.body).append(chips);
       },
       on,
     );
@@ -56,7 +66,7 @@ export default function Feel() {
 
   // The pick tip at (3, 10.5) is the hotspot; the swing pivots on the grip.
   return (
-    <div className="cur" ref={axe} aria-hidden="true">
+    <div className="cur" ref={axe} aria-hidden="true" popover="manual">
       <svg viewBox="0 0 32 32" fill="none" strokeLinecap="round" strokeLinejoin="round">
         <g stroke="#06090A" strokeWidth="5">
           <path d="M15.5 6 25 29.5" />
