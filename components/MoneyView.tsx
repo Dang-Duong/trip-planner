@@ -212,7 +212,7 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   return (
     <div className="shop">
-      <Toaster position="top-center" theme="dark" />
+      <Toaster position="top-center" theme="light" options={{ fill: "#161E22" }} />
       <header className="shop-head">
         <div className="shop-top">
           <span className="blz" aria-hidden="true">
@@ -768,7 +768,7 @@ function AccountField({
           onClick={() => {
             save(null);
             setText("");
-            sileo.info({
+            sileo.error({
               title: "Account removed",
               description: "Nobody gets a QR code to pay you any more.",
               button: { title: "Undo", onClick: () => save(iban) },
