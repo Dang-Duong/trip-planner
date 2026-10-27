@@ -221,7 +221,19 @@ export default function MoneyView({ slug }: { slug: string }) {
             <i />
           </span>
         </div>
-        <h1>Who owes whom</h1>
+        <div className="who-title">
+          <h1>Who owes whom</h1>
+          <button type="button" className="who-chip" onClick={() => setSwitching(true)}>
+            {me ? (
+              <span>
+                I&apos;m <b>{me}</b>
+              </span>
+            ) : (
+              <span>Viewing everyone</span>
+            )}
+            <i>{me ? "Switch" : "Pick your name"}</i>
+          </button>
+        </div>
         <p className="shop-sub">
           {trip.title} {trip.titleAccent} {trip.titleTail} · {trip.dates}
         </p>
@@ -236,18 +248,6 @@ export default function MoneyView({ slug }: { slug: string }) {
           Receipts are <b>shared with everyone</b> on this page. Add one with no signal and it is kept on your phone
           until you have bars again — the badge says so while it waits.{" "}
           <SyncBadge sync={sync} pending={pending} />
-        </p>
-        <p className="who-chip">
-          {me ? (
-            <span>
-              You&apos;re <b>{me}</b>
-            </span>
-          ) : (
-            <span>Viewing everyone</span>
-          )}
-          <button type="button" onClick={() => setSwitching(true)}>
-            {me ? "Switch" : "Pick your name"}
-          </button>
         </p>
       </header>
 

@@ -645,12 +645,14 @@ label:hover>.tick{border-color:var(--glacier)}
 @media(prefers-reduced-motion:reduce){.shop{animation:none}}
 
 /* Who-are-you: a chip under the header, and the sheet it opens (first visit opens it too). */
-.who-chip{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin:.4rem 0 0;
-  font-size:.9rem;color:var(--stone)}
-.who-chip b{color:var(--ink);font-weight:600}
-.who-chip button{background:none;border:1px solid var(--rule);color:var(--ink);cursor:pointer;
-  font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;padding:.45rem .7rem}
-.who-chip button:hover,.who-chip button:focus-visible{border-color:var(--glacier);outline:none}
+.who-title{display:flex;flex-wrap:wrap;align-items:center;gap:.8rem 1.4rem}
+.who-chip{display:inline-flex;align-items:center;gap:.9rem;padding:.55rem .6rem .55rem 1rem;
+  background:var(--panel);border:1px solid var(--rule);color:var(--stone);font:inherit;font-size:1.05rem;
+  cursor:pointer;transition:border-color .15s}
+.who-chip b{color:var(--ink);font-weight:700;font-size:1.2rem}
+.who-chip i{font-style:normal;font-family:var(--mono);font-size:.58rem;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink);border-left:1px solid var(--rule);padding:.35rem 0 .35rem .8rem}
+.who-chip:hover,.who-chip:focus-visible{border-color:var(--glacier);outline:none}
 .who{margin:auto auto 0;width:100%;max-width:34rem;max-height:85dvh;overflow-y:auto;
   background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-top:3px solid var(--blaze);
   padding:1.4rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom))}
