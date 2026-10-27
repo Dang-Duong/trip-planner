@@ -1,6 +1,7 @@
 "use client";
 
 import qrcode from "qrcode-generator";
+import { sileo, Toaster } from "sileo";
 import { useEffect, useMemo, useState } from "react";
 import Select from "@/components/Select";
 import SyncBadge from "@/components/SyncBadge";
@@ -199,6 +200,7 @@ export default function MoneyView({ slug }: { slug: string }) {
 
   return (
     <div className="shop">
+      <Toaster position="top-center" theme="dark" />
       <header className="shop-head">
         <div className="shop-top">
           <span className="blz" aria-hidden="true">
@@ -696,12 +698,29 @@ function AccountField({
       <button
         type="button"
         disabled={!parsed || parsed === iban}
-        onClick={() => save(parsed)}
+        onClick={() => {
+          save(parsed);
+          sileo.success({
+            title: iban ? "Account updated" : "Account saved",
+            description: "People who owe you now get a QR code to pay you.",
+          });
+        }}
       >
         {iban ? "Update" : "Save"}
       </button>
       {iban && (
-        <button type="button" onClick={() => save(null)}>
+        <button
+          type="button"
+          onClick={() => {
+            save(null);
+            setText("");
+            sileo.info({
+              title: "Account removed",
+              description: "Nobody gets a QR code to pay you any more.",
+              button: { title: "Undo", onClick: () => save(iban) },
+            });
+          }}
+        >
           Remove
         </button>
       )}
