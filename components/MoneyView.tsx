@@ -2,7 +2,7 @@
 
 import qrcode from "qrcode-generator";
 import { sileo, Toaster } from "sileo";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import Select from "@/components/Select";
 import SyncBadge from "@/components/SyncBadge";
 import { useStoredChoice } from "@/lib/local-state";
@@ -26,6 +26,8 @@ import type { Entry } from "@/lib/sync-ops";
 import { getTrip } from "@/trips";
 
 const ACCT = "acct:";
+const LOOKING = "*";
+const noop = () => () => {};
 
 const CURRENCIES = Object.keys(RATES) as Currency[];
 
@@ -98,8 +100,18 @@ export default function MoneyView({ slug }: { slug: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- write is rebuilt every render
   }, [live, expenses]);
   const rate = currency === "CZK" ? undefined : (live?.rates[currency] ?? RATES[currency]);
-  const everyone = useMemo(() => ["", ...people], [people]);
-  const [me, setMe] = useStoredChoice(`money-me:${slug}`, everyone, "");
+  // "" = never asked, LOOKING = asked and skipped, otherwise a name on the trip.
+  const whoOptions = useMemo(() => ["", LOOKING, ...people], [people]);
+  const [who, setWho] = useStoredChoice(`money-me:${slug}`, whoOptions, "");
+  const me = people.includes(who) ? who : "";
+  const [switching, setSwitching] = useState(false);
+  // The server can't see localStorage, so only ask once the stored answer has been read.
+  const hydrated = useSyncExternalStore(noop, () => true, () => false);
+  const asking = switching || (hydrated && who === "");
+  const answer = (name: string | null) => {
+    setWho(name ?? (who || LOOKING));
+    setSwitching(false);
+  };
   const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
@@ -225,28 +237,25 @@ export default function MoneyView({ slug }: { slug: string }) {
           until you have bars again — the badge says so while it waits.{" "}
           <SyncBadge sync={sync} pending={pending} />
         </p>
+        <p className="who-chip">
+          {me ? (
+            <span>
+              You&apos;re <b>{me}</b>
+            </span>
+          ) : (
+            <span>Viewing everyone</span>
+          )}
+          <button type="button" onClick={() => setSwitching(true)}>
+            {me ? "Switch" : "Pick your name"}
+          </button>
+        </p>
       </header>
 
-      {receipts.length > 0 && (
+      <WhoSheet people={people} me={me} open={asking} answer={answer} />
+
+      {me && (
         <section className="money-me">
-          <label className="money-f">
-            <span>Who are you?</span>
-            <Select
-              value={me}
-              onChange={setMe}
-              options={[{ value: "", label: "Pick your name…" }, ...people.map((p) => ({ value: p, label: p }))]}
-            />
-          </label>
-
-          {!me && (
-            <p className="money-me-note money-me-why">
-              Pick your name to see what you owe or get back, pay with a QR
-              code in your banking app, and add your account so others can pay
-              you the same way.
-            </p>
-          )}
-
-          {me && (
+          {receipts.length > 0 && (
             <>
               <p className="money-me-sum">
                 {(net.get(me) ?? 0) < 0
@@ -286,13 +295,13 @@ export default function MoneyView({ slug }: { slug: string }) {
                     </li>
                   ))}
               </ul>
-              <AccountField
-                key={`${me}:${accounts.get(me) ?? ""}`}
-                iban={accounts.get(me)}
-                save={(iban) => saveAccount(me, iban)}
-              />
             </>
           )}
+          <AccountField
+            key={`${me}:${accounts.get(me) ?? ""}`}
+            iban={accounts.get(me)}
+            save={(iban) => saveAccount(me, iban)}
+          />
         </section>
       )}
 
@@ -443,15 +452,6 @@ export default function MoneyView({ slug }: { slug: string }) {
               ))}
             </ul>
           </section>
-
-          <label className="money-f money-filter">
-            <span>Show</span>
-            <Select
-              value={me}
-              onChange={setMe}
-              options={[{ value: "", label: "Everyone" }, ...people.map((p) => ({ value: p, label: p }))]}
-            />
-          </label>
 
           <section className="money-bal">
             <h2>Where everyone stands</h2>
@@ -669,6 +669,60 @@ function PayQr({
         </span>
       </p>
     </div>
+  );
+}
+
+function WhoSheet({
+  people,
+  me,
+  open,
+  answer,
+}: {
+  people: string[];
+  me: string;
+  open: boolean;
+  answer: (name: string | null) => void;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const d = ref.current;
+    if (open && !d?.open) d?.showModal();
+    if (!open && d?.open) d.close();
+  }, [open]);
+
+  return (
+    <dialog
+      ref={ref}
+      className="who"
+      aria-labelledby="who-h"
+      onCancel={(e) => {
+        e.preventDefault();
+        answer(null);
+      }}
+      onClick={(e) => e.target === e.currentTarget && answer(null)}
+    >
+      <h2 id="who-h">Who are you?</h2>
+      <p>
+        See what you owe or get back, pay by QR in your banking app, and let
+        others pay you the same way. Remembered on this phone.
+      </p>
+      <ul>
+        {people.map((p) => (
+          <li key={p}>
+            <button
+              type="button"
+              aria-pressed={p === me}
+              onClick={() => answer(p)}
+            >
+              {p}
+            </button>
+          </li>
+        ))}
+      </ul>
+      <button type="button" className="who-skip" onClick={() => answer(null)}>
+        {me ? "Cancel" : "Just looking"}
+      </button>
+    </dialog>
   );
 }
 

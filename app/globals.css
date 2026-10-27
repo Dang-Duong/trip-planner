@@ -449,7 +449,6 @@ label:hover>.tick{border-color:var(--glacier)}
 .money-row{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:1.1rem}
 .money-f{display:grid;gap:.35rem;flex:1 1 130px;min-width:0}
 .money-f-wide{flex:2 1 220px}
-.money-filter{margin-top:2.2rem;max-width:22rem}
 /* "Your turn": the first thing on the page, so nobody scrolls to find what they owe. */
 .shop .money-me{margin-top:2.2rem;border:1px solid var(--rule);border-top:3px solid var(--blaze);
   background:var(--panel);padding:1rem 1.1rem 1.2rem}
@@ -467,7 +466,6 @@ label:hover>.tick{border-color:var(--glacier)}
   text-transform:none;font-weight:500;color:var(--stone);font-size:.9rem}
 .money-me-list .money-paid{margin-left:0;width:100%;margin-top:.4rem;padding:.6rem}
 .money-me-note{flex-basis:100%;margin:0;font-size:.8rem;color:var(--stone)}
-.money-me-why{margin-top:.7rem;max-width:34rem;line-height:1.45}
 .money-me .money-qr p{margin:0;flex:1 1 12rem;font-size:.8rem;line-height:1.5;color:var(--stone)}
 .money-me .money-qr p b{display:block;font-weight:600;color:var(--ink)}
 .money-me .money-qr p span{display:block;margin-top:.4rem;color:var(--ink);
@@ -645,3 +643,30 @@ label:hover>.tick{border-color:var(--glacier)}
 .shop{animation:page-in .45s cubic-bezier(.2,.8,.2,1)}
 @keyframes page-in{from{opacity:0;translate:0 12px}}
 @media(prefers-reduced-motion:reduce){.shop{animation:none}}
+
+/* Who-are-you: a chip under the header, and the sheet it opens (first visit opens it too). */
+.who-chip{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem .9rem;margin:.4rem 0 0;
+  font-size:.9rem;color:var(--stone)}
+.who-chip b{color:var(--ink);font-weight:600}
+.who-chip button{background:none;border:1px solid var(--rule);color:var(--ink);cursor:pointer;
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.13em;text-transform:uppercase;padding:.45rem .7rem}
+.who-chip button:hover,.who-chip button:focus-visible{border-color:var(--glacier);outline:none}
+.who{margin:auto auto 0;width:100%;max-width:34rem;max-height:85dvh;overflow-y:auto;
+  background:var(--panel);color:var(--ink);border:1px solid var(--rule);border-top:3px solid var(--blaze);
+  padding:1.4rem 1.2rem calc(1.2rem + env(safe-area-inset-bottom))}
+.who[open]{animation:who-up .28s cubic-bezier(.2,.8,.2,1)}
+.who::backdrop{background:rgba(3,5,6,.7);backdrop-filter:blur(3px)}
+.who h2{margin:0;font-family:var(--display);font-stretch:84%;font-weight:800;font-size:1.7rem;line-height:1;
+  letter-spacing:-.01em;text-transform:none;color:var(--ink)}
+.who>p{margin:.6rem 0 1.1rem;font-size:.85rem;color:var(--stone);line-height:1.45}
+.who ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(10rem,1fr));gap:.5rem}
+.who ul button{width:100%;min-height:3rem;padding:.6rem .7rem;text-align:left;font:inherit;font-size:.95rem;
+  background:var(--sunken);color:var(--ink);border:1px solid var(--rule);cursor:pointer;overflow-wrap:anywhere}
+.who ul button:hover,.who ul button:focus-visible{border-color:var(--glacier);outline:none}
+.who ul button[aria-pressed="true"]{border-color:var(--blaze);color:var(--blaze)}
+.who-skip{display:block;margin:1rem auto 0;background:none;border:0;color:var(--stone);cursor:pointer;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;padding:.6rem 1rem}
+.who-skip:hover,.who-skip:focus-visible{color:var(--ink);outline:none}
+@media (min-width:640px){.who{margin:auto}}
+@keyframes who-up{from{transform:translateY(24px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.who[open]{animation:none}}
