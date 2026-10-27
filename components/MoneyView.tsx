@@ -44,6 +44,17 @@ const fmtAmount = (minor: number) =>
  *  we want — an amount should never wrap across two lines. */
 const fmt = (czk: number) => czk.toLocaleString("cs-CZ");
 
+const and = new Intl.ListFormat("en", { type: "conjunction" });
+
+/** "everyone", "everyone but Bobr", or the names — whichever is shortest to read. */
+function forWhom(shares: string[], people: string[]) {
+  const who = people.filter((p) => shares.includes(p));
+  const left = people.filter((p) => !shares.includes(p));
+  if (!left.length) return "everyone";
+  if (left.length <= 2 && who.length > left.length) return `everyone but ${and.format(left)}`;
+  return and.format(who);
+}
+
 export default function MoneyView({ slug }: { slug: string }) {
   const trip = getTrip(slug);
   const people = useMemo(() => trip?.people ?? [], [trip]);
@@ -434,7 +445,7 @@ export default function MoneyView({ slug }: { slug: string }) {
                   <b>{e.what}</b>
                   <span className="money-meta">
                     {counts(e)
-                      ? `${e.payer} paid · ${e.shares.length} ways`
+                      ? `${e.payer} paid for ${forWhom(e.shares, people)}`
                       : `${e.payer} is not on this trip — not counted`}
                   </span>
                   <span className="money-amt">
