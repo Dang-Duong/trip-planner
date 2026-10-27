@@ -112,7 +112,9 @@ export default function MoneyView({ slug }: { slug: string }) {
     setWho(name ?? (who || LOOKING));
     setSwitching(false);
   };
-  const mine = (e: Expense) => !me || e.payer === me || e.shares.includes(me);
+  const [all, setAll] = useState(false);
+  const focus = all ? "" : me;
+  const mine = (e: Expense) => !focus || e.payer === focus || e.shares.includes(focus);
 
   const net = useMemo(() => balances(expenses, people), [expenses, people]);
   const transfers = useMemo(
@@ -126,8 +128,8 @@ export default function MoneyView({ slug }: { slug: string }) {
       ),
     [net, expenses, people],
   );
-  const shown = me
-    ? transfers.filter((t) => t.from === me || t.to === me)
+  const shown = focus
+    ? transfers.filter((t) => t.from === focus || t.to === focus)
     : transfers;
 
   // An expense can only name someone off the list if the trip data was renamed under it
@@ -412,6 +414,16 @@ export default function MoneyView({ slug }: { slug: string }) {
 
       {receipts.length > 0 && (
         <>
+          {me && (
+            <div className="seg money-scope" role="group" aria-label="Show receipts">
+              <button type="button" aria-pressed={!all} onClick={() => setAll(false)}>
+                Mine
+              </button>
+              <button type="button" aria-pressed={all} onClick={() => setAll(true)}>
+                Everyone&apos;s
+              </button>
+            </div>
+          )}
           <section className="money-list">
             <h2>
               Receipts <i>{fmt(total)} Kč</i>
@@ -451,7 +463,7 @@ export default function MoneyView({ slug }: { slug: string }) {
           <section className="money-bal">
             <h2>Where everyone stands</h2>
             <ul>
-              {(me ? [me] : people).map((p) => {
+              {(focus ? [focus] : people).map((p) => {
                 const v = net.get(p) ?? 0;
                 return (
                   <li
@@ -473,7 +485,7 @@ export default function MoneyView({ slug }: { slug: string }) {
             <h2>Settle up</h2>
             {shown.length === 0 ? (
               <p className="shop-lede">
-                {me ? `${me} is square.` : "Everyone is square."}
+                {focus ? `${focus} is square.` : "Everyone is square."}
               </p>
             ) : (
               <ol>

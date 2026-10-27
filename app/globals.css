@@ -157,7 +157,7 @@ a.go{font-family:var(--mono);font-size:.7rem;color:var(--blaze);text-decoration-
 .seg{display:flex;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-top:1rem}
 .seg button{flex:1;padding:.5rem;background:var(--panel);color:var(--stone);border:0;font:inherit;
   font-size:.8rem;cursor:pointer}
-.seg button[aria-selected="true"]{background:var(--raise);color:var(--ink);box-shadow:inset 0 -2px var(--blaze)}
+.seg button[aria-selected="true"],.seg button[aria-pressed="true"]{background:var(--raise);color:var(--ink);box-shadow:inset 0 -2px var(--blaze)}
 
 .hikes{display:grid;gap:.6rem;margin-top:.6rem}
 .hike{display:grid;gap:.2rem;padding:.9rem 1rem;background:var(--panel);border:1px solid var(--rule);
@@ -454,6 +454,7 @@ label:hover>.tick{border-color:var(--glacier)}
 .shop .money-me{margin-top:2.2rem;border:1px solid var(--rule);border-top:3px solid var(--blaze);
   background:var(--panel);padding:1rem 1.1rem 1.2rem}
 .money-me>.money-f{max-width:22rem}
+.money-scope{margin-top:2.6rem;max-width:22rem}
 .money-me-sum{margin:1rem 0 .2rem;font-family:var(--display);font-stretch:84%;font-weight:800;
   font-size:1.5rem;text-transform:uppercase;letter-spacing:.005em;color:var(--ink)}
 .money-me-list{list-style:none;margin:.6rem 0 0;padding:0}
