@@ -78,10 +78,15 @@ export default function MoneyView({ slug }: { slug: string }) {
   const [qr, setQr] = useState<string | null>(null);
   const [live, setLive] = useState<{ date: string; rates: Partial<Record<Currency, number>> }>();
   useEffect(() => {
-    fetch("/api/rates")
-      .then((r) => (r.ok ? r.json() : undefined))
-      .then(setLive)
-      .catch(() => {});
+    const check = () =>
+      document.visibilityState === "visible" &&
+      fetch("/api/rates")
+        .then((r) => (r.ok ? r.json() : undefined))
+        .then((next) => next && setLive(next))
+        .catch(() => {});
+    check();
+    document.addEventListener("visibilitychange", check);
+    return () => document.removeEventListener("visibilitychange", check);
   }, []);
   const rate = currency === "CZK" ? undefined : (live?.rates[currency] ?? RATES[currency]);
   const everyone = useMemo(() => ["", ...people], [people]);
