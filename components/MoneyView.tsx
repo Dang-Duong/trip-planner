@@ -88,6 +88,13 @@ export default function MoneyView({ slug }: { slug: string }) {
     document.addEventListener("visibilitychange", check);
     return () => document.removeEventListener("visibilitychange", check);
   }, []);
+  // Receipts from before rates were stored get the day's rate once, then keep it.
+  useEffect(() => {
+    const stamp = (e: Expense) => (e.currency === "CZK" || e.rate ? undefined : live?.rates[e.currency]);
+    if (!expenses.some(stamp)) return;
+    write((prev) => prev.map((e) => (stamp(e) ? { ...e, rate: stamp(e) } : e)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- write is rebuilt every render
+  }, [live, expenses]);
   const rate = currency === "CZK" ? undefined : (live?.rates[currency] ?? RATES[currency]);
   const everyone = useMemo(() => ["", ...people], [people]);
   const [me, setMe] = useStoredChoice(`money-me:${slug}`, everyone, "");
@@ -424,6 +431,7 @@ export default function MoneyView({ slug }: { slug: string }) {
                     {e.currency !== "CZK" && (
                       <i>
                         {(e.amount / 100).toFixed(2)} {e.currency}
+                        {e.rate && ` × ${e.rate.toLocaleString("cs-CZ")}`}
                       </i>
                     )}
                   </span>
