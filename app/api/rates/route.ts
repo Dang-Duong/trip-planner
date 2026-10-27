@@ -1,7 +1,7 @@
 import { RATES, type Currency } from "@/lib/split";
 
-// ČNB publishes one fixing per working day around 14:30; an hour of staleness is fine.
-export const revalidate = 3600;
+// ČNB publishes one fixing per working day; fetch it once a day.
+export const revalidate = 86400;
 
 const CNB =
   "https://www.cnb.cz/en/financial-markets/foreign-exchange-market/central-bank-exchange-rate-fixing/central-bank-exchange-rate-fixing/daily.txt";
